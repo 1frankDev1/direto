@@ -1,0 +1,65 @@
+:root {
+    --pastel-bg: #fef9f3;
+    --pastel-card: #ffffff;
+    --pastel-primary: #a8dadc;
+    --pastel-secondary: #f1faee;
+    --pastel-text: #1d3557;
+    --pastel-accent: #e63946;
+}
+
+[data-bs-theme="pastel"] {
+    --bs-body-bg: var(--pastel-bg);
+    --bs-body-color: var(--pastel-text);
+    --bs-primary: #457b9d;
+    --bs-primary-rgb: 69, 123, 157;
+}
+
+[data-bs-theme="pastel"] .navbar {
+    background-color: var(--pastel-primary) !important;
+}
+
+[data-bs-theme="pastel"] .hero {
+    background: linear-gradient(135deg, var(--pastel-primary) 0%, var(--pastel-secondary) 100%);
+    color: var(--pastel-text);
+}
+
+[data-bs-theme="pastel"] .card {
+    background-color: var(--pastel-card);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+[data-bs-theme="pastel"] .card:hover {
+    transform: translateY(-5px);
+}
+
+[data-bs-theme="pastel"] .btn-primary {
+    background-color: #457b9d;
+    border: none;
+}
+
+/* Light Mode Overrides for more "Pastel" feel if desired */
+[data-bs-theme="light"] {
+    --bs-body-bg: #f8f9fa;
+}
+
+/* Common Styles */
+.hero {
+    background-color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .hero {
+    background-color: #212529;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: contain;
+    background: #fff;
+    padding: 1rem;
+}
+
+.navbar-brand img {
+    border-radius: 50%;
+}
