@@ -2,8 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('directorySearch');
     const searchBtn = document.getElementById('searchBtn');
     const resultsContainer = document.getElementById('directoryResults');
-    const cityChips = document.querySelectorAll('#cityChips .chip');
     const categoryContainer = document.getElementById('categoryChips');
+    const sidebarLocations = document.getElementById('sidebarLocations');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const body = document.body;
 
     // Modal elements
     const menuModalEl = document.getElementById('menuModal');
@@ -11,9 +14,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuModalLabel = document.getElementById('menuModalLabel');
     const menuIframe = document.getElementById('menuIframe');
 
-    let currentCity = '';
+    let currentCity = 'tijuana'; // Default to Tijuana
     let currentCategory = '';
     let renderTimeout;
+
+    // Sidebar Toggle Logic
+    function toggleSidebar() {
+        body.classList.toggle('sidebar-open');
+        body.classList.toggle('sidebar-closed');
+    }
+
+    if (sidebarToggle) sidebarToggle.addEventListener('click', toggleSidebar);
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // Initialize Locations in Sidebar
+    function initLocations() {
+        if (!sidebarLocations) return;
+
+        const cities = ['Todas', ...new Set(directoryData.map(item => item.city))];
+        sidebarLocations.innerHTML = '';
+
+        cities.forEach(city => {
+            const citySlug = city === 'Todas' ? '' : slugify(city);
+            const btn = document.createElement('button');
+            btn.className = `nav-link-custom ${citySlug === currentCity ? 'active' : ''}`;
+            btn.innerHTML = `<i class="bi bi-geo-alt"></i> <span>${city}</span>`;
+
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-link-custom').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCity = citySlug;
+                renderDirectory(searchInput.value, currentCity, currentCategory);
+
+                // Close sidebar on mobile after selection
+                if (window.innerWidth < 992 && body.classList.contains('sidebar-open')) {
+                    toggleSidebar();
+                }
+            });
+            sidebarLocations.appendChild(btn);
+        });
+    }
 
     // Initialize Categories
     function initCategories() {
@@ -69,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultsContainer.innerHTML = `
                     <div class="col-12 text-center py-5 animate-fade-in">
                         <i class="bi bi-search display-1 text-muted opacity-25"></i>
-                        <p class="lead mt-3 text-muted">No encontramos resultados para tu búsqueda.</p>
+                        <p class="lead mt-3 text-muted">No encontramos resultados para tu búsqueda en esta ubicación.</p>
                     </div>
                 `;
                 return;
@@ -141,15 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    cityChips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            cityChips.forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            currentCity = chip.getAttribute('data-filter');
-            renderDirectory(searchInput.value, currentCity, currentCategory);
-        });
-    });
+    // Ensure initial state for sidebar based on screen size
+    if (window.innerWidth < 992) {
+        body.classList.remove('sidebar-open');
+        body.classList.add('sidebar-closed');
+    }
 
+    initLocations();
     initCategories();
-    renderDirectory();
+    renderDirectory('', currentCity);
 });
