@@ -27,57 +27,54 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="./index.html">
                 <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="40" class="me-2">
                 <span class="fw-bold">Tragalero</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-palette me-1"></i> Temas
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                            <li><button class="dropdown-item" data-theme-value="light"><i class="bi bi-sun me-2"></i> Modo Claro</button></li>
-                            <li><button class="dropdown-item" data-theme-value="dark"><i class="bi bi-moon-stars me-2"></i> Modo Oscuro</button></li>
-                            <li><button class="dropdown-item" data-theme-value="medio"><i class="bi bi-circle-half me-2"></i> Modo Medio</button></li>
-                            <li><button class="dropdown-item" data-theme-value="pastel"><i class="bi bi-flower1 me-2"></i> Modo Pastel</button></li>
-                        </ul>
-                    </li>
-                </ul>
+
+            <div class="ms-auto d-flex align-items-center theme-switcher-bar">
+                <button class="theme-btn" data-theme-value="light" title="Modo Claro"><i class="bi bi-sun-fill"></i></button>
+                <button class="theme-btn" data-theme-value="dark" title="Modo Oscuro"><i class="bi bi-moon-stars-fill"></i></button>
+                <button class="theme-btn" data-theme-value="medio" title="Modo Medio"><i class="bi bi-eye-fill"></i></button>
+                <button class="theme-btn" data-theme-value="pastel" title="Modo Pastel"><i class="bi bi-palette-fill"></i></button>
             </div>
         </div>
     </nav>
 
     <header class="hero text-center">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-3">Encuentra tu próximo sabor</h1>
-            <p class="lead mb-0">Explora los mejores restaurantes por nombre, zona o código postal.</p>
+            <h1 class="display-4 fw-bold mb-3 animate-fade-in">Descubre Sabores</h1>
+            <p class="lead mb-0 animate-fade-in delay-1">Directorio exclusivo de los mejores restaurantes.</p>
         </div>
     </header>
 
-    <div class="container search-container">
-        <div class="card shadow-lg border-0 p-4">
-            <div class="input-group input-group-lg">
-                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
-                <input type="text" id="directorySearch" class="form-control border-start-0 shadow-none" placeholder="Buscar por nombre, CP, colonia...">
-                <button class="btn btn-primary px-5 fw-bold" type="button" id="searchBtn">Buscar</button>
+    <div class="container search-container animate-fade-in delay-2">
+        <div class="custom-search-card shadow-sm">
+            <div class="row g-3 p-4">
+                <div class="col-md-9">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="directorySearch" class="form-control" placeholder="Busca por nombre, CP o ciudad...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-custom-primary w-100" type="button" id="searchBtn">Buscar</button>
+                </div>
             </div>
 
-            <div class="filter-chips mt-3" id="cityChips">
-                <button class="chip active" data-filter="">Todos</button>
-                <button class="chip" data-filter="cdmx">CDMX</button>
-                <button class="chip" data-filter="tijuana">Tijuana</button>
-                <button class="chip" data-filter="guadalajara">Guadalajara</button>
-                <button class="chip" data-filter="monterrey">Monterrey</button>
-                <button class="chip" data-filter="puebla">Puebla</button>
-                <button class="chip" data-filter="merida">Mérida</button>
-                <button class="chip" data-filter="leon">León</button>
+            <div class="filter-chips-wrapper pb-4 px-4">
+                <div class="filter-chips" id="cityChips">
+                    <button class="chip active" data-filter="">Todos</button>
+                    <button class="chip" data-filter="cdmx">CDMX</button>
+                    <button class="chip" data-filter="tijuana">Tijuana</button>
+                    <button class="chip" data-filter="guadalajara">Guadalajara</button>
+                    <button class="chip" data-filter="monterrey">Monterrey</button>
+                    <button class="chip" data-filter="puebla">Puebla</button>
+                    <button class="chip" data-filter="merida">Mérida</button>
+                    <button class="chip" data-filter="leon">León</button>
+                </div>
             </div>
         </div>
     </div>
@@ -96,13 +93,13 @@
     <!-- Modal for Quick View -->
     <div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header">
+            <div class="modal-content border-0 shadow-lg custom-modal">
+                <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold text-truncate" id="menuModalLabel">Nombre del Restaurante</h5>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-0">
-                    <div class="ratio ratio-16x9" style="height: 80vh;">
+                <div class="modal-body p-4">
+                    <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm" style="height: 75vh;">
                         <iframe id="menuIframe" src="" frameborder="0"></iframe>
                     </div>
                 </div>
