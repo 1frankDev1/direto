@@ -11,11 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuIframe = document.getElementById('menuIframe');
 
     let currentFilter = '';
+    let renderTimeout;
 
     function renderDirectory(filterText = '', cityFilter = '') {
-        resultsContainer.innerHTML = '';
+        // Smooth transition: fade out first
+        resultsContainer.classList.add('results-hidden');
 
-        const filtered = directoryData.filter(item => {
+        clearTimeout(renderTimeout);
+        renderTimeout = setTimeout(() => {
+            resultsContainer.innerHTML = '';
+
+            const filtered = directoryData.filter(item => {
             const searchLower = filterText.toLowerCase();
             const matchesText = !filterText ||
                 item.name.toLowerCase().includes(searchLower) ||
@@ -69,14 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsContainer.appendChild(col);
         });
 
-        // Add event listeners to newly created buttons
-        document.querySelectorAll('.view-menu-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const url = e.currentTarget.getAttribute('data-url');
-                const name = e.currentTarget.getAttribute('data-name');
-                openMenu(url, name);
+            // Add event listeners to newly created buttons
+            document.querySelectorAll('.view-menu-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const url = e.currentTarget.getAttribute('data-url');
+                    const name = e.currentTarget.getAttribute('data-name');
+                    openMenu(url, name);
+                });
             });
-        });
+
+            // Fade back in
+            resultsContainer.classList.remove('results-hidden');
+        }, 300);
     }
 
     function openMenu(url, name) {

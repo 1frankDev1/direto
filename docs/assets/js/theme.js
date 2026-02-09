@@ -3,7 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const htmlElement = document.documentElement;
 
     // Load saved theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    let savedTheme = localStorage.getItem('theme') || 'light';
+    // Validate theme (remove old ones like 'pastel')
+    const validThemes = ['light', 'dark', 'medio'];
+    if (!validThemes.includes(savedTheme)) {
+        savedTheme = 'light';
+    }
     setTheme(savedTheme);
 
     themeButtons.forEach(btn => {

@@ -1,16 +1,15 @@
 :root {
-    --transition-speed: 0.4s;
+    --transition-speed: 0.5s;
     --card-radius: 30px;
-    --pastel-pink: #ffd1dc;
-    --pastel-blue: #c1e1c1; /* mint actually */
-    --pastel-yellow: #fdfd96;
-    --pastel-purple: #e0bbe4;
-    --pastel-peach: #ffdab9;
+}
+
+* {
+    transition: background-color var(--transition-speed) ease-in-out, border-color var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
-    transition: background-color var(--transition-speed), color var(--transition-speed);
+    transition: background-color var(--transition-speed) ease-in-out, color var(--transition-speed) ease-in-out;
     overflow-x: hidden;
 }
 
@@ -75,12 +74,12 @@ body {
 }
 
 [data-bs-theme="dark"] .custom-search-card {
-    background: #1e1e2d;
+    background: #1e293b;
 }
 
 [data-bs-theme="medio"] .custom-search-card {
-    background: #fdf6e3;
-    border: 1px solid #eee8d5;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
 }
 
 .search-input-wrapper {
@@ -173,11 +172,11 @@ body {
 }
 
 [data-bs-theme="dark"] .restaurant-card {
-    background: #1e1e2d;
+    background: #1e293b;
 }
 
 [data-bs-theme="medio"] .restaurant-card {
-    background: #eee8d5;
+    background: #ffffff;
 }
 
 .restaurant-card:hover {
@@ -204,21 +203,29 @@ body {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(40px);
+        transform: translateY(20px) scale(0.98);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .animate-fade-in {
     opacity: 0;
-    animation: fadeInUp 1s ease forwards;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.delay-1 { animation-delay: 0.2s; }
-.delay-2 { animation-delay: 0.4s; }
+#directoryResults {
+    transition: opacity 0.4s ease-in-out;
+}
+
+.results-hidden {
+    opacity: 0;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
 
 /* Modals */
 .custom-modal {
@@ -228,7 +235,7 @@ body {
 
 /* --- THEMES --- */
 
-/* Light / Default Pastel (Yellow) */
+/* Light / Yellow Theme */
 [data-bs-theme="light"] {
     --bs-body-bg: #fffdf0;
     --bs-primary: #f1c40f;
@@ -239,31 +246,21 @@ body {
 
 /* Dark Mode */
 [data-bs-theme="dark"] {
-    --bs-body-bg: #12121e;
-    --bs-body-color: #e0e0e0;
-    --bs-primary: #f1c40f;
-    --bs-primary-rgb: 241, 196, 15;
+    --bs-body-bg: #0f172a;
+    --bs-body-color: #f1f5f9;
+    --bs-primary: #fbbf24;
+    --bs-primary-rgb: 251, 191, 36;
 }
-[data-bs-theme="dark"] .navbar { background-color: #1a1a2e; }
-[data-bs-theme="dark"] .hero { background-color: #16213e; }
+[data-bs-theme="dark"] .navbar { background-color: #1e293b; }
+[data-bs-theme="dark"] .hero { background-color: #111827; }
 
-/* Medio / Warm Mode */
+/* Medio / Soft Periwinkle */
 [data-bs-theme="medio"] {
-    --bs-body-bg: #fdf6e3;
-    --bs-body-color: #657b83;
-    --bs-primary: #b58900;
-    --bs-primary-rgb: 181, 137, 0;
+    --bs-body-bg: #f8fafc;
+    --bs-body-color: #334155;
+    --bs-primary: #6366f1;
+    --bs-primary-rgb: 99, 102, 241;
 }
-[data-bs-theme="medio"] .navbar { background-color: #eee8d5; }
-[data-bs-theme="medio"] .hero { background-color: #eee8d5; }
-
-/* Dedicated Pastel (extra soft) */
-[data-bs-theme="pastel"] {
-    --bs-body-bg: #f0fff4;
-    --bs-primary: #48bb78;
-    --bs-primary-rgb: 72, 187, 120;
-}
-[data-bs-theme="pastel"] .navbar { background-color: #c6f6d5; }
-[data-bs-theme="pastel"] .hero { background-color: #f0fff4; }
-[data-bs-theme="pastel"] .custom-search-card { background-color: #ffffff; }
-[data-bs-theme="pastel"] .restaurant-card { background-color: #ffffff; }
+[data-bs-theme="medio"] .navbar { background-color: #e0e7ff; }
+[data-bs-theme="medio"] .hero { background-color: #f1f5f9; }
+[data-bs-theme="medio"] .restaurant-card { background: white; border: 1px solid #e2e8f0; }
