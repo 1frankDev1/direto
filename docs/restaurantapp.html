@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Directorio de Restaurantes - Tragalero</title>
+    <title>Directorio de Negocios - Tragalero</title>
     <link href="https://tragalero.com/assets/img/tragalero.png" rel="icon" sizes="17x17" type="image/png" />
     <link href="https://tragalero.com/assets/img/tragalero.png" rel="icon" sizes="33x33" type="image/png" />
     <link href="https://tragalero.com/assets/img/tragalero.png" rel="icon" sizes="181x181" type="image/png" />
@@ -44,8 +44,8 @@
 
     <header class="hero text-center">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-3 animate-fade-in">Descubre Sabores</h1>
-            <p class="lead mb-0 animate-fade-in delay-1">Directorio exclusivo de los mejores restaurantes.</p>
+            <h1 class="display-4 fw-bold mb-3 animate-fade-in">Descubre Oportunidades</h1>
+            <p class="lead mb-0 animate-fade-in delay-1">Directorio inteligente de negocios y servicios.</p>
         </div>
     </header>
 
@@ -55,7 +55,7 @@
                 <div class="col-md-9">
                     <div class="search-input-wrapper">
                         <i class="bi bi-search"></i>
-                        <input type="text" id="directorySearch" class="form-control" placeholder="Busca por nombre, CP o ciudad...">
+                        <input type="text" id="directorySearch" class="form-control" placeholder="Busca por nombre, categoría, CP o ciudad...">
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -63,9 +63,14 @@
                 </div>
             </div>
 
-            <div class="filter-chips-wrapper pb-4 px-4">
+            <div class="filter-chips-wrapper pb-2 px-4">
+                <small class="text-muted mb-2 d-block ms-1">Categorías</small>
+                <div class="filter-chips mb-3" id="categoryChips">
+                    <!-- Dynamic categories -->
+                </div>
+                <small class="text-muted mb-2 d-block ms-1">Ciudades</small>
                 <div class="filter-chips" id="cityChips">
-                    <button class="chip active" data-filter="">Todos</button>
+                    <button class="chip active" data-filter="">Todas</button>
                     <button class="chip" data-filter="cdmx">CDMX</button>
                     <button class="chip" data-filter="tijuana">Tijuana</button>
                     <button class="chip" data-filter="guadalajara">Guadalajara</button>
@@ -94,7 +99,7 @@
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg custom-modal">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold text-truncate" id="menuModalLabel">Nombre del Restaurante</h5>
+                    <h5 class="modal-title fw-bold text-truncate" id="menuModalLabel">Nombre del Negocio</h5>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
