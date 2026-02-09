@@ -16,12 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsContainer.innerHTML = '';
 
         const filtered = directoryData.filter(item => {
+            const searchLower = filterText.toLowerCase();
             const matchesText = !filterText ||
-                item.name.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.city.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.zips.some(zip => zip.includes(filterText));
+                item.name.toLowerCase().includes(searchLower) ||
+                item.city.toLowerCase().includes(searchLower) ||
+                item.state.toLowerCase().includes(searchLower) ||
+                item.zip.includes(filterText);
 
-            const matchesCity = !cityFilter || item.state === cityFilter;
+            // For city chips, we compare using slugify
+            const itemCitySlug = slugify(item.city);
+            const matchesCity = !cityFilter || itemCitySlug === cityFilter;
 
             return matchesText && matchesCity;
         });
@@ -42,13 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
             col.innerHTML = `
                 <div class="card h-100 restaurant-card border-0 shadow-sm overflow-hidden">
                     <div class="position-relative">
-                        <img src="${item.img}" class="card-img-top p-4" alt="${item.name}" style="height: 200px; object-fit: contain; background: #fff;">
+                        <img src="${item.logo}" class="card-img-top p-4" alt="${item.name}" style="height: 200px; object-fit: contain; background: #fff;">
                         <span class="badge bg-light text-dark position-absolute top-0 end-0 m-3 shadow-sm border">${item.city}</span>
                     </div>
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold text-truncate mb-3">${item.name}</h5>
+                        <h5 class="card-title fw-bold text-truncate mb-1">${item.name}</h5>
+                        <p class="text-muted small mb-3"><i class="bi bi-geo-alt me-1"></i>${item.state}, ${item.zip}</p>
                         <div class="mt-auto">
-                            <button class="btn btn-outline-primary w-100 fw-bold view-menu-btn" data-url="${item.url}" data-name="${item.name}">
+                            <button class="btn btn-primary w-100 fw-bold view-menu-btn" data-url="${item.menuUrl}" data-name="${item.name}">
                                 <i class="bi bi-book me-2"></i>Ver Menú
                             </button>
                         </div>
