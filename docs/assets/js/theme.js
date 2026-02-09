@@ -14,10 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function setTheme(theme) {
+        // Apply theme to HTML element
         htmlElement.setAttribute('data-bs-theme', theme);
         localStorage.setItem('theme', theme);
 
-        // Update active state in dropdown if needed
+        // Update active state in UI
         themeButtons.forEach(btn => {
             if (btn.getAttribute('data-theme-value') === theme) {
                 btn.classList.add('active');
@@ -25,5 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.remove('active');
             }
         });
+
+        // Optional: Trigger a custom event for other scripts to respond
+        window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme } }));
     }
 });

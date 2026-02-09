@@ -1,137 +1,268 @@
 :root {
-    --pastel-bg: #fff5f8;
-    --pastel-card: #ffffff;
-    --pastel-primary: #ffc2d1;
-    --pastel-secondary: #e2f0cb;
-    --pastel-accent: #b5ead7;
-    --pastel-text: #4a4e69;
-
-    --medio-bg: #f4f1ea;
-    --medio-card: #fdfbf7;
-    --medio-primary: #d4a373;
-    --medio-secondary: #faedcd;
-    --medio-text: #604d3c;
+    --transition-speed: 0.4s;
+    --card-radius: 30px;
+    --pastel-pink: #ffd1dc;
+    --pastel-blue: #c1e1c1; /* mint actually */
+    --pastel-yellow: #fdfd96;
+    --pastel-purple: #e0bbe4;
+    --pastel-peach: #ffdab9;
 }
 
-/* Pastel Theme */
-[data-bs-theme="pastel"] {
-    --bs-body-bg: var(--pastel-bg);
-    --bs-body-color: var(--pastel-text);
-    --bs-primary: #ff85a1;
-    --bs-primary-rgb: 255, 133, 161;
-    --bs-link-color: #ff85a1;
+body {
+    font-family: 'Poppins', sans-serif;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    overflow-x: hidden;
 }
 
-[data-bs-theme="pastel"] .navbar {
-    background-color: var(--pastel-primary) !important;
+/* Navbar */
+.navbar {
+    transition: background-color var(--transition-speed);
+    padding: 1rem 0;
 }
 
-[data-bs-theme="pastel"] .hero {
-    background: linear-gradient(135deg, var(--pastel-primary) 0%, var(--pastel-accent) 100%);
-    color: var(--pastel-text);
+.theme-switcher-bar {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50px;
+    padding: 4px 12px;
 }
 
-[data-bs-theme="pastel"] .card {
-    background-color: var(--pastel-card);
-    border: 2px solid var(--pastel-secondary);
-    border-radius: 20px;
+[data-bs-theme="dark"] .theme-switcher-bar {
+    background: rgba(255, 255, 255, 0.1);
 }
 
-[data-bs-theme="pastel"] .btn-primary {
-    background-color: #ff85a1;
-    border-color: #ff85a1;
+.theme-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    padding: 8px;
+    margin: 0 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: inherit;
+    opacity: 0.5;
+    border-radius: 50%;
+}
+
+.theme-btn:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.05);
+}
+
+[data-bs-theme="dark"] .theme-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.theme-btn.active {
+    opacity: 1;
+    transform: scale(1.1);
+    color: var(--bs-primary);
+}
+
+/* Hero */
+.hero {
+    padding: 6rem 0;
+    transition: background-color var(--transition-speed);
+}
+
+/* Custom Search Card */
+.custom-search-card {
+    border-radius: var(--card-radius);
+    background: white;
+    margin-top: -80px;
+    position: relative;
+    z-index: 100;
+    transition: background-color var(--transition-speed);
+}
+
+[data-bs-theme="dark"] .custom-search-card {
+    background: #1e1e2d;
+}
+
+[data-bs-theme="medio"] .custom-search-card {
+    background: #fdf6e3;
+    border: 1px solid #eee8d5;
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.search-input-wrapper i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.search-input-wrapper .form-control {
+    padding-left: 55px;
+    border-radius: 50px;
+    border: 2px solid #f0f0f0;
+    height: 65px;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    background: transparent;
+}
+
+[data-bs-theme="dark"] .search-input-wrapper .form-control {
+    border-color: #333;
     color: white;
 }
 
-[data-bs-theme="pastel"] .badge-city {
-    background-color: var(--pastel-accent);
-    color: var(--pastel-text);
+.search-input-wrapper .form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.1);
 }
 
-/* Medio Theme (Sepia/Warm) */
-[data-bs-theme="medio"] {
-    --bs-body-bg: var(--medio-bg);
-    --bs-body-color: var(--medio-text);
-    --bs-primary: #bc6c25;
-    --bs-primary-rgb: 188, 108, 37;
+.btn-custom-primary {
+    background-color: var(--bs-primary);
+    border: none;
+    color: white;
+    border-radius: 50px;
+    font-weight: 600;
+    height: 65px;
+    transition: all 0.3s;
 }
 
-[data-bs-theme="medio"] .navbar {
-    background-color: #dda15e !important;
+.btn-custom-primary:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.1);
+    color: white;
 }
 
-[data-bs-theme="medio"] .hero {
-    background-color: #faedcd;
-    color: var(--medio-text);
-}
-
-[data-bs-theme="medio"] .card {
-    background-color: var(--medio-card);
-    border: 1px solid #d4a373;
-}
-
-/* Common Global Styles */
-.hero {
-    padding: 4rem 0;
-    margin-bottom: 3rem;
-    transition: all 0.3s ease;
-}
-
-.card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 12px;
-}
-
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-}
-
-.card-img-top {
-    height: 180px;
-    object-fit: contain;
-    background: white;
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.search-container {
-    max-width: 800px;
-    margin: -50px auto 0;
-    position: relative;
-    z-index: 10;
-}
-
+/* Chips */
 .filter-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 1.5rem;
+    gap: 12px;
 }
 
 .chip {
-    padding: 8px 20px;
+    padding: 10px 24px;
     border-radius: 50px;
-    background: white;
-    border: 1px solid #ddd;
+    background: #f8f9fa;
+    border: none;
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-}
-
-.chip:hover, .chip.active {
-    background: var(--bs-primary);
-    color: white;
-    border-color: var(--bs-primary);
+    transition: all 0.3s;
+    font-weight: 500;
+    color: #666;
 }
 
 [data-bs-theme="dark"] .chip {
-    background: #333;
-    border-color: #444;
-    color: #eee;
+    background: #2d2d3f;
+    color: #aaa;
 }
 
-.navbar-brand img {
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+.chip:hover {
+    background: #eee;
 }
+
+.chip.active {
+    background: var(--bs-primary);
+    color: white;
+}
+
+/* Restaurant Cards */
+.restaurant-card {
+    border-radius: var(--card-radius) !important;
+    background: white;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease !important;
+    opacity: 0; /* Start hidden for animation */
+}
+
+[data-bs-theme="dark"] .restaurant-card {
+    background: #1e1e2d;
+}
+
+[data-bs-theme="medio"] .restaurant-card {
+    background: #eee8d5;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
+}
+
+.card-img-wrapper {
+    background: white;
+    padding: 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-img-top {
+    max-height: 120px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+
+/* Modals */
+.custom-modal {
+    border-radius: var(--card-radius);
+    overflow: hidden;
+}
+
+/* --- THEMES --- */
+
+/* Light / Default Pastel */
+[data-bs-theme="light"] {
+    --bs-body-bg: #fff9fb;
+    --bs-primary: #ff85a1;
+    --bs-primary-rgb: 255, 133, 161;
+}
+[data-bs-theme="light"] .navbar { background-color: var(--pastel-pink); }
+[data-bs-theme="light"] .hero { background-color: #fff0f3; }
+
+/* Dark Mode */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #12121e;
+    --bs-body-color: #e0e0e0;
+    --bs-primary: #ff85a1;
+    --bs-primary-rgb: 255, 133, 161;
+}
+[data-bs-theme="dark"] .navbar { background-color: #1a1a2e; }
+[data-bs-theme="dark"] .hero { background-color: #16213e; }
+
+/* Medio / Warm Mode */
+[data-bs-theme="medio"] {
+    --bs-body-bg: #fdf6e3;
+    --bs-body-color: #657b83;
+    --bs-primary: #b58900;
+    --bs-primary-rgb: 181, 137, 0;
+}
+[data-bs-theme="medio"] .navbar { background-color: #eee8d5; }
+[data-bs-theme="medio"] .hero { background-color: #eee8d5; }
+
+/* Dedicated Pastel (extra soft) */
+[data-bs-theme="pastel"] {
+    --bs-body-bg: #f0fff4;
+    --bs-primary: #48bb78;
+    --bs-primary-rgb: 72, 187, 120;
+}
+[data-bs-theme="pastel"] .navbar { background-color: #c6f6d5; }
+[data-bs-theme="pastel"] .hero { background-color: #f0fff4; }
+[data-bs-theme="pastel"] .custom-search-card { background-color: #ffffff; }
+[data-bs-theme="pastel"] .restaurant-card { background-color: #ffffff; }
