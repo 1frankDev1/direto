@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-bs-theme="light" lang="en">
+<html data-bs-theme="light" lang="es">
 
 <head>
     <meta charset="utf-8">
@@ -30,7 +30,7 @@
     <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="./index.html">
-                <img src="./assets/img/tragalero.png" alt="Tragalero" height="40" class="me-2">
+                <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="40" class="me-2">
                 <span class="fw-bold">Tragalero</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -40,12 +40,13 @@
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            Temas
+                            <i class="bi bi-palette me-1"></i> Temas
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" data-theme-value="light">Modo Claro</button></li>
-                            <li><button class="dropdown-item" data-theme-value="dark">Modo Oscuro</button></li>
-                            <li><button class="dropdown-item" data-theme-value="pastel">Modo Pastel</button></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li><button class="dropdown-item" data-theme-value="light"><i class="bi bi-sun me-2"></i> Modo Claro</button></li>
+                            <li><button class="dropdown-item" data-theme-value="dark"><i class="bi bi-moon-stars me-2"></i> Modo Oscuro</button></li>
+                            <li><button class="dropdown-item" data-theme-value="medio"><i class="bi bi-circle-half me-2"></i> Modo Medio</button></li>
+                            <li><button class="dropdown-item" data-theme-value="pastel"><i class="bi bi-flower1 me-2"></i> Modo Pastel</button></li>
                         </ul>
                     </li>
                 </ul>
@@ -53,24 +54,35 @@
         </div>
     </nav>
 
-    <header class="hero py-5 mb-5 text-center">
+    <header class="hero text-center">
         <div class="container">
             <h1 class="display-4 fw-bold mb-3">Encuentra tu próximo sabor</h1>
-            <p class="lead mb-4">Busca por nombre, código postal o ubicación en nuestro directorio exclusivo.</p>
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="input-group input-group-lg shadow-sm">
-                        <input type="text" id="directorySearch" class="form-control" placeholder="Ej: Polanco, 11510, Restaurante Polanco 1...">
-                        <button class="btn btn-primary px-4" type="button" id="searchBtn">Buscar</button>
-                    </div>
-                </div>
-            </div>
+            <p class="lead mb-0">Explora los mejores restaurantes por nombre, zona o código postal.</p>
         </div>
     </header>
 
-    <main class="container mb-5">
+    <div class="container search-container">
+        <div class="card shadow-lg border-0 p-4">
+            <div class="input-group input-group-lg">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="directorySearch" class="form-control border-start-0 shadow-none" placeholder="Buscar por nombre, CP, colonia...">
+                <button class="btn btn-primary px-5 fw-bold" type="button" id="searchBtn">Buscar</button>
+            </div>
+
+            <div class="filter-chips mt-3" id="cityChips">
+                <button class="chip active" data-filter="">Todos</button>
+                <button class="chip" data-filter="cdmx">CDMX</button>
+                <button class="chip" data-filter="tijuana">Tijuana</button>
+                <button class="chip" data-filter="guadalajara">Guadalajara</button>
+                <button class="chip" data-filter="monterrey">Monterrey</button>
+                <button class="chip" data-filter="puebla">Puebla</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="container my-5 pt-4">
         <div id="directoryResults" class="row g-4">
-            <!-- Dynamic results will be injected here -->
+            <!-- Dynamic results -->
             <div class="col-12 text-center py-5">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Cargando...</span>
@@ -82,23 +94,22 @@
     <!-- Modal for Quick View -->
     <div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="menuModalLabel">Nombre del Restaurante</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title fw-bold text-truncate" id="menuModalLabel">Nombre del Restaurante</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0">
-                    <iframe id="menuIframe" src="" frameborder="0" style="width: 100%; height: 80vh;"></iframe>
+                    <div class="ratio ratio-16x9" style="height: 80vh;">
+                        <iframe id="menuIframe" src="" frameborder="0"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts at the end -->
-    <!-- Bootstrap 5 Bundle -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Data and Logic -->
     <script src="./assets/js/directory_data.js"></script>
     <script src="./assets/js/theme.js"></script>
     <script src="./assets/js/directory_logic.js"></script>
