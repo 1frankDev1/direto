@@ -152,10 +152,19 @@ const restaurantData = {
 // Flattened structure for easier searching
 const directoryData = [];
 
+// Helper to create a consistent slug from a name (handles accents and dashes)
+function slugify(text) {
+    return text.toString().toLowerCase().trim()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove accents
+        .replace(/\s+/g, '-') // spaces to dashes
+        .replace(/[^\w-]+/g, '') // remove non-word chars
+        .replace(/--+/g, '-'); // collapse multiple dashes
+}
+
 for (const state in restaurantData) {
     for (const citySlug in restaurantData[state]) {
         const stateCities = statesCitiesData[state] || [];
-        const cityInfo = stateCities.find(c => c.name.toLowerCase().replace(/\s+/g, '') === citySlug.replace(/\s+/g, ''));
+        const cityInfo = stateCities.find(c => slugify(c.name) === citySlug);
         const cityName = cityInfo ? cityInfo.name : citySlug;
         const cityZips = cityInfo ? cityInfo.zip : [];
 
