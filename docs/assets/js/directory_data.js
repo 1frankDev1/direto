@@ -65,9 +65,11 @@ const directoryData = [
     }
 ];
 
-// Helper to normalize strings for search
+// Helper to normalize strings for search (removes accents and special chars)
 function slugify(text) {
     return text.toString().toLowerCase()
+        .normalize("NFD")               // Decompose accents
+        .replace(/[\u0300-\u036f]/g, "") // Remove accent marks
         .replace(/\s+/g, '-')           // Replace spaces with -
         .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
         .replace(/\-\-+/g, '-')         // Replace multiple - with single -
