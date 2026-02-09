@@ -127,7 +127,8 @@ body {
 
 .btn-custom-primary:hover {
     transform: translateY(-3px);
-    filter: brightness(1.1);
+    background-color: var(--bs-primary);
+    filter: brightness(0.85);
     color: white;
 }
 
@@ -227,21 +228,21 @@ body {
 
 /* --- THEMES --- */
 
-/* Light / Default Pastel */
+/* Light / Default Pastel (Yellow) */
 [data-bs-theme="light"] {
-    --bs-body-bg: #fff9fb;
-    --bs-primary: #ff85a1;
-    --bs-primary-rgb: 255, 133, 161;
+    --bs-body-bg: #fffdf0;
+    --bs-primary: #f1c40f;
+    --bs-primary-rgb: 241, 196, 15;
 }
-[data-bs-theme="light"] .navbar { background-color: var(--pastel-pink); }
-[data-bs-theme="light"] .hero { background-color: #fff0f3; }
+[data-bs-theme="light"] .navbar { background-color: #fdfd96; }
+[data-bs-theme="light"] .hero { background-color: #fef9c3; }
 
 /* Dark Mode */
 [data-bs-theme="dark"] {
     --bs-body-bg: #12121e;
     --bs-body-color: #e0e0e0;
-    --bs-primary: #ff85a1;
-    --bs-primary-rgb: 255, 133, 161;
+    --bs-primary: #f1c40f;
+    --bs-primary-rgb: 241, 196, 15;
 }
 [data-bs-theme="dark"] .navbar { background-color: #1a1a2e; }
 [data-bs-theme="dark"] .hero { background-color: #16213e; }
