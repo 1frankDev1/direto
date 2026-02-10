@@ -121,15 +121,24 @@
 
         .bento-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: 140px;
+            grid-template-columns: repeat(6, 1fr);
+            grid-auto-rows: 120px;
             gap: 15px;
             width: 100%;
-            max-width: 800px;
+            max-width: 1100px;
             background: rgba(0,0,0,0.05);
-            padding: 20px;
-            border-radius: 30px;
+            padding: 25px;
+            border-radius: 35px;
             min-height: 200px;
+            height: auto;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(3, 1fr);
+                padding: 15px;
+            }
         }
 
         [data-bs-theme="dark"] .bento-grid {
@@ -224,18 +233,23 @@
                 </button>
 
                 <div id="editForm" class="slot-controls" style="display: none;">
-                    <h6 class="text-uppercase small fw-bold text-muted mb-3">Propiedades del Slot</h6>
+                    <h6 class="text-uppercase small fw-bold text-muted mb-3">Configurar Herramienta</h6>
 
                     <div class="mb-3">
-                        <label class="form-label small">Etiqueta</label>
-                        <input type="text" id="slotLabel" class="form-control" placeholder="Ej: Apps">
+                        <label class="form-label small">Herramienta</label>
+                        <select id="toolSelect" class="form-select">
+                            <option value="" selected disabled>Elije una herramienta...</option>
+                            <option value="Web Building">Web Building</option>
+                            <option value="Marketing kit">Marketing kit</option>
+                            <option value="Directorio">Directorio</option>
+                            <option value="Forms">Forms</option>
+                            <option value="Promotions">Promotions</option>
+                            <option value="Pos">Pos</option>
+                            <option value="Apps">Apps</option>
+                        </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small">URL de Redirección (Opcional)</label>
-                        <input type="url" id="slotLink" class="form-control" placeholder="https://ejemplo.com">
-                    </div>
-
+                    <div id="toolProperties" style="display: none;">
                     <div class="row g-2 mb-3">
                     <div class="col-6">
                         <label class="form-label small">Ancho (Cols)</label>
@@ -244,6 +258,8 @@
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
                         </select>
                     </div>
                     <div class="col-6">
@@ -273,6 +289,7 @@
                     <button class="btn btn-primary flex-grow-1 fw-bold" id="applyBtn">Aplicar</button>
                     <button class="btn btn-outline-danger" id="deleteBtn"><i class="bi bi-trash"></i></button>
                 </div>
+                </div> <!-- end toolProperties -->
             </div>
 
             <div class="mt-5 pt-3 border-top border-secondary">
@@ -323,8 +340,8 @@
         const expandBtn = document.getElementById('expandBtn');
         const gridContainer = document.getElementById('bentoGrid');
         const editForm = document.getElementById('editForm');
-        const slotLabel = document.getElementById('slotLabel');
-        const slotLink = document.getElementById('slotLink');
+        const toolSelect = document.getElementById('toolSelect');
+        const toolProperties = document.getElementById('toolProperties');
         const slotCols = document.getElementById('slotCols');
         const slotRows = document.getElementById('slotRows');
         const pastelBtns = document.querySelectorAll('.pastel-btn');
@@ -379,6 +396,15 @@
         expandBtn.onclick = () => {
             configPanel.classList.remove('collapsed');
         };
+
+        // Tool Selection Toggle
+        toolSelect.addEventListener('change', () => {
+            if (toolSelect.value) {
+                toolProperties.style.display = 'block';
+            } else {
+                toolProperties.style.display = 'none';
+            }
+        });
 
         // Load data
         async function loadGrid() {
@@ -450,8 +476,16 @@
         function selectSlot(id) {
             selectedId = id;
             const item = gridData.find(i => i.id === id);
-            slotLabel.value = item.label;
-            slotLink.value = item.link_url || '';
+
+            // Populate select
+            if (item.label && item.label !== 'Nuevo Slot') {
+                toolSelect.value = item.label;
+                toolProperties.style.display = 'block';
+            } else {
+                toolSelect.value = '';
+                toolProperties.style.display = 'none';
+            }
+
             slotCols.value = item.col_span;
             slotRows.value = item.row_span;
             selectedColor = item.bg_color;
@@ -478,7 +512,7 @@
             const newId = Date.now().toString();
             const newItem = {
                 id: newId,
-                label: 'Nuevo Slot',
+                label: '',
                 col_span: 1,
                 row_span: 1,
                 bg_color: '#dcf0fa',
@@ -489,12 +523,11 @@
         };
 
         document.getElementById('applyBtn').onclick = () => {
-            if (!selectedId) return;
+            if (!selectedId || !toolSelect.value) return;
             const index = gridData.findIndex(i => i.id === selectedId);
             gridData[index] = {
                 ...gridData[index],
-                label: slotLabel.value,
-                link_url: slotLink.value,
+                label: toolSelect.value,
                 col_span: parseInt(slotCols.value),
                 row_span: parseInt(slotRows.value),
                 bg_color: selectedColor
