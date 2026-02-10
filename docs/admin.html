@@ -499,12 +499,6 @@
                 content.textContent = item.label || 'Nuevo Slot';
                 div.appendChild(content);
 
-                // If link exists, show a small icon
-                if (item.link_url) {
-                    const icon = document.createElement('i');
-                    icon.className = 'bi bi-link-45deg position-absolute top-0 end-0 m-2 text-muted';
-                    div.appendChild(icon);
-                }
 
                 div.onclick = (e) => {
                     e.stopPropagation();
