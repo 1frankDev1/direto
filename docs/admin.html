@@ -325,7 +325,12 @@
 
         <!-- Grid Preview -->
         <div class="preview-panel">
-            <div class="theme-switcher-container">
+            <div class="theme-switcher-container d-flex align-items-center bg-white bg-opacity-10 p-2 rounded-pill shadow-sm">
+                <div id="authActions" class="me-3 ps-2">
+                    <button class="btn btn-sm btn-outline-danger" onclick="logout()" style="border-radius: 20px;">
+                        <i class="bi bi-box-arrow-right me-1"></i>Salir
+                    </button>
+                </div>
                 <div class="theme-switcher-bar d-flex">
                     <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
                     <button class="theme-btn" data-theme-value="dark" title="Modo Oscuro"><i class="bi bi-moon-stars-fill"></i></button>
@@ -333,7 +338,7 @@
                 </div>
             </div>
 
-            <h2 class="fw-bold mb-4 animate-fade-in">Vista Previa</h2>
+            <h2 class="fw-bold mb-4 animate-fade-in" id="previewTitle">Vista Previa</h2>
             <div class="bento-grid" id="bentoGrid">
                 <!-- Items dynamically loaded -->
             </div>
@@ -349,42 +354,22 @@
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
-        // Authentication Logic
-        let currentUser = JSON.parse(sessionStorage.getItem('tragalero_user'));
-
-        async function checkLogin() {
-            if (!currentUser) {
-                const name = prompt("Nombre de Usuario:");
-                const pass = prompt("Contraseña:");
-
-                if (name && pass) {
-                    try {
-                        const { data, error } = await supabaseClient
-                            .from('directory_users')
-                            .select('*')
-                            .eq('name', name)
-                            .eq('password', pass)
-                            .single();
-
-                        if (data) {
-                            currentUser = data;
-                            sessionStorage.setItem('tragalero_user', JSON.stringify(data));
-                            location.reload();
-                        } else {
-                            alert("Credenciales incorrectas.");
-                            window.location.href = './restaurantapp.html';
-                        }
-                    } catch (e) {
-                        alert("Error de conexión. Asegúrate de que la tabla directory_users existe.");
-                        window.location.href = './restaurantapp.html';
-                    }
-                } else {
-                    window.location.href = './restaurantapp.html';
-                }
-            }
+        // Auth Check
+        const currentUser = getLoggedInUser();
+        if (!currentUser) {
+            window.location.href = './login.html';
         }
 
-        checkLogin();
+        // Context check: Is Admin editing an owner?
+        const urlParams = new URLSearchParams(window.location.search);
+        const ownerIdParam = urlParams.get('owner_id');
+        const targetUserId = ownerIdParam || currentUser.id;
+        const isEditingOthers = ownerIdParam && ownerIdParam !== currentUser.id;
+
+        if (isEditingOthers && currentUser.role !== 'Admin') {
+            alert("No tienes permiso para editar el grid de otros usuarios.");
+            window.location.href = './admin.html';
+        }
 
         // Use global supabaseClient from assets/js/supabase_logic.js
         const sbClient = supabaseClient;
@@ -498,32 +483,33 @@
 
         // Load data
         async function loadGrid() {
+            if (isEditingOthers) {
+                document.getElementById('previewTitle').textContent = "Editando Grid de Usuario";
+            }
             try {
                 const { data, error } = await sbClient
                     .from('bento_grid')
                     .select('*')
+                    .eq('user_id', targetUserId)
                     .order('position', { ascending: true });
 
                 if (data && data.length > 0) {
                     gridData = data;
                 } else {
-                    console.log("No data or error from Supabase, using fallback.");
+                    console.log("No data for user, using default tool.");
                     setFallbackData();
                 }
             } catch (e) {
-                console.error("Supabase load failed, using fallback.", e);
+                console.error("Supabase load failed.", e);
                 setFallbackData();
             }
             renderGrid();
         }
 
         function setFallbackData() {
+            const directoryTool = TOOLS_CONFIG.find(t => t.name === 'Directorio') || { name: 'Directorio', url: './restaurantapp.html' };
             gridData = [
-                { id: '1', label: 'Formularios', col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: '' },
-                { id: '2', label: 'Pos', col_span: 1, row_span: 1, bg_color: '#e9dcfb', link_url: '' },
-                { id: '3', label: 'Website', col_span: 1, row_span: 1, bg_color: '#fbe0e0', link_url: '' },
-                { id: '4', label: 'Directorio', col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: '' },
-                { id: '5', label: 'Apps', col_span: 1, row_span: 2, bg_color: '#fde2c4', link_url: '' }
+                { id: 'def-1', label: directoryTool.name, col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: directoryTool.url }
             ];
         }
 
@@ -683,12 +669,13 @@
                 const { error: deleteError } = await sbClient
                     .from('bento_grid')
                     .delete()
-                    .not('id', 'is', null);
+                    .eq('user_id', targetUserId);
 
                 if (deleteError) throw deleteError;
 
                 // Map position based on current index in gridData array
                 const toSave = gridData.map((item, index) => ({
+                    user_id: targetUserId,
                     label: item.label,
                     link_url: item.link_url,
                     col_span: item.col_span,
@@ -697,11 +684,13 @@
                     position: index
                 }));
 
-                const { error: insertError } = await sbClient
-                    .from('bento_grid')
-                    .insert(toSave);
+                if (toSave.length > 0) {
+                    const { error: insertError } = await sbClient
+                        .from('bento_grid')
+                        .insert(toSave);
 
-                if (insertError) throw insertError;
+                    if (insertError) throw insertError;
+                }
 
                 status.textContent = '¡Guardado con éxito!';
                 status.className = 'small text-center mt-2 text-success';

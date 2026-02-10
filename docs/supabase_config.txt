@@ -7,6 +7,7 @@ Supabase Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
 
 create table bento_grid (
   id uuid default gen_random_uuid() primary key,
+  user_id uuid references directory_users(id) on delete cascade,
   label text not null,
   link_url text,
   col_span int default 1,
