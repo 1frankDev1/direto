@@ -305,7 +305,7 @@
         }
 
         async function deleteUser(id) {
-            if (!confirm("¿Estás seguro de eliminar este usuario? Se perderán sus configuraciones de grid.")) return;
+            if (!confirm("¿Estás seguro de eliminar este usuario? Se perderán permanentemente todos sus negocios registrados y su configuración de panel (Bento Grid).")) return;
             try {
                 const { error } = await supabaseClient.from('directory_users').delete().eq('id', id);
                 if (error) throw error;

@@ -507,10 +507,19 @@
         }
 
         function setFallbackData() {
-            const directoryTool = TOOLS_CONFIG.find(t => t.name === 'Directorio') || { name: 'Directorio', url: './restaurantapp.html' };
-            gridData = [
-                { id: 'def-1', label: directoryTool.name, col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: directoryTool.url }
-            ];
+            // Admin gets a more complete starting grid, others get just the Directory
+            if (currentUser.role === 'Admin' && !isEditingOthers) {
+                gridData = [
+                    { id: 'def-1', label: 'Directorio', col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: './restaurantapp.html' },
+                    { id: 'def-2', label: 'Usuarios', col_span: 1, row_span: 1, bg_color: '#e9dcfb', link_url: './users.html' },
+                    { id: 'def-3', label: 'Negocios', col_span: 1, row_span: 1, bg_color: '#fbe0e0', link_url: './manage_businesses.html' }
+                ];
+            } else {
+                const directoryTool = TOOLS_CONFIG.find(t => t.name === 'Directorio') || { name: 'Directorio', url: './restaurantapp.html' };
+                gridData = [
+                    { id: 'def-1', label: directoryTool.name, col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: directoryTool.url }
+                ];
+            }
         }
 
         function renderGrid() {
@@ -660,12 +669,51 @@
 
         document.getElementById('saveAllBtn').onclick = async () => {
             const status = document.getElementById('saveStatus');
+
+            // Auto-apply if form is open to capture last changes
+            if (selectedId && editForm.style.display !== 'none' && toolSelect.value) {
+                const toolInfo = TOOLS_CONFIG.find(t => t.name === toolSelect.value);
+                const toolUrl = toolInfo ? toolInfo.url : '';
+                const idx = gridData.findIndex(i => i.id === selectedId);
+                if (idx !== -1) {
+                    gridData[idx] = {
+                        ...gridData[idx],
+                        label: toolSelect.value,
+                        col_span: parseInt(slotCols.value),
+                        row_span: parseInt(slotRows.value),
+                        link_url: toolUrl,
+                        bg_color: selectedColor
+                    };
+                }
+            }
+
             status.textContent = 'Guardando...';
             status.style.display = 'block';
             status.className = 'small text-center mt-2 text-info';
 
+            // Validation: filter out empty or incomplete slots
+            const validSlots = gridData.filter(item => item.label && item.label !== '' && item.label !== 'Nuevo Slot');
+
+            if (validSlots.length === 0 && gridData.length > 0) {
+                status.textContent = 'Configura al menos una herramienta válida.';
+                status.className = 'small text-center mt-2 text-warning';
+                return;
+            }
+
             try {
+                // Prepare data for saving
+                const toSave = validSlots.map((item, index) => ({
+                    user_id: targetUserId,
+                    label: item.label,
+                    link_url: item.link_url,
+                    col_span: parseInt(item.col_span),
+                    row_span: parseInt(item.row_span),
+                    bg_color: item.bg_color,
+                    position: index
+                }));
+
                 // Clear existing and insert new for a clean sync
+                // We do it in this order to avoid data loss if validation above passed
                 const { error: deleteError } = await sbClient
                     .from('bento_grid')
                     .delete()
@@ -673,23 +721,15 @@
 
                 if (deleteError) throw deleteError;
 
-                // Map position based on current index in gridData array
-                const toSave = gridData.map((item, index) => ({
-                    user_id: targetUserId,
-                    label: item.label,
-                    link_url: item.link_url,
-                    col_span: item.col_span,
-                    row_span: item.row_span,
-                    bg_color: item.bg_color,
-                    position: index
-                }));
-
                 if (toSave.length > 0) {
                     const { error: insertError } = await sbClient
                         .from('bento_grid')
                         .insert(toSave);
 
-                    if (insertError) throw insertError;
+                    if (insertError) {
+                        console.error("Insert Error:", insertError);
+                        throw new Error(insertError.message || "Error al insertar datos.");
+                    }
                 }
 
                 status.textContent = '¡Guardado con éxito!';
@@ -701,11 +741,12 @@
                     configPanel.classList.add('collapsed');
                     isEditMode = false;
                     selectedId = null;
-                    renderGrid();
+                    // Refresh data to get clean IDs from DB if needed
+                    loadGrid();
                 }, 1000);
             } catch (err) {
-                console.error(err);
-                status.textContent = 'Error al guardar. Verifica la tabla en Supabase.';
+                console.error("Supabase Save Error:", err);
+                status.innerHTML = `Error: ${err.message || 'Verifica la conexión o permisos'}<br><small>Reintenta en unos segundos.</small>`;
                 status.className = 'small text-center mt-2 text-danger';
             }
         };
