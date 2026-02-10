@@ -4,6 +4,16 @@ Este documento detalla el funcionamiento del ecosistema Tragalero, incluyendo el
 
 ---
 
+## 0. SISTEMA DE USUARIOS Y ACCESO (`login.html`)
+
+El acceso a las funciones de administración y registro está protegido:
+- **Login:** Acceso mediante usuario y contraseña.
+- **Roles:**
+    - **Administrador:** Acceso total al grid, gestión de usuarios y visibilidad de negocios.
+    - **Owner (Dueño):** Puede registrar y gestionar sus propios negocios (según su límite permitido).
+
+---
+
 ## 1. DIRECTORIO DE NEGOCIOS (`restaurantapp.html`)
 
 El directorio ha sido rediseñado para ser moderno, responsivo y dinámico.
@@ -15,8 +25,9 @@ El directorio ha sido rediseñado para ser moderno, responsivo y dinámico.
 - **Filtro Lateral:** El panel izquierdo permite filtrar rápidamente por ubicaciones populares.
 
 ### Registro de Negocios (`directorymap.html`):
-Ahora existe un formulario para que los negocios se registren por sí mismos o para que tú los des de alta fácilmente:
-1. Accede a través del botón **"Registrar Negocio"**.
+Ahora existe un formulario para que los negocios se registren:
+1. Requiere iniciar sesión.
+2. Cada usuario tiene un **límite de registros** (ej. 1 negocio, o varios) definido por el administrador.
 2. Completa los datos: nombre, dirección, redes sociales, horarios y links de reserva/pedido.
 3. **Imagen de Portada/Logo:** Puedes subir una imagen directamente. Esta se guardará en el almacenamiento en la nube (Supabase Storage).
 4. Al guardar, el negocio aparecerá automáticamente en el directorio principal.
@@ -29,6 +40,10 @@ El editor visual para la parrilla de herramientas.
 
 ### Gestión de Espacios (Gap Filling):
 - La cuadrícula es inteligente. Si mueves un cuadro y queda un hueco, el sistema intentará **"rellenar el espacio vacío"** automáticamente (Grid Auto-flow Dense) para que la interfaz siempre se vea compacta y profesional.
+
+### Gestión de Usuarios y Directorio:
+- **Usuarios (`users.html`):** El administrador puede crear nuevos usuarios "Owner", suspender cuentas y modificar el límite de negocios que cada uno puede registrar.
+- **Control de Negocios (`manage_businesses.html`):** Permite al administrador ocultar negocios del directorio público o eliminarlos definitivamente.
 
 ### Modos de Operación:
 - **Modo Edición:** Permite arrastrar cuadros, cambiar tamaños, colores y seleccionar herramientas.

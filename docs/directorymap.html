@@ -103,7 +103,12 @@
                 <span class="fw-bold">Tragalero</span>
             </a>
             <div class="ms-auto d-flex align-items-center">
-                <button class="btn btn-outline-danger btn-sm me-3 d-none d-md-inline-block" onclick="logout()">Cerrar Sesión</button>
+                <div id="userIndicator" class="me-3 d-none d-md-block">
+                    <span class="small text-muted me-2" id="userNameDisplay"></span>
+                    <button class="btn btn-sm btn-outline-danger" onclick="logout()" style="border-radius: 20px;">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </div>
                 <div class="theme-switcher-bar d-flex align-items-center">
                     <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
                 <button class="theme-btn" data-theme-value="dark" title="Modo Oscuro"><i class="bi bi-moon-stars-fill"></i></button>
@@ -245,9 +250,23 @@
 
     <script>
         // Check Access
-        const user = checkAccess('Owner');
-        if (!user) {
-            // checkAccess will redirect
+        const sessionUser = getLoggedInUser();
+        if (sessionUser) {
+            document.getElementById('userIndicator').classList.remove('d-none');
+            document.getElementById('userNameDisplay').textContent = sessionUser.name;
+        }
+        if (!sessionUser) {
+            window.location.href = './login.html';
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const ownerIdParam = urlParams.get('owner_id');
+        const targetOwnerId = ownerIdParam || sessionUser.id;
+
+        // Security: only Admin can register for someone else
+        if (ownerIdParam && ownerIdParam !== sessionUser.id && sessionUser.role !== 'Admin') {
+            alert("No tienes permiso para registrar negocios a nombre de otro usuario.");
+            window.location.href = './directorymap.html';
         }
 
         const form = document.getElementById('businessForm');
@@ -314,27 +333,27 @@
             statusMsg.className = 'alert d-none';
 
             try {
-                // Check business limit
-                if (user.role !== 'Admin') {
+                // Check business limit for target user
+                if (sessionUser.role !== 'Admin') {
                     const { count, error: countError } = await supabaseClient
                         .from('businesses')
                         .select('*', { count: 'exact', head: true })
-                        .eq('owner_id', user.id);
+                        .eq('owner_id', targetOwnerId);
 
                     if (countError) throw countError;
 
-                    // Fetch user specific limit just in case it changed
+                    // Fetch user specific limit
                     const { data: userData, error: userError } = await supabaseClient
                         .from('directory_users')
                         .select('max_businesses, is_active')
-                        .eq('id', user.id)
+                        .eq('id', targetOwnerId)
                         .single();
 
                     if (userError) throw userError;
-                    if (!userData.is_active) throw new Error("Tu cuenta está suspendida.");
+                    if (!userData.is_active) throw new Error("La cuenta seleccionada está suspendida.");
 
                     if (count >= userData.max_businesses) {
-                        throw new Error(`Has alcanzado el límite de ${userData.max_businesses} negocios permitidos.`);
+                        throw new Error(`Límite alcanzado (${userData.max_businesses} negocios).`);
                     }
                 }
 
@@ -364,7 +383,7 @@
                 }
 
                 const bizData = {
-                    owner_id: user.id,
+                    owner_id: targetOwnerId,
                     name: document.getElementById('bizName').value,
                     category: bizCategory.value,
                     city: document.getElementById('bizCity').value,

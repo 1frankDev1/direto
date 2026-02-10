@@ -27,5 +27,19 @@ VALUES ('Antonio', '123', 'Admin')
 ON CONFLICT (name) DO NOTHING;
 
 -- 4. Enable RLS (Optional but recommended)
+-- 4. User-Specific Bento Grid
+CREATE TABLE IF NOT EXISTS bento_grid (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES directory_users(id) ON DELETE CASCADE,
+  label text NOT NULL,
+  link_url text,
+  col_span int DEFAULT 1,
+  row_span int DEFAULT 1,
+  bg_color text DEFAULT '#dcf0fa',
+  position int DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+-- 5. Enable RLS (Optional but recommended)
 -- ALTER TABLE directory_users ENABLE ROW LEVEL SECURITY;
 -- CREATE POLICY "Admins can do everything" ON directory_users FOR ALL TO anon USING (TRUE);
