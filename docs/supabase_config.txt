@@ -8,6 +8,7 @@ SQL Schema for 'bento_grid' table:
 create table bento_grid (
   id uuid default gen_random_uuid() primary key,
   label text not null,
+  link_url text,
   col_span int default 1,
   row_span int default 1,
   bg_color text default '#dcf0fa',
