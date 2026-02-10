@@ -1,51 +1,54 @@
-# INSTRUCCIONES DE ADMINISTRACIÓN - TRAGALERO
+# INSTRUCCIONES DE ADMINISTRACIÓN - TRAGALERO v2.0
 
-Este documento explica cómo gestionar el Directorio de Negocios y la Parrilla (Bento Grid) de Herramientas.
-
----
-
-## 1. DIRECTORIO DE NEGOCIOS (restaurantapp.html)
-
-El directorio de negocios (restaurantes, servicios, etc.) utiliza datos locales para una carga ultrarrápida.
-
-### Cómo agregar o editar negocios:
-1. Abre el archivo: `docs/assets/js/directory_data.js`
-2. Verás una lista llamada `directoryData`. Cada objeto representa un negocio.
-3. Puedes cambiar nombres, ciudades, CPs y categorías aquí.
+Este documento detalla el funcionamiento del ecosistema Tragalero, incluyendo el Directorio de Negocios y el Panel de Control Bento.
 
 ---
 
-## 2. CONFIGURACIÓN DE HERRAMIENTAS Y ENLACES (IMPORTANTE)
+## 1. DIRECTORIO DE NEGOCIOS (`restaurantapp.html`)
 
-Para que el administrador no tenga que escribir enlaces manualmente, tú puedes pre-configurar las herramientas y sus links en el código.
+El directorio ha sido rediseñado para ser moderno, responsivo y dinámico.
 
-### Cómo agregar, quitar o editar herramientas y sus links:
-1. Abre el archivo: `docs/assets/js/tools_config.js`
-2. Verás una lista llamada `TOOLS_CONFIG`. Cada objeto tiene un `name` (nombre) y un `url` (enlace):
-   ```javascript
-   { name: "Marketing kit", url: "https://tu-enlace-aqui.com" },
-   ```
-3. Si agregas una herramienta aquí, aparecerá automáticamente en el menú desplegable del editor.
-4. Si cambias un enlace aquí, se aplicará a todos los cuadros que seleccionen esa herramienta en el futuro.
+### Funcionalidades clave:
+- **Temas Visuales:** El usuario puede alternar entre Modo Amarillo (Claro), Modo Oscuro y Modo Suave (Medio). La preferencia se guarda automáticamente.
+- **Búsqueda Inteligente:** La barra superior permite buscar por Nombre, Código Postal, Ciudad o Categoría simultáneamente.
+- **Visualización Integrada:** Al hacer clic en "Ver Menú" o detalles, se abre una ventana modal interna. Esto evita que el usuario salga de la aplicación, mejorando la retención.
+- **Filtro Lateral:** El panel izquierdo permite filtrar rápidamente por ubicaciones populares.
 
----
-
-## 3. EDITOR DE PARRILLA / BENTO GRID (admin.html)
-
-### Cómo usar el editor visual:
-1. Abre `docs/admin.html` en tu navegador.
-2. **Seleccionar Herramienta:** Al elegir una herramienta del menú desplegable, el sistema le asignará automáticamente el enlace que configuraste en `tools_config.js`.
-3. **Tamaño y Color:** Puedes ajustar el tamaño (columnas/filas) y el color pastel de cada cuadro.
-4. **Reordenar:** Arrastra los cuadros para cambiar su posición.
-5. **GUARDAR:** Haz clic en **"Guardar Cambios"** para actualizar la base de datos de Supabase.
+### Registro de Negocios (`directorymap.html`):
+Ahora existe un formulario para que los negocios se registren por sí mismos o para que tú los des de alta fácilmente:
+1. Accede a través del botón **"Registrar Negocio"**.
+2. Completa los datos: nombre, dirección, redes sociales, horarios y links de reserva/pedido.
+3. **Imagen de Portada/Logo:** Puedes subir una imagen directamente. Esta se guardará en el almacenamiento en la nube (Supabase Storage).
+4. Al guardar, el negocio aparecerá automáticamente en el directorio principal.
 
 ---
 
-## 4. BASE DE DATOS (Supabase)
+## 2. PANEL DE CONTROL BENTO (`admin.html`)
 
-- **Tabla:** `bento_grid`
-- Las credenciales están configuradas internamente en `docs/admin.html`.
+El editor visual para la parrilla de herramientas.
+
+### Gestión de Espacios (Gap Filling):
+- La cuadrícula es inteligente. Si mueves un cuadro y queda un hueco, el sistema intentará **"rellenar el espacio vacío"** automáticamente (Grid Auto-flow Dense) para que la interfaz siempre se vea compacta y profesional.
+
+### Modos de Operación:
+- **Modo Edición:** Permite arrastrar cuadros, cambiar tamaños, colores y seleccionar herramientas.
+- **Modo Navegación:** Una vez que guardas los cambios o cierras el panel de configuración, los cuadros dejan de ser arrastrables y se convierten en **enlaces activos**. Esto permite usar el panel `admin.html` como una página de inicio funcional.
+- Haz clic en el icono de **engranaje (⚙️)** para volver al modo edición.
 
 ---
 
-¡Listo! Con esto el usuario final solo tiene que elegir el nombre de la herramienta y tú controlas los enlaces desde el archivo `.js`.
+## 3. CONFIGURACIÓN TÉCNICA (Desarrolladores)
+
+### Centralización de Enlaces (`assets/js/tools_config.js`):
+Para evitar errores, los enlaces de las herramientas se gestionan en este archivo. El administrador solo elige el nombre de la herramienta, y el sistema asigna el link pre-configurado.
+
+### Base de Datos y Almacenamiento (Supabase):
+- **Tabla `businesses`:** Almacena la información de los locales registrados.
+- **Tabla `bento_grid`:** Almacena la disposición de los cuadros en el admin.
+- **Bucket `logos`:** Almacena las imágenes subidas desde el formulario de registro.
+
+---
+
+### Notas de Mantenimiento:
+- Para cambios masivos de datos base, puedes seguir usando `docs/assets/js/directory_data.js`, pero la prioridad de carga la tienen los datos dinámicos de Supabase.
+- Asegúrate de mantener actualizadas las claves de API en `docs/assets/js/supabase_logic.js`.
