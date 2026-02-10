@@ -107,7 +107,9 @@
                             <thead>
                                 <tr>
                                     <th class="border-0">Usuario</th>
+                                    <th class="border-0">Contraseña</th>
                                     <th class="border-0">Rol</th>
+                                    <th class="border-0">Negocios</th>
                                     <th class="border-0">Límite</th>
                                     <th class="border-0">Estado</th>
                                     <th class="border-0 text-center">Acciones</th>
@@ -191,9 +193,10 @@
             tbody.innerHTML = '';
 
             try {
+                // Fetch users and their businesses (linked by owner_id in businesses table)
                 const { data, error } = await supabaseClient
                     .from('directory_users')
-                    .select('*')
+                    .select('*, businesses(name)')
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
@@ -201,6 +204,9 @@
                 data.forEach(u => {
                     const tr = document.createElement('tr');
                     const isActive = u.is_active;
+                    const businessNames = u.businesses && u.businesses.length > 0
+                        ? u.businesses.map(b => b.name).join(', ')
+                        : '<span class="text-muted small">Sin negocios</span>';
 
                     tr.innerHTML = `
                         <td class="border-0">
@@ -215,9 +221,17 @@
                             </div>
                         </td>
                         <td class="border-0">
+                           <code class="bg-light p-1 rounded small">${u.password}</code>
+                        </td>
+                        <td class="border-0">
                             <span class="badge-role ${u.role === 'Admin' ? 'bg-danger bg-opacity-10 text-danger' : 'bg-success bg-opacity-10 text-success'}">
                                 ${u.role}
                             </span>
+                        </td>
+                        <td class="border-0">
+                            <div class="small text-truncate" style="max-width: 150px;" title="${u.businesses?.map(b=>b.name).join(', ')}">
+                                ${businessNames}
+                            </div>
                         </td>
                         <td class="border-0 fw-bold text-muted">${u.max_businesses}</td>
                         <td class="border-0">
