@@ -31,6 +31,9 @@ async function getBusinesses() {
                 social_media: item.social_media || {},
                 hours: item.hours || {},
                 is_restaurant: item.is_restaurant,
+                cuid: item.cuid,
+                ruid: item.ruid,
+                has_reservation: item.has_reservation,
                 order_url: item.order_url,
                 reservation_url: item.reservation_url
             }));
