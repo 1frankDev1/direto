@@ -31,25 +31,82 @@
         }
 
         .admin-layout {
-            display: flex;
+            display: block;
             height: 100vh;
+            width: 100vw;
+            position: relative;
         }
 
         .controls-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
             width: 350px;
+            max-height: 90vh;
             background: var(--bs-body-bg);
-            padding: 30px;
-            border-right: 1px solid rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 1000;
             overflow-y: auto;
-            z-index: 10;
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
         }
 
         [data-bs-theme="dark"] .controls-panel {
-            border-right-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .controls-panel.collapsed {
+            width: 60px;
+            height: 60px;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .controls-panel.collapsed .panel-content {
+            display: none;
+        }
+
+        .gear-icon {
+            display: none;
+            font-size: 28px;
+            color: var(--bs-primary);
+        }
+
+        .controls-panel.collapsed .gear-icon {
+            display: block;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .panel-header {
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        [data-bs-theme="dark"] .panel-header {
+            border-bottom-color: rgba(255,255,255,0.1);
         }
 
         .preview-panel {
-            flex-grow: 1;
+            width: 100%;
+            height: 100%;
             padding: 50px;
             overflow-y: auto;
             background: rgba(0,0,0,0.02);
@@ -147,26 +204,39 @@
 
 <body>
     <div class="admin-layout">
-        <!-- Sidebar Controls -->
-        <div class="controls-panel">
-            <div class="d-flex align-items-center mb-4">
-                <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="30" class="me-2">
-                <h4 class="fw-bold mb-0">Grid Editor</h4>
-            </div>
+        <!-- Floating Config Panel -->
+        <div class="controls-panel" id="configPanel">
+            <i class="bi bi-gear-fill gear-icon" id="expandBtn"></i>
 
-            <button class="btn btn-custom-primary w-100 mb-4 fw-bold" id="addSlotBtn">
-                <i class="bi bi-plus-lg me-2"></i>Agregar Slot
-            </button>
-
-            <div id="editForm" class="slot-controls" style="display: none;">
-                <h6 class="text-uppercase small fw-bold text-muted mb-3">Propiedades del Slot</h6>
-
-                <div class="mb-3">
-                    <label class="form-label small">Etiqueta</label>
-                    <input type="text" id="slotLabel" class="form-control" placeholder="Ej: Apps">
+            <div class="panel-content">
+                <div class="panel-header" id="panelHeader">
+                    <div class="d-flex align-items-center">
+                        <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="24" class="me-2">
+                        <h6 class="fw-bold mb-0">Grid Editor</h6>
+                    </div>
+                    <button class="btn btn-sm text-secondary p-0" id="collapseBtn">
+                        <i class="bi bi-dash-lg fs-5"></i>
+                    </button>
                 </div>
 
-                <div class="row g-2 mb-3">
+                <button class="btn btn-custom-primary w-100 mb-4 fw-bold" id="addSlotBtn">
+                    <i class="bi bi-plus-lg me-2"></i>Agregar Slot
+                </button>
+
+                <div id="editForm" class="slot-controls" style="display: none;">
+                    <h6 class="text-uppercase small fw-bold text-muted mb-3">Propiedades del Slot</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label small">Etiqueta</label>
+                        <input type="text" id="slotLabel" class="form-control" placeholder="Ej: Apps">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small">URL de Redirección (Opcional)</label>
+                        <input type="url" id="slotLink" class="form-control" placeholder="https://ejemplo.com">
+                    </div>
+
+                    <div class="row g-2 mb-3">
                     <div class="col-6">
                         <label class="form-label small">Ancho (Cols)</label>
                         <select id="slotCols" class="form-select">
@@ -211,6 +281,7 @@
                 </button>
                 <div id="saveStatus" class="small text-center mt-2" style="display: none;"></div>
             </div>
+            </div> <!-- end panel-content -->
         </div>
 
         <!-- Grid Preview -->
@@ -246,13 +317,68 @@
         let gridData = [];
         let selectedId = null;
 
+        const configPanel = document.getElementById('configPanel');
+        const panelHeader = document.getElementById('panelHeader');
+        const collapseBtn = document.getElementById('collapseBtn');
+        const expandBtn = document.getElementById('expandBtn');
         const gridContainer = document.getElementById('bentoGrid');
         const editForm = document.getElementById('editForm');
         const slotLabel = document.getElementById('slotLabel');
+        const slotLink = document.getElementById('slotLink');
         const slotCols = document.getElementById('slotCols');
         const slotRows = document.getElementById('slotRows');
         const pastelBtns = document.querySelectorAll('.pastel-btn');
         let selectedColor = '#dcf0fa';
+
+        // Dragging Logic
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        panelHeader.addEventListener("mousedown", dragStart);
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("mouseup", dragEnd);
+
+        function dragStart(e) {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+            if (e.target === panelHeader || panelHeader.contains(e.target)) {
+                isDragging = true;
+            }
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                setTranslate(currentX, currentY, configPanel);
+            }
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+        }
+
+        function dragEnd() {
+            isDragging = false;
+        }
+
+        // Collapse/Expand Logic
+        collapseBtn.onclick = (e) => {
+            e.stopPropagation();
+            configPanel.classList.add('collapsed');
+        };
+
+        expandBtn.onclick = () => {
+            configPanel.classList.remove('collapsed');
+        };
 
         // Load data
         async function loadGrid() {
@@ -277,11 +403,11 @@
 
         function setFallbackData() {
             gridData = [
-                { id: '1', label: 'Formularios', col_span: 2, row_span: 2, bg_color: '#dcf0fa' },
-                { id: '2', label: 'Pos', col_span: 1, row_span: 1, bg_color: '#e9dcfb' },
-                { id: '3', label: 'Website', col_span: 1, row_span: 1, bg_color: '#fbe0e0' },
-                { id: '4', label: 'Directorio', col_span: 2, row_span: 2, bg_color: '#dcf0fa' },
-                { id: '5', label: 'Apps', col_span: 1, row_span: 2, bg_color: '#fde2c4' }
+                { id: '1', label: 'Formularios', col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: '' },
+                { id: '2', label: 'Pos', col_span: 1, row_span: 1, bg_color: '#e9dcfb', link_url: '' },
+                { id: '3', label: 'Website', col_span: 1, row_span: 1, bg_color: '#fbe0e0', link_url: '' },
+                { id: '4', label: 'Directorio', col_span: 2, row_span: 2, bg_color: '#dcf0fa', link_url: '' },
+                { id: '5', label: 'Apps', col_span: 1, row_span: 2, bg_color: '#fde2c4', link_url: '' }
             ];
         }
 
@@ -293,7 +419,19 @@
                 div.style.gridColumn = `span ${item.col_span}`;
                 div.style.gridRow = `span ${item.row_span}`;
                 div.style.backgroundColor = item.bg_color;
-                div.textContent = item.label;
+
+                // Content
+                const content = document.createElement('div');
+                content.textContent = item.label;
+                div.appendChild(content);
+
+                // If link exists, show a small icon
+                if (item.link_url) {
+                    const icon = document.createElement('i');
+                    icon.className = 'bi bi-link-45deg position-absolute top-0 end-0 m-2 text-muted';
+                    div.appendChild(icon);
+                }
+
                 div.onclick = (e) => {
                     e.stopPropagation();
                     selectSlot(item.id);
@@ -313,6 +451,7 @@
             selectedId = id;
             const item = gridData.find(i => i.id === id);
             slotLabel.value = item.label;
+            slotLink.value = item.link_url || '';
             slotCols.value = item.col_span;
             slotRows.value = item.row_span;
             selectedColor = item.bg_color;
@@ -342,7 +481,8 @@
                 label: 'Nuevo Slot',
                 col_span: 1,
                 row_span: 1,
-                bg_color: '#dcf0fa'
+                bg_color: '#dcf0fa',
+                link_url: ''
             };
             gridData.push(newItem);
             selectSlot(newId);
@@ -354,6 +494,7 @@
             gridData[index] = {
                 ...gridData[index],
                 label: slotLabel.value,
+                link_url: slotLink.value,
                 col_span: parseInt(slotCols.value),
                 row_span: parseInt(slotRows.value),
                 bg_color: selectedColor
@@ -386,6 +527,7 @@
 
                 const toSave = gridData.map(i => ({
                     label: i.label,
+                    link_url: i.link_url,
                     col_span: i.col_span,
                     row_span: i.row_span,
                     bg_color: i.bg_color
