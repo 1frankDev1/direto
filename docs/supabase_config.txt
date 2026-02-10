@@ -12,6 +12,7 @@ create table bento_grid (
   col_span int default 1,
   row_span int default 1,
   bg_color text default '#dcf0fa',
+  position int default 0,
   created_at timestamptz default now()
 );
 
