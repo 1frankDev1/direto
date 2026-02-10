@@ -227,6 +227,122 @@ body {
 .delay-1 { animation-delay: 0.1s; }
 .delay-2 { animation-delay: 0.2s; }
 
+/* Sidebar & Layout */
+.sidebar {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    background-color: var(--bs-body-bg);
+    border-right: 1px solid rgba(0,0,0,0.05);
+    z-index: 1030;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-closed .sidebar {
+    transform: translateX(-280px);
+}
+
+.main-content-wrapper {
+    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-open .main-content-wrapper {
+    margin-left: 280px;
+}
+
+.sidebar-closed .main-content-wrapper {
+    margin-left: 0;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-link-custom {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 4px 15px;
+    border-radius: 12px;
+    color: var(--bs-body-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    text-align: left;
+    width: calc(100% - 30px);
+}
+
+.nav-link-custom:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+    padding-left: 25px;
+}
+
+.nav-link-custom.active {
+    background-color: var(--bs-primary);
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.3);
+}
+
+.nav-link-custom i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+.btn-sidebar-toggle {
+    background: transparent;
+    border: none;
+    color: var(--bs-body-color);
+    font-size: 1.4rem;
+    padding: 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-sidebar-toggle:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    z-index: 1025;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar-open .sidebar-overlay {
+        opacity: 1;
+        visibility: visible;
+    }
+    .main-content-wrapper {
+        margin-left: 0 !important;
+    }
+    .sidebar {
+        transform: translateX(-280px);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+    }
+    .sidebar-open .sidebar {
+        transform: translateX(0);
+    }
+}
+
 /* Modals */
 .custom-modal {
     border-radius: var(--card-radius);
