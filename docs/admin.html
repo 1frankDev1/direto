@@ -279,6 +279,10 @@
                     </div>
 
                     <div id="toolProperties" style="display: none;">
+                    <div class="mb-3">
+                        <label class="form-label small">Enlace (URL)</label>
+                        <input type="url" id="slotLink" class="form-control" placeholder="https://...">
+                    </div>
                     <div class="row g-2 mb-3">
                     <div class="col-6">
                         <label class="form-label small">Ancho (Cols)</label>
@@ -374,6 +378,7 @@
         const toolProperties = document.getElementById('toolProperties');
         const slotCols = document.getElementById('slotCols');
         const slotRows = document.getElementById('slotRows');
+        const slotLink = document.getElementById('slotLink');
         const pastelBtns = document.querySelectorAll('.pastel-btn');
         let selectedColor = '#dcf0fa';
 
@@ -556,6 +561,7 @@
 
             slotCols.value = item.col_span;
             slotRows.value = item.row_span;
+            slotLink.value = item.link_url || '';
             selectedColor = item.bg_color;
 
             updateColorPaletteUI();
@@ -598,6 +604,7 @@
                 label: toolSelect.value,
                 col_span: parseInt(slotCols.value),
                 row_span: parseInt(slotRows.value),
+                link_url: slotLink.value,
                 bg_color: selectedColor
             };
             renderGrid();
