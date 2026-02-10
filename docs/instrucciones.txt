@@ -10,57 +10,42 @@ El directorio de negocios (restaurantes, servicios, etc.) utiliza datos locales 
 
 ### Cómo agregar o editar negocios:
 1. Abre el archivo: `docs/assets/js/directory_data.js`
-2. Verás una lista llamada `directoryData`. Cada objeto representa un negocio:
+2. Verás una lista llamada `directoryData`. Cada objeto representa un negocio.
+3. Puedes cambiar nombres, ciudades, CPs y categorías aquí.
+
+---
+
+## 2. CONFIGURACIÓN DE HERRAMIENTAS Y ENLACES (IMPORTANTE)
+
+Para que el administrador no tenga que escribir enlaces manualmente, tú puedes pre-configurar las herramientas y sus links en el código.
+
+### Cómo agregar, quitar o editar herramientas y sus links:
+1. Abre el archivo: `docs/assets/js/tools_config.js`
+2. Verás una lista llamada `TOOLS_CONFIG`. Cada objeto tiene un `name` (nombre) y un `url` (enlace):
    ```javascript
-   {
-       name: "Nombre del Negocio",
-       city: "Tijuana",
-       state: "Zona Río",
-       zip: "22010",
-       category: "Restaurantes",
-       logo: "https://enlace-a-tu-logo.png",
-       menuUrl: "https://enlace-al-menu-o-detalles.com"
-   }
+   { name: "Marketing kit", url: "https://tu-enlace-aqui.com" },
    ```
-3. **Categorías Disponibles:** Restaurantes, Hogar, Construcción, Servicios Técnicos (puedes inventar nuevas y aparecerán solas).
-4. **Búsqueda:** El sistema busca automáticamente por nombre, ciudad, código postal y categoría.
+3. Si agregas una herramienta aquí, aparecerá automáticamente en el menú desplegable del editor.
+4. Si cambias un enlace aquí, se aplicará a todos los cuadros que seleccionen esa herramienta en el futuro.
 
 ---
 
-## 2. EDITOR DE PARRILLA / BENTO GRID (admin.html)
+## 3. EDITOR DE PARRILLA / BENTO GRID (admin.html)
 
-La página de inicio con cuadros de colores (Bento Grid) se gestiona visualmente desde el editor.
-
-### Cómo usar el editor:
+### Cómo usar el editor visual:
 1. Abre `docs/admin.html` en tu navegador.
-2. **Agregar Slot:** Haz clic en "Agregar Slot" para crear un nuevo cuadro.
-3. **Configurar:** Haz clic en cualquier cuadro para seleccionarlo. Verás el panel lateral:
-   - **Herramienta:** Elige qué herramienta representa (Marketing, Directorio, etc.).
-   - **Enlace (URL):** Pega aquí la dirección a donde quieres que mande ese cuadro.
-   - **Tamaño:** Cambia el ancho (columnas) y alto (filas).
-   - **Color:** Elige uno de los colores pastel.
-4. **Reordenar:** Puedes arrastrar y soltar los cuadros para cambiar su posición. Gracias a la tecnología "Dense Grid", los huecos se taparán solos si es posible.
-5. **Panel Flotante:** El panel de configuración se puede arrastrar desde su cabecera y colapsar haciendo clic en el icono del engranaje para ver mejor la cuadrícula.
-6. **GUARDAR:** Muy importante hacer clic en **"Guardar Cambios"** para que se suba a la base de datos de Supabase.
+2. **Seleccionar Herramienta:** Al elegir una herramienta del menú desplegable, el sistema le asignará automáticamente el enlace que configuraste en `tools_config.js`.
+3. **Tamaño y Color:** Puedes ajustar el tamaño (columnas/filas) y el color pastel de cada cuadro.
+4. **Reordenar:** Arrastra los cuadros para cambiar su posición.
+5. **GUARDAR:** Haz clic en **"Guardar Cambios"** para actualizar la base de datos de Supabase.
 
 ---
 
-## 3. BASE DE DATOS (Supabase)
-
-Si prefieres editar los datos de la parrilla manualmente o verificar la conexión:
+## 4. BASE DE DATOS (Supabase)
 
 - **Tabla:** `bento_grid`
-- **Columnas:**
-  - `id`: (Generado automáticamente)
-  - `label`: Nombre de la herramienta.
-  - `link_url`: Enlace de destino.
-  - `col_span`: Ancho (1 a 6).
-  - `row_span`: Alto (1 a 4).
-  - `bg_color`: Código hexadecimal del color.
-  - `position`: Orden en la parrilla (0, 1, 2...).
-
-Las credenciales de acceso están configuradas en `docs/admin.html`.
+- Las credenciales están configuradas internamente en `docs/admin.html`.
 
 ---
 
-¡Listo! Con estas herramientas tienes el control total del aspecto visual y funcional de tu plataforma.
+¡Listo! Con esto el usuario final solo tiene que elegir el nombre de la herramienta y tú controlas los enlaces desde el archivo `.js`.
