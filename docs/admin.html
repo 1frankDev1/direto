@@ -357,6 +357,7 @@
 
         let gridData = [];
         let selectedId = null;
+        let isEditMode = true;
 
         const configPanel = document.getElementById('configPanel');
         const panelHeader = document.getElementById('panelHeader');
@@ -438,10 +439,15 @@
         collapseBtn.onclick = (e) => {
             e.stopPropagation();
             configPanel.classList.add('collapsed');
+            isEditMode = false;
+            selectedId = null;
+            renderGrid();
         };
 
         expandBtn.onclick = () => {
             configPanel.classList.remove('collapsed');
+            isEditMode = true;
+            renderGrid();
         };
 
         // Tool Selection Toggle
@@ -502,7 +508,11 @@
 
                 div.onclick = (e) => {
                     e.stopPropagation();
-                    selectSlot(item.id);
+                    if (isEditMode) {
+                        selectSlot(item.id);
+                    } else if (item.link_url) {
+                        window.location.href = item.link_url;
+                    }
                 };
                 gridContainer.appendChild(div);
             });
@@ -514,6 +524,8 @@
         let sortableInstance = null;
         function initSortable() {
             if (sortableInstance) sortableInstance.destroy();
+            if (!isEditMode) return;
+
             sortableInstance = new Sortable(gridContainer, {
                 animation: 150,
                 ghostClass: 'sortable-ghost',
@@ -650,7 +662,15 @@
 
                 status.textContent = '¡Guardado con éxito!';
                 status.className = 'small text-center mt-2 text-success';
-                setTimeout(() => status.style.display = 'none', 3000);
+
+                // Exit editor mode after successful save
+                setTimeout(() => {
+                    status.style.display = 'none';
+                    configPanel.classList.add('collapsed');
+                    isEditMode = false;
+                    selectedId = null;
+                    renderGrid();
+                }, 1000);
             } catch (err) {
                 console.error(err);
                 status.textContent = 'Error al guardar. Verifica la tabla en Supabase.';
