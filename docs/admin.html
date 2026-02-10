@@ -484,7 +484,19 @@
         // Load data
         async function loadGrid() {
             if (isEditingOthers) {
-                document.getElementById('previewTitle').textContent = "Editando Grid de Usuario";
+                try {
+                    const { data: userData } = await sbClient
+                        .from('directory_users')
+                        .select('name, businesses(name)')
+                        .eq('id', targetUserId)
+                        .single();
+                    if (userData) {
+                        const bizNames = userData.businesses?.map(b => b.name).join(', ') || 'Sin negocios';
+                        document.getElementById('previewTitle').innerHTML = `Editando Grid: <span class="text-primary">${userData.name}</span> <br><small class="text-muted" style="font-size: 0.9rem;">Negocios: ${bizNames}</small>`;
+                    }
+                } catch (e) {
+                    document.getElementById('previewTitle').textContent = "Editando Grid de Usuario";
+                }
             }
             try {
                 const { data, error } = await sbClient

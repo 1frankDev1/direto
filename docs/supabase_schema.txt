@@ -1,4 +1,5 @@
 -- SQL for updating the Tragalero Directory Database
+-- Re-run this entire script to ensure all columns and tables exist.
 
 -- 1. Add restaurant-specific fields to the businesses table
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS cuid TEXT;
@@ -26,9 +27,12 @@ INSERT INTO directory_users (name, password, role)
 VALUES ('Antonio', '123', 'Admin')
 ON CONFLICT (name) DO NOTHING;
 
--- 4. Enable RLS (Optional but recommended)
--- 4. User-Specific Bento Grid
-CREATE TABLE IF NOT EXISTS bento_grid (
+-- 4. Bento Grid Table
+-- If you have errors with user_id, it's safer to DROP and CREATE again.
+-- WARNING: This will clear existing grid layouts.
+DROP TABLE IF EXISTS bento_grid;
+
+CREATE TABLE bento_grid (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id uuid REFERENCES directory_users(id) ON DELETE CASCADE,
   label text NOT NULL,
