@@ -11,8 +11,14 @@ CREATE TABLE IF NOT EXISTS directory_users (
     name TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role TEXT DEFAULT 'User',
+    is_active BOOLEAN DEFAULT TRUE,
+    max_businesses INTEGER DEFAULT 1,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- 2b. Add visibility and ownership to businesses table
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS owner_id UUID REFERENCES directory_users(id);
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS is_visible BOOLEAN DEFAULT TRUE;
 
 -- 3. Seed the admin user
 -- NOTE: In a production environment, passwords should be hashed.

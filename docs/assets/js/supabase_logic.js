@@ -7,13 +7,16 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 /**
  * Fetches businesses from Supabase and merges them with local data.
  */
-async function getBusinesses() {
+async function getBusinesses(showAll = false) {
     let dynamicData = [];
     try {
-        const { data, error } = await supabaseClient
-            .from('businesses')
-            .select('*')
-            .order('created_at', { ascending: false });
+        let query = supabaseClient.from('businesses').select('*');
+
+        if (!showAll) {
+            query = query.eq('is_visible', true);
+        }
+
+        const { data, error } = await query.order('created_at', { ascending: false });
 
         if (error) throw error;
         if (data) {
@@ -35,7 +38,9 @@ async function getBusinesses() {
                 ruid: item.ruid,
                 has_reservation: item.has_reservation,
                 order_url: item.order_url,
-                reservation_url: item.reservation_url
+                reservation_url: item.reservation_url,
+                is_visible: item.is_visible,
+                owner_id: item.owner_id
             }));
         }
     } catch (e) {
@@ -44,5 +49,32 @@ async function getBusinesses() {
 
     // Merge with local directoryData (from directory_data.js)
     // Local data serves as fallback or static content
-    return [...dynamicData, ...directoryData];
+    const merged = [...dynamicData, ...directoryData];
+    return showAll ? merged : merged.filter(b => b.is_visible !== false);
+}
+
+/**
+ * Auth check helpers
+ */
+function getLoggedInUser() {
+    const session = sessionStorage.getItem('tragalero_user');
+    return session ? JSON.parse(session) : null;
+}
+
+function logout() {
+    sessionStorage.removeItem('tragalero_user');
+    window.location.href = './login.html';
+}
+
+function checkAccess(roleRequired) {
+    const user = getLoggedInUser();
+    if (!user) {
+        window.location.href = './login.html';
+        return null;
+    }
+    if (roleRequired && user.role !== roleRequired && user.role !== 'Admin') {
+        window.location.href = './restaurantapp.html';
+        return null;
+    }
+    return user;
 }
