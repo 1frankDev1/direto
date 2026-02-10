@@ -102,8 +102,10 @@
                 <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="40" class="me-2">
                 <span class="fw-bold">Tragalero</span>
             </a>
-            <div class="ms-auto d-flex align-items-center theme-switcher-bar">
-                <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
+            <div class="ms-auto d-flex align-items-center">
+                <button class="btn btn-outline-danger btn-sm me-3 d-none d-md-inline-block" onclick="logout()">Cerrar Sesión</button>
+                <div class="theme-switcher-bar d-flex align-items-center">
+                    <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
                 <button class="theme-btn" data-theme-value="dark" title="Modo Oscuro"><i class="bi bi-moon-stars-fill"></i></button>
                 <button class="theme-btn" data-theme-value="medio" title="Modo Suave"><i class="bi bi-palette-fill"></i></button>
             </div>
@@ -242,6 +244,12 @@
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
+        // Check Access
+        const user = checkAccess('Owner');
+        if (!user) {
+            // checkAccess will redirect
+        }
+
         const form = document.getElementById('businessForm');
         const bizCategory = document.getElementById('bizCategory');
         const restaurantFields = document.getElementById('restaurantFields');
@@ -301,11 +309,37 @@
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Subiendo...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Validando...';
 
             statusMsg.className = 'alert d-none';
 
             try {
+                // Check business limit
+                if (user.role !== 'Admin') {
+                    const { count, error: countError } = await supabaseClient
+                        .from('businesses')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('owner_id', user.id);
+
+                    if (countError) throw countError;
+
+                    // Fetch user specific limit just in case it changed
+                    const { data: userData, error: userError } = await supabaseClient
+                        .from('directory_users')
+                        .select('max_businesses, is_active')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (userError) throw userError;
+                    if (!userData.is_active) throw new Error("Tu cuenta está suspendida.");
+
+                    if (count >= userData.max_businesses) {
+                        throw new Error(`Has alcanzado el límite de ${userData.max_businesses} negocios permitidos.`);
+                    }
+                }
+
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Subiendo...';
+
                 const logoFile = fileInput.files[0];
                 let logoUrl = '';
 
@@ -330,6 +364,7 @@
                 }
 
                 const bizData = {
+                    owner_id: user.id,
                     name: document.getElementById('bizName').value,
                     category: bizCategory.value,
                     city: document.getElementById('bizCity').value,
