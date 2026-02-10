@@ -1,0 +1,19 @@
+Supabase URL: https://cnoiesjjupubkrgyhbof.supabase.co
+Supabase Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNub2llc2pqdXB1YmtyZ3loYm9mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2MjYxMjIsImV4cCI6MjA4NjIwMjEyMn0.GZ3gGs7Wk4IJm0Ebp-3bAUlFtKHPV6jTpLATacLcJhA
+
+--------------------------------------------------
+SQL Schema for 'bento_grid' table:
+--------------------------------------------------
+
+create table bento_grid (
+  id uuid default gen_random_uuid() primary key,
+  label text not null,
+  col_span int default 1,
+  row_span int default 1,
+  bg_color text default '#dcf0fa',
+  created_at timestamptz default now()
+);
+
+-- Enable RLS and allow all access for demo purposes (adjust as needed)
+alter table bento_grid enable row level security;
+create policy "Allow public access" on bento_grid for all using (true) with check (true);
