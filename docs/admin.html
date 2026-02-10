@@ -349,6 +349,43 @@
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
+        // Authentication Logic
+        let currentUser = JSON.parse(sessionStorage.getItem('tragalero_user'));
+
+        async function checkLogin() {
+            if (!currentUser) {
+                const name = prompt("Nombre de Usuario:");
+                const pass = prompt("Contraseña:");
+
+                if (name && pass) {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from('directory_users')
+                            .select('*')
+                            .eq('name', name)
+                            .eq('password', pass)
+                            .single();
+
+                        if (data) {
+                            currentUser = data;
+                            sessionStorage.setItem('tragalero_user', JSON.stringify(data));
+                            location.reload();
+                        } else {
+                            alert("Credenciales incorrectas.");
+                            window.location.href = './restaurantapp.html';
+                        }
+                    } catch (e) {
+                        alert("Error de conexión. Asegúrate de que la tabla directory_users existe.");
+                        window.location.href = './restaurantapp.html';
+                    }
+                } else {
+                    window.location.href = './restaurantapp.html';
+                }
+            }
+        }
+
+        checkLogin();
+
         // Use global supabaseClient from assets/js/supabase_logic.js
         const sbClient = supabaseClient;
 
@@ -373,6 +410,9 @@
         function populateToolOptions() {
             toolSelect.innerHTML = '<option value="" selected disabled>Elije una herramienta...</option>';
             TOOLS_CONFIG.forEach(tool => {
+                // Filter tools by role
+                if (tool.adminOnly && currentUser?.role !== 'Admin') return;
+
                 const opt = document.createElement('option');
                 opt.value = tool.name;
                 opt.textContent = tool.name;
@@ -508,6 +548,12 @@
                     if (isEditMode) {
                         selectSlot(item.id);
                     } else if (item.link_url) {
+                        // Check if the linked tool is admin only
+                        const toolConfig = TOOLS_CONFIG.find(t => t.url === item.link_url);
+                        if (toolConfig && toolConfig.adminOnly && currentUser?.role !== 'Admin') {
+                            alert("Acceso denegado: Se requiere rol de Administrador.");
+                            return;
+                        }
                         window.location.href = item.link_url;
                     }
                 };

@@ -9,5 +9,6 @@ const TOOLS_CONFIG = [
     { name: "Forms", url: "https://tragalero.com/herramientas/forms" },
     { name: "Promotions", url: "https://tragalero.com/herramientas/promotions" },
     { name: "Pos", url: "https://tragalero.com/herramientas/pos" },
-    { name: "Apps", url: "https://tragalero.com/herramientas/apps" }
+    { name: "Apps", url: "https://tragalero.com/herramientas/apps" },
+    { name: "Usuarios", url: "./users.html", adminOnly: true }
 ];

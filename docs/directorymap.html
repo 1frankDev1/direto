@@ -51,6 +51,47 @@
             box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.1);
             border-color: var(--bs-primary);
         }
+
+        /* Drag & Drop Styles */
+        .upload-area {
+            border: 2px dashed rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(0,0,0,0.01);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        [data-bs-theme="dark"] .upload-area {
+            border-color: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.02);
+        }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--bs-primary);
+            background: rgba(var(--bs-primary-rgb), 0.05);
+        }
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--bs-primary);
+            opacity: 0.5;
+        }
+        .upload-area p {
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--bs-body-color);
+            opacity: 0.7;
+        }
+        #filePreview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        #bizLogo {
+            display: none;
+        }
     </style>
 </head>
 
@@ -94,9 +135,14 @@
                                     <option value="Varios">Varios</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Logo / Imagen</label>
-                                <input type="file" id="bizLogo" class="form-control" accept="image/*" required>
+                            <div class="col-md-12">
+                                <label class="form-label">Logo / Imagen del Negocio</label>
+                                <div class="upload-area" id="dropZone">
+                                    <i class="bi bi-cloud-arrow-up"></i>
+                                    <p>Arrastra tu logo aquí o haz clic para buscar</p>
+                                    <input type="file" id="bizLogo" accept="image/*">
+                                    <img id="filePreview" alt="Vista previa">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -151,12 +197,26 @@
                     <div class="form-section animate-fade-in delay-2" id="restaurantFields" style="display: none;">
                         <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-egg-fried me-2"></i>Opciones de Restaurante</h5>
                         <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">CUID (Menutech)</label>
+                                <input type="text" id="bizCuid" class="form-control" placeholder="52230bb2-...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">RUID (Menutech)</label>
+                                <input type="text" id="bizRuid" class="form-control" placeholder="010d211a-...">
+                            </div>
                             <div class="col-md-12">
-                                <label class="form-label">Link para Pedidos Online</label>
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="hasReservation">
+                                    <label class="form-check-label fw-bold" for="hasReservation">Activar Reservación de Mesas (Menutech)</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-3">
+                                <label class="form-label">Link Alternativo Pedidos (opcional)</label>
                                 <input type="url" id="bizOrder" class="form-control" placeholder="UberEats, Rappi, etc.">
                             </div>
                             <div class="col-md-12">
-                                <label class="form-label">Link para Reservación de Mesas</label>
+                                <label class="form-label">Link Alternativo Reservas (opcional)</label>
                                 <input type="url" id="bizReservation" class="form-control" placeholder="OpenTable, etc.">
                             </div>
                         </div>
@@ -186,7 +246,11 @@
         const bizCategory = document.getElementById('bizCategory');
         const restaurantFields = document.getElementById('restaurantFields');
         const statusMsg = document.getElementById('statusMsg');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('bizLogo');
+        const filePreview = document.getElementById('filePreview');
 
+        // Category Toggle
         bizCategory.addEventListener('change', () => {
             if (bizCategory.value === 'Restaurantes') {
                 restaurantFields.style.display = 'block';
@@ -194,6 +258,44 @@
                 restaurantFields.style.display = 'none';
             }
         });
+
+        // Drag & Drop Handlers
+        dropZone.onclick = () => fileInput.click();
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handlePreview(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handlePreview(fileInput.files[0]);
+            }
+        });
+
+        function handlePreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                filePreview.src = e.target.result;
+                filePreview.style.display = 'inline-block';
+                dropZone.querySelector('i').style.display = 'none';
+                dropZone.querySelector('p').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
 
         form.onsubmit = async (e) => {
             e.preventDefault();
@@ -204,7 +306,7 @@
             statusMsg.className = 'alert d-none';
 
             try {
-                const logoFile = document.getElementById('bizLogo').files[0];
+                const logoFile = fileInput.files[0];
                 let logoUrl = '';
 
                 if (logoFile) {
@@ -237,6 +339,9 @@
                     logo_url: logoUrl,
                     website: document.getElementById('bizWebsite').value,
                     is_restaurant: bizCategory.value === 'Restaurantes',
+                    cuid: document.getElementById('bizCuid').value,
+                    ruid: document.getElementById('bizRuid').value,
+                    has_reservation: document.getElementById('hasReservation').checked,
                     order_url: document.getElementById('bizOrder').value,
                     reservation_url: document.getElementById('bizReservation').value,
                     social_media: {

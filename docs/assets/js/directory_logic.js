@@ -156,24 +156,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (item.social_media.whatsapp) socialHtml += `<a href="https://wa.me/${escapeHtml(item.social_media.whatsapp)}" target="_blank" class="text-success me-2"><i class="bi bi-whatsapp"></i></a>`;
                 }
 
-                // Additional buttons for restaurants
+                // Additional buttons for restaurants (Menutech Integration)
                 let extraButtons = '';
                 if (isRestaurant) {
-                    if (item.order_url) {
+                    if (item.cuid && item.ruid) {
+                        // Use Menutech Custom Tags
                         extraButtons += `
-                            <div class="col-6 ps-1">
-                                <a href="${escapeHtml(item.order_url)}" target="_blank" class="btn btn-outline-success w-100 btn-sm" style="border-radius: 20px;">
-                                    <i class="bi bi-bag-check me-1"></i>Ordena
-                                </a>
+                            <div class="${item.has_reservation ? 'col-6' : 'col-12'} ps-1">
+                                <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#f2a04a" textColor="#ffffff"></menutech-orders>
                             </div>`;
-                    }
-                    if (item.reservation_url) {
-                        extraButtons += `
-                            <div class="col-6 pe-1">
-                                <a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-outline-primary w-100 btn-sm" style="border-radius: 20px;">
-                                    <i class="bi bi-calendar-event me-1"></i>Reserva
-                                </a>
-                            </div>`;
+
+                        if (item.has_reservation) {
+                            extraButtons += `
+                                <div class="col-6 pe-1">
+                                    <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#2f4854" textColor="#ffffff"></menutech-reservations>
+                                </div>`;
+                        }
+                    } else {
+                        // Fallback to traditional links
+                        if (item.order_url) {
+                            extraButtons += `
+                                <div class="col-6 ps-1">
+                                    <a href="${escapeHtml(item.order_url)}" target="_blank" class="btn btn-outline-success w-100 btn-sm" style="border-radius: 20px;">
+                                        <i class="bi bi-bag-check me-1"></i>Ordena
+                                    </a>
+                                </div>`;
+                        }
+                        if (item.reservation_url) {
+                            extraButtons += `
+                                <div class="col-6 pe-1">
+                                    <a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-outline-primary w-100 btn-sm" style="border-radius: 20px;">
+                                        <i class="bi bi-calendar-event me-1"></i>Reserva
+                                    </a>
+                                </div>`;
+                        }
                     }
                 }
 
