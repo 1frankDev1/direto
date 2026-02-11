@@ -571,11 +571,9 @@
 
                 if (data && data.length > 0) {
                     gridData = data;
-                    // Auto-collapse if grid already exists and it's not a fresh session
-                    if (!sessionStorage.getItem('force_expand')) {
-                        configPanel.classList.add('collapsed');
-                        isEditMode = false;
-                    }
+                    // Always collapse if grid already exists to prioritize usage over editing
+                    configPanel.classList.add('collapsed');
+                    isEditMode = false;
                 } else {
                     console.log("No data for user, using default tool.");
                     setFallbackData();
