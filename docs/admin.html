@@ -571,16 +571,13 @@
 
                 if (data && data.length > 0) {
                     gridData = data;
-                    // Always collapse if grid already exists to prioritize usage over editing
-                    configPanel.classList.add('collapsed');
-                    isEditMode = false;
                 } else {
                     console.log("No data for user, using default tool.");
                     setFallbackData();
-                    // Keep expanded for new users
-                    configPanel.classList.remove('collapsed');
-                    isEditMode = true;
                 }
+                // Always start collapsed as requested
+                configPanel.classList.add('collapsed');
+                isEditMode = false;
             } catch (e) {
                 console.error("Supabase load failed.", e);
                 setFallbackData();

@@ -110,18 +110,13 @@
         </main>
     </div>
 
-    <!-- Modal for Quick View -->
+    <!-- Modal for Business Card View -->
     <div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg custom-modal">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold text-truncate" id="menuModalLabel">Nombre del Negocio</h5>
-                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm" style="height: 75vh;">
-                        <iframe id="menuIframe" src="" frameborder="0"></iframe>
-                    </div>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg custom-modal" id="modalContent">
+                <!-- Dynamic content from directory_logic.js -->
+                <div class="p-5 text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
                 </div>
             </div>
         </div>

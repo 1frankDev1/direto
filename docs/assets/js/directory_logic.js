@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Modal elements
     const menuModalEl = document.getElementById('menuModal');
     const menuModal = new bootstrap.Modal(menuModalEl);
-    const menuModalLabel = document.getElementById('menuModalLabel');
-    const menuIframe = document.getElementById('menuIframe');
+    const modalContent = document.getElementById('modalContent');
 
     let currentCity = 'tijuana'; // Default to Tijuana
     let currentCategory = '';
@@ -110,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     item.name.toLowerCase().includes(searchLower) ||
                     item.city.toLowerCase().includes(searchLower) ||
                     (item.state && item.state.toLowerCase().includes(searchLower)) ||
-                    (item.zip && item.zip.includes(filterText)) ||
+                    (item.zip && item.zip.toString().includes(filterText)) ||
                     item.category.toLowerCase().includes(searchLower);
 
                 const itemCitySlug = slugify(item.city);
@@ -146,51 +145,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sState = escapeHtml(item.state);
                 const sAddress = escapeHtml(item.address);
                 const sLogo = escapeHtml(item.logo);
-                const sMenuUrl = escapeHtml(item.menuUrl || item.website);
 
                 // Social Media icons
                 let socialHtml = '';
                 if (item.social_media) {
-                    if (item.social_media.facebook) socialHtml += `<a href="${escapeHtml(item.social_media.facebook)}" target="_blank" class="text-primary me-2"><i class="bi bi-facebook"></i></a>`;
-                    if (item.social_media.instagram) socialHtml += `<a href="${escapeHtml(item.social_media.instagram)}" target="_blank" class="text-danger me-2"><i class="bi bi-instagram"></i></a>`;
-                    if (item.social_media.whatsapp) socialHtml += `<a href="https://wa.me/${escapeHtml(item.social_media.whatsapp)}" target="_blank" class="text-success me-2"><i class="bi bi-whatsapp"></i></a>`;
-                }
-
-                // Additional buttons for restaurants (Menutech Integration)
-                let extraButtons = '';
-                if (isRestaurant) {
-                    if (item.cuid && item.ruid) {
-                        // Use Menutech Custom Tags
-                        extraButtons += `
-                            <div class="${item.has_reservation ? 'col-6' : 'col-12'} ps-1">
-                                <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#f2a04a" textColor="#ffffff"></menutech-orders>
-                            </div>`;
-
-                        if (item.has_reservation) {
-                            extraButtons += `
-                                <div class="col-6 pe-1">
-                                    <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#2f4854" textColor="#ffffff"></menutech-reservations>
-                                </div>`;
-                        }
-                    } else {
-                        // Fallback to traditional links
-                        if (item.order_url) {
-                            extraButtons += `
-                                <div class="col-6 ps-1">
-                                    <a href="${escapeHtml(item.order_url)}" target="_blank" class="btn btn-outline-success w-100 btn-sm" style="border-radius: 20px;">
-                                        <i class="bi bi-bag-check me-1"></i>Ordena
-                                    </a>
-                                </div>`;
-                        }
-                        if (item.reservation_url) {
-                            extraButtons += `
-                                <div class="col-6 pe-1">
-                                    <a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-outline-primary w-100 btn-sm" style="border-radius: 20px;">
-                                        <i class="bi bi-calendar-event me-1"></i>Reserva
-                                    </a>
-                                </div>`;
-                        }
-                    }
+                    if (item.social_media.facebook) socialHtml += `<span class="text-primary me-2"><i class="bi bi-facebook"></i></span>`;
+                    if (item.social_media.instagram) socialHtml += `<span class="text-danger me-2"><i class="bi bi-instagram"></i></span>`;
+                    if (item.social_media.whatsapp) socialHtml += `<span class="text-success me-2"><i class="bi bi-whatsapp"></i></span>`;
                 }
 
                 col.innerHTML = `
@@ -210,40 +171,122 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </p>
 
                             <div class="mt-auto">
-                                <div class="row g-2 mb-2">
-                                    ${extraButtons}
-                                </div>
-                                <button class="btn btn-custom-primary w-100 view-menu-btn" data-url="${sMenuUrl}" data-name="${sName}">
+                                <button class="btn btn-custom-primary w-100 view-details-btn" data-id="${item.id || index}">
                                     <i class="bi ${mainButtonIcon} me-2"></i>${mainButtonText}
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
-                resultsContainer.appendChild(col);
-            });
 
-            document.querySelectorAll('.view-menu-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const url = e.currentTarget.getAttribute('data-url');
-                    const name = e.currentTarget.getAttribute('data-name');
-                    if (url) openMenu(url, name);
+                col.querySelector('.view-details-btn').addEventListener('click', () => {
+                    openBusinessCard(item);
                 });
+
+                resultsContainer.appendChild(col);
             });
 
             resultsContainer.classList.remove('results-hidden');
         }, 300);
     }
 
-    function openMenu(url, name) {
-        menuModalLabel.textContent = name;
-        menuIframe.src = url;
+    function openBusinessCard(item) {
+        const sName = escapeHtml(item.name);
+        const sLogo = escapeHtml(item.logo);
+        const sCity = escapeHtml(item.city);
+        const sCategory = escapeHtml(item.category);
+        const sAddress = escapeHtml(item.address);
+        const sState = escapeHtml(item.state);
+        const sWebsite = escapeHtml(item.website || item.menuUrl);
+
+        // Social Media
+        let socialHtml = '';
+        if (item.social_media) {
+            if (item.social_media.facebook) socialHtml += `<a href="${escapeHtml(item.social_media.facebook)}" target="_blank" class="social-link-icon"><i class="bi bi-facebook"></i></a>`;
+            if (item.social_media.instagram) socialHtml += `<a href="${escapeHtml(item.social_media.instagram)}" target="_blank" class="social-link-icon"><i class="bi bi-instagram"></i></a>`;
+            if (item.social_media.whatsapp) socialHtml += `<a href="https://wa.me/${escapeHtml(item.social_media.whatsapp)}" target="_blank" class="social-link-icon"><i class="bi bi-whatsapp"></i></a>`;
+        }
+
+        // Menutech & Orders
+        let actionHtml = '';
+        if (item.cuid && item.ruid) {
+            actionHtml = `
+                <div class="menutech-container shadow-sm border">
+                    <h6 class="fw-bold mb-3 text-center"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas</h6>
+                    <div class="row g-2">
+                        <div class="col-12 mb-2">
+                            <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#f1c40f" textColor="#ffffff"></menutech-orders>
+                        </div>
+                        ${item.has_reservation ? `
+                        <div class="col-12">
+                            <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#2f4854" textColor="#ffffff"></menutech-reservations>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `;
+        } else {
+            if (item.order_url || item.reservation_url || sWebsite) {
+                actionHtml = `
+                    <div class="menutech-container shadow-sm border">
+                        <div class="d-grid gap-2">
+                            ${item.order_url ? `<a href="${escapeHtml(item.order_url)}" target="_blank" class="btn btn-warning fw-bold rounded-pill py-2"><i class="bi bi-bag-check me-2"></i>Ordena Ahora</a>` : ''}
+                            ${item.reservation_url ? `<a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-info text-white fw-bold rounded-pill py-2"><i class="bi bi-calendar-event me-2"></i>Reserva Mesa</a>` : ''}
+                            ${sWebsite ? `<a href="${sWebsite}" target="_blank" class="btn btn-outline-primary fw-bold rounded-pill py-2"><i class="bi bi-globe me-2"></i>Ver Menú / Sitio Web</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        modalContent.innerHTML = `
+            <div class="business-card-header">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-4 shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                <img src="${sLogo}" alt="${sName}" class="business-logo-lg">
+                <h2 class="fw-bold mb-1">${sName}</h2>
+                <div class="badge bg-primary px-3 py-2 mb-3 rounded-pill">${sCategory}</div>
+                <div class="d-flex justify-content-center">
+                    ${socialHtml}
+                </div>
+            </div>
+            <div class="modal-body p-4 p-md-5">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-info-circle me-2 text-primary"></i>Información</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-3 d-flex">
+                                <i class="bi bi-geo-alt-fill text-danger me-3 fs-5"></i>
+                                <div>
+                                    <div class="fw-bold">Ubicación</div>
+                                    <div class="text-muted">${sAddress}, ${sCity}, ${sState}</div>
+                                </div>
+                            </li>
+                            ${item.hours ? `
+                            <li class="mb-3 d-flex">
+                                <i class="bi bi-clock-fill text-success me-3 fs-5"></i>
+                                <div>
+                                    <div class="fw-bold">Horarios</div>
+                                    <div class="text-muted small">Consulta disponibilidad al ordenar</div>
+                                </div>
+                            </li>` : ''}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        ${actionHtml}
+                    </div>
+                </div>
+
+                ${sWebsite && !item.cuid ? `
+                <div class="mt-4 pt-4 border-top">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-eye me-2 text-primary"></i>Vista Previa</h5>
+                    <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm">
+                        <iframe src="${sWebsite}" frameborder="0"></iframe>
+                    </div>
+                </div>` : ''}
+            </div>
+        `;
+
         menuModal.show();
     }
-
-    menuModalEl.addEventListener('hidden.bs.modal', () => {
-        menuIframe.src = '';
-    });
 
     searchBtn.addEventListener('click', () => {
         renderDirectory(searchInput.value, currentCity, currentCategory);
