@@ -185,19 +185,41 @@
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label">Sitio Web / Menú Digital</label>
-                                <input type="url" id="bizWebsite" class="form-control" placeholder="https://...">
+                                <input type="text" id="bizWebsite" class="form-control" placeholder="minegocio.com">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Facebook (URL)</label>
-                                <input type="url" id="bizFB" class="form-control" placeholder="https://facebook.com/...">
+                                <input type="text" id="bizFB" class="form-control" placeholder="facebook.com/minegocio">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Instagram (URL)</label>
-                                <input type="url" id="bizIG" class="form-control" placeholder="https://instagram.com/...">
+                                <input type="text" id="bizIG" class="form-control" placeholder="instagram.com/minegocio">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">WhatsApp (Número)</label>
                                 <input type="tel" id="bizWA" class="form-control" placeholder="526641234567">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Button Customization -->
+                    <div class="form-section animate-fade-in delay-2">
+                        <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-palette me-2"></i>Diseño de Botones</h5>
+                        <p class="small text-muted mb-4">Personaliza los colores de los botones de acción en tu tarjeta de negocio.</p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Color de Fondo (Botón Principal)</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="color" id="btnBgColor" class="form-control form-control-color me-3" value="#f1c40f" title="Elige un color">
+                                    <input type="text" id="btnBgText" class="form-control" value="#f1c40f" placeholder="#f1c40f">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color de Texto (Botón Principal)</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="color" id="btnTextColor" class="form-control form-control-color me-3" value="#ffffff" title="Elige un color">
+                                    <input type="text" id="btnTextText" class="form-control" value="#ffffff" placeholder="#ffffff">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -329,6 +351,22 @@
             reader.readAsDataURL(file);
         }
 
+        // Color sync
+        document.getElementById('btnBgColor').oninput = (e) => document.getElementById('btnBgText').value = e.target.value.toUpperCase();
+        document.getElementById('btnBgText').oninput = (e) => document.getElementById('btnBgColor').value = e.target.value;
+        document.getElementById('btnTextColor').oninput = (e) => document.getElementById('btnTextText').value = e.target.value.toUpperCase();
+        document.getElementById('btnTextText').oninput = (e) => document.getElementById('btnTextColor').value = e.target.value;
+
+        function ensureHttps(url) {
+            if (!url) return '';
+            url = url.trim();
+            if (url === '') return '';
+            if (!/^https?:\/\//i.test(url)) {
+                return 'https://' + url;
+            }
+            return url;
+        }
+
         form.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -396,16 +434,18 @@
                     zip: document.getElementById('bizZip').value,
                     address_detail: document.getElementById('bizAddress').value,
                     logo_url: logoUrl,
-                    website: document.getElementById('bizWebsite').value,
+                    website: ensureHttps(document.getElementById('bizWebsite').value),
+                    btn_bg_color: document.getElementById('btnBgColor').value,
+                    btn_text_color: document.getElementById('btnTextColor').value,
                     is_restaurant: bizCategory.value === 'Restaurantes',
                     cuid: document.getElementById('bizCuid').value,
                     ruid: document.getElementById('bizRuid').value,
                     has_reservation: document.getElementById('hasReservation').checked,
-                    order_url: document.getElementById('bizOrder').value,
-                    reservation_url: document.getElementById('bizReservation').value,
+                    order_url: ensureHttps(document.getElementById('bizOrder').value),
+                    reservation_url: ensureHttps(document.getElementById('bizReservation').value),
                     social_media: {
-                        facebook: document.getElementById('bizFB').value,
-                        instagram: document.getElementById('bizIG').value,
+                        facebook: ensureHttps(document.getElementById('bizFB').value),
+                        instagram: ensureHttps(document.getElementById('bizIG').value),
                         whatsapp: document.getElementById('bizWA').value
                     }
                 };

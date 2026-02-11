@@ -30,6 +30,8 @@ async function getBusinesses(showAll = false) {
                 logo: item.logo_url || 'https://via.placeholder.com/150?text=Logo',
                 menuUrl: item.website || '',
                 website: item.website || '',
+                btn_bg_color: item.btn_bg_color || '',
+                btn_text_color: item.btn_text_color || '',
                 address: item.address_detail || '',
                 social_media: item.social_media || {},
                 hours: item.hours || {},
