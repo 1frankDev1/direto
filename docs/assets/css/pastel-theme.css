@@ -380,3 +380,98 @@ body {
 [data-bs-theme="medio"] .navbar { background-color: #e0e7ff; }
 [data-bs-theme="medio"] .hero { background-color: #f1f5f9; }
 [data-bs-theme="medio"] .restaurant-card { background: white; border: 1px solid #e2e8f0; }
+
+/* User Profile Menu */
+.user-menu-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.user-avatar-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 3px solid rgba(255,255,255,0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-size: 1.2rem;
+    padding: 0;
+}
+
+.user-avatar-btn:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    width: 240px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    padding: 15px;
+    display: none;
+    z-index: 1050;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+[data-bs-theme="dark"] .user-dropdown-menu {
+    background: #1e293b;
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+}
+
+.user-dropdown-menu.show {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-info-header {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.user-dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 12px;
+    color: var(--bs-body-color);
+    text-decoration: none;
+    transition: 0.2s;
+    font-weight: 500;
+}
+
+.user-dropdown-item:hover {
+    background: rgba(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+}
+
+.user-dropdown-item i {
+    font-size: 1.1rem;
+    margin-right: 12px;
+    opacity: 0.8;
+}
+
+.user-dropdown-item.logout {
+    color: var(--bs-danger);
+}
+
+.user-dropdown-item.logout:hover {
+    background: rgba(var(--bs-danger-rgb), 0.1);
+    color: var(--bs-danger);
+}

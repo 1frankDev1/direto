@@ -50,7 +50,8 @@
             z-index: 1000;
             overflow-y: auto;
             border: 1px solid rgba(0,0,0,0.1);
-            transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+            transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease, transform 0s;
+            touch-action: none;
         }
 
         [data-bs-theme="dark"] .controls-panel {
@@ -59,15 +60,16 @@
         }
 
         .controls-panel.collapsed {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             padding: 0;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            cursor: pointer;
+            border-radius: 50% !important;
+            cursor: move;
+            border: 3px solid var(--bs-primary);
         }
 
         .controls-panel.collapsed .panel-content {
@@ -76,13 +78,13 @@
 
         .gear-icon {
             display: none;
-            font-size: 28px;
+            font-size: 32px;
             color: var(--bs-primary);
         }
 
         .controls-panel.collapsed .gear-icon {
             display: block;
-            animation: spin 4s linear infinite;
+            animation: spin 6s linear infinite;
         }
 
         @keyframes spin {
@@ -112,6 +114,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding-bottom: 150px;
         }
 
         [data-bs-theme="dark"] .preview-panel {
@@ -237,6 +240,46 @@
             top: 20px;
             right: 20px;
         }
+
+        .admin-badge {
+            background: linear-gradient(135deg, var(--bs-primary), #e67e22);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin-bottom: 10px;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .back-btn {
+            border-radius: 12px;
+            padding: 8px 15px;
+            transition: 0.2s;
+            background: rgba(0,0,0,0.05);
+            color: var(--bs-body-color);
+            border: none;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .back-btn:hover {
+            background: var(--bs-primary);
+            color: white;
+            transform: translateX(-5px);
+        }
     </style>
 </head>
 
@@ -326,10 +369,8 @@
         <!-- Grid Preview -->
         <div class="preview-panel">
             <div class="theme-switcher-container d-flex align-items-center bg-white bg-opacity-10 p-2 rounded-pill shadow-sm">
-                <div id="authActions" class="me-3 ps-2">
-                    <button class="btn btn-sm btn-outline-danger" onclick="logout()" style="border-radius: 20px;">
-                        <i class="bi bi-box-arrow-right me-1"></i>Salir
-                    </button>
+                <div id="authButtons" class="me-3 ps-2">
+                    <!-- Unified User Menu -->
                 </div>
                 <div class="theme-switcher-bar d-flex">
                     <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
@@ -338,7 +379,20 @@
                 </div>
             </div>
 
-            <h2 class="fw-bold mb-4 animate-fade-in" id="previewTitle">Vista Previa</h2>
+            <div class="text-center mb-4 animate-fade-in">
+                <div id="adminNavigation" style="display: none;">
+                    <a href="./users.html" class="back-btn">
+                        <i class="bi bi-arrow-left me-2"></i>Volver a Usuarios
+                    </a>
+                </div>
+                <div class="d-flex align-items-center justify-content-center mb-2">
+                    <div id="adminNameDisplay" class="admin-badge me-2" style="display: none;">
+                        <i class="bi bi-shield-check me-2"></i> Admin: <span id="adminNameText" class="ms-1"></span>
+                    </div>
+                </div>
+                <h2 class="fw-bold" id="previewTitle">Vista Previa</h2>
+            </div>
+
             <div class="bento-grid" id="bentoGrid">
                 <!-- Items dynamically loaded -->
             </div>
@@ -406,7 +460,7 @@
         }
         populateToolOptions();
 
-        // Dragging Logic
+        // Improved Dragging Logic
         let isDragging = false;
         let currentX;
         let currentY;
@@ -415,8 +469,12 @@
         let xOffset = 0;
         let yOffset = 0;
 
-        panelHeader.addEventListener("mousedown", dragStart);
-        panelHeader.addEventListener("touchstart", dragStart, { passive: false });
+        // Add event listeners to both header and gear icon
+        [panelHeader, expandBtn].forEach(el => {
+            el.addEventListener("mousedown", dragStart);
+            el.addEventListener("touchstart", dragStart, { passive: false });
+        });
+
         document.addEventListener("mousemove", drag);
         document.addEventListener("touchmove", drag, { passive: false });
         document.addEventListener("mouseup", dragEnd);
@@ -429,7 +487,9 @@
             initialX = clientX - xOffset;
             initialY = clientY - yOffset;
 
-            if (e.target === panelHeader || panelHeader.contains(e.target)) {
+            // Allow dragging if target is header OR if panel is collapsed and target is gear icon
+            if (e.target === panelHeader || panelHeader.contains(e.target) ||
+               (configPanel.classList.contains('collapsed') && (e.target === expandBtn || expandBtn.contains(e.target)))) {
                 isDragging = true;
             }
         }
@@ -484,6 +544,10 @@
         // Load data
         async function loadGrid() {
             if (isEditingOthers) {
+                document.getElementById('adminNavigation').style.display = 'block';
+                document.getElementById('adminNameDisplay').style.display = 'inline-flex';
+                document.getElementById('adminNameText').textContent = currentUser.name;
+
                 try {
                     const { data: userData } = await sbClient
                         .from('directory_users')
@@ -507,9 +571,17 @@
 
                 if (data && data.length > 0) {
                     gridData = data;
+                    // Auto-collapse if grid already exists and it's not a fresh session
+                    if (!sessionStorage.getItem('force_expand')) {
+                        configPanel.classList.add('collapsed');
+                        isEditMode = false;
+                    }
                 } else {
                     console.log("No data for user, using default tool.");
                     setFallbackData();
+                    // Keep expanded for new users
+                    configPanel.classList.remove('collapsed');
+                    isEditMode = true;
                 }
             } catch (e) {
                 console.error("Supabase load failed.", e);
@@ -763,6 +835,9 @@
             }
         };
 
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUserMenu('authButtons');
+        });
         loadGrid();
     </script>
 </body>

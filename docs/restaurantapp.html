@@ -43,17 +43,7 @@
 
             <div class="ms-auto d-flex align-items-center">
                 <div id="authButtons" class="me-3">
-                    <a href="./login.html" class="btn btn-sm btn-outline-primary" id="loginBtn" style="border-radius: 20px;">
-                        <i class="bi bi-person-circle me-1"></i>Iniciar Sesión
-                    </a>
-                    <div id="userMenu" class="d-none">
-                        <a href="./admin.html" class="btn btn-sm btn-custom-primary me-2" style="border-radius: 20px;">
-                            <i class="bi bi-grid-fill me-1"></i>Mi Panel
-                        </a>
-                        <button class="btn btn-sm btn-outline-danger" onclick="logout()" style="border-radius: 20px;">
-                            <i class="bi bi-box-arrow-right"></i>
-                        </button>
-                    </div>
+                    <!-- Unified User Menu -->
                 </div>
                 <div class="theme-switcher-bar d-flex align-items-center">
                     <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
@@ -149,11 +139,7 @@
     <script src="./assets/js/directory_logic.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const user = getLoggedInUser();
-            if (user) {
-                document.getElementById('loginBtn').classList.add('d-none');
-                document.getElementById('userMenu').classList.remove('d-none');
-            }
+            renderUserMenu('authButtons');
         });
     </script>
 
