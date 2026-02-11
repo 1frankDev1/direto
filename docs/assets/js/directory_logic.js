@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const searchInput = document.getElementById('directorySearch');
+    const navbarSearch = document.getElementById('navbarSearch');
     const searchBtn = document.getElementById('searchBtn');
     const resultsContainer = document.getElementById('directoryResults');
     const categoryContainer = document.getElementById('categoryChips');
@@ -135,8 +136,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const delay = (index % 9) * 0.1;
                 const isRestaurant = item.category === 'Restaurantes' || item.is_restaurant;
-                const mainButtonText = isRestaurant ? 'Ver Menú' : 'Ver Detalles';
-                const mainButtonIcon = isRestaurant ? 'bi-qr-code-scan' : 'bi-info-circle';
 
                 // Sanitize values
                 const sName = escapeHtml(item.name);
@@ -149,41 +148,56 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Social Media icons
                 let socialHtml = '';
                 if (item.social_media) {
-                    if (item.social_media.facebook) socialHtml += `<span class="text-primary me-2"><i class="bi bi-facebook"></i></span>`;
-                    if (item.social_media.instagram) socialHtml += `<span class="text-danger me-2"><i class="bi bi-instagram"></i></span>`;
-                    if (item.social_media.whatsapp) socialHtml += `<span class="text-success me-2"><i class="bi bi-whatsapp"></i></span>`;
+                    if (item.social_media.facebook) socialHtml += `<span class="text-primary ms-2"><i class="bi bi-facebook"></i></span>`;
                 }
 
                 col.innerHTML = `
                     <div class="card h-100 restaurant-card border-0 shadow-sm overflow-hidden animate-fade-in" style="animation-delay: ${delay}s">
-                        <div class="card-img-wrapper position-relative">
-                            <img src="${sLogo}" class="card-img-top" alt="${sName}">
-                            <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3 shadow-sm border-0" style="border-radius: 20px; padding: 8px 15px;">${sCity}</span>
-                            <span class="badge bg-primary text-white position-absolute top-0 start-0 m-3 shadow-sm border-0" style="border-radius: 20px; padding: 5px 12px; font-size: 0.7rem; text-transform: uppercase;">${sCategory}</span>
+                        <div class="card-img-wrapper position-relative" style="background: white; padding: 25px; height: 180px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(0,0,0,0.02);">
+                            <img src="${sLogo}" alt="${sName}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                            <span class="badge position-absolute top-0 start-0 m-3" style="background: #7c83fd; color: white; border-radius: 10px; padding: 6px 12px; font-weight: 600; font-size: 0.7rem; text-transform: uppercase;">${sCategory}</span>
+                            <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3 shadow-sm border-0" style="border-radius: 20px; padding: 8px 18px; font-size: 0.8rem; font-weight: 500;">${sCity}</span>
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <div class="d-flex justify-content-between align-items-start mb-1">
-                                <h5 class="card-title fw-bold text-truncate mb-0" style="font-size: 1.25rem;">${sName}</h5>
+                                <h4 class="fw-bold mb-0" style="color: #4338ca; font-size: 1.4rem;">${sName}</h4>
                                 <div class="fs-5">${socialHtml}</div>
                             </div>
-                            <p class="text-muted small mb-3" style="letter-spacing: 0.5px;">
-                                <i class="bi bi-geo-alt-fill me-1 text-primary"></i>${sState} ${sAddress}
+                            <p class="text-muted mb-4" style="font-size: 0.95rem;">
+                                <i class="bi bi-geo-alt-fill me-1" style="color: #7c83fd;"></i>${sState} ${sAddress}
                             </p>
 
                             <div class="mt-auto">
                                 ${isRestaurant && item.cuid && item.ruid ? `
-                                    <div class="menutech-card-buttons d-grid gap-2">
-                                        <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="${item.order_text_color || '#ffffff'}" background="${item.order_bg_color || '#f2a04a'}" textColor="${item.order_text_color || '#ffffff'}"></menutech-orders>
+                                    <div class="menutech-card-buttons d-grid gap-3">
+                                        <menutech-orders
+                                            cuid="${item.cuid}"
+                                            ruid="${item.ruid}"
+                                            color="${item.order_text_color || '#ffffff'}"
+                                            background="${item.order_bg_color || '#f2a04a'}"
+                                            textColor="${item.order_text_color || '#ffffff'}"
+                                            data-glf-cuid="${item.cuid}"
+                                            data-glf-ruid="${item.ruid}"
+                                        ></menutech-orders>
                                         ${item.has_reservation ? `
-                                            <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="${item.res_text_color || '#ffffff'}" background="${item.res_bg_color || '#2f4854'}" textColor="${item.res_text_color || '#ffffff'}"></menutech-reservations>
+                                            <menutech-reservations
+                                                cuid="${item.cuid}"
+                                                ruid="${item.ruid}"
+                                                color="${item.res_text_color || '#ffffff'}"
+                                                background="${item.res_bg_color || '#2f4854'}"
+                                                textColor="${item.res_text_color || '#ffffff'}"
+                                                data-glf-cuid="${item.cuid}"
+                                                data-glf-ruid="${item.ruid}"
+                                                data-glf-reservation="true"
+                                            ></menutech-reservations>
                                         ` : ''}
-                                        <button class="btn btn-outline-secondary btn-sm rounded-pill mt-1 view-details-btn" data-id="${item.id || index}">
+                                        <button class="btn btn-outline-secondary w-100 rounded-pill py-2 mt-1 view-details-btn" style="border-color: #ddd; color: #666; font-size: 0.9rem;" data-id="${item.id || index}">
                                             <i class="bi bi-info-circle me-1"></i>Detalles
                                         </button>
                                     </div>
                                 ` : `
-                                    <button class="btn btn-custom-primary w-100 view-details-btn" data-id="${item.id || index}">
-                                        <i class="bi ${mainButtonIcon} me-2"></i>${mainButtonText}
+                                    <button class="btn btn-custom-primary w-100 rounded-pill py-3 view-details-btn" style="background: #7c83fd; color: white;" data-id="${item.id || index}">
+                                        <i class="bi bi-qr-code-scan me-2"></i>Ver Menú
                                     </button>
                                 `}
                             </div>
@@ -201,9 +215,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             resultsContainer.classList.remove('results-hidden');
 
             // Initialize Menutech components on cards
-            if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
-                setTimeout(() => window.MenutechUI.init(), 100);
-            }
+            const tryInitMenutech = () => {
+                if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
+                    window.MenutechUI.init();
+                    // Double check after a moment
+                    setTimeout(() => window.MenutechUI.init(), 500);
+                } else {
+                    // Try to wait for script
+                    setTimeout(tryInitMenutech, 300);
+                }
+            };
+            tryInitMenutech();
         }, 300);
     }
 
@@ -237,11 +259,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <h6 class="fw-bold mb-4 text-center opacity-75"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas</h6>
                     <div class="row g-3">
                         <div class="col-12">
-                            <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="${item.order_text_color || '#ffffff'}" background="${item.order_bg_color || '#f2a04a'}" textColor="${item.order_text_color || '#ffffff'}"></menutech-orders>
+                            <menutech-orders
+                                cuid="${item.cuid}"
+                                ruid="${item.ruid}"
+                                color="${item.order_text_color || '#ffffff'}"
+                                background="${item.order_bg_color || '#f2a04a'}"
+                                textColor="${item.order_text_color || '#ffffff'}"
+                                data-glf-cuid="${item.cuid}"
+                                data-glf-ruid="${item.ruid}"
+                            ></menutech-orders>
                         </div>
                         ${item.has_reservation ? `
                         <div class="col-12">
-                            <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="${item.res_text_color || '#ffffff'}" background="${item.res_bg_color || '#2f4854'}" textColor="${item.res_text_color || '#ffffff'}"></menutech-reservations>
+                            <menutech-reservations
+                                cuid="${item.cuid}"
+                                ruid="${item.ruid}"
+                                color="${item.res_text_color || '#ffffff'}"
+                                background="${item.res_bg_color || '#2f4854'}"
+                                textColor="${item.res_text_color || '#ffffff'}"
+                                data-glf-cuid="${item.cuid}"
+                                data-glf-ruid="${item.ruid}"
+                                data-glf-reservation="true"
+                            ></menutech-reservations>
                         </div>` : ''}
                     </div>
                 </div>
@@ -311,23 +350,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         menuModal.show();
 
         // Re-initialize Menutech if scripts are present
-        if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
-            window.MenutechUI.init();
-        }
+        const initModalMenutech = () => {
+            if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
+                window.MenutechUI.init();
+                setTimeout(() => window.MenutechUI.init(), 300);
+            } else {
+                setTimeout(initModalMenutech, 200);
+            }
+        };
+        initModalMenutech();
     }
 
-    searchBtn.addEventListener('click', () => {
-        renderDirectory(searchInput.value, currentCity, currentCategory);
-    });
+    const handleSearch = (val) => {
+        if (searchInput) searchInput.value = val;
+        if (navbarSearch) navbarSearch.value = val;
+        renderDirectory(val, currentCity, currentCategory);
+    };
 
-    searchInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-            renderDirectory(searchInput.value, currentCity, currentCategory);
-        }
-        if (searchInput.value.length > 2 || searchInput.value.length === 0) {
-            renderDirectory(searchInput.value, currentCity, currentCategory);
-        }
-    });
+    if (searchBtn) {
+        searchBtn.addEventListener('click', () => {
+            handleSearch(searchInput.value);
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') handleSearch(searchInput.value);
+            else if (searchInput.value.length > 2 || searchInput.value.length === 0) {
+                handleSearch(searchInput.value);
+            }
+        });
+    }
+
+    if (navbarSearch) {
+        navbarSearch.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') handleSearch(navbarSearch.value);
+            else if (navbarSearch.value.length > 2 || navbarSearch.value.length === 0) {
+                handleSearch(navbarSearch.value);
+            }
+        });
+    }
 
     if (window.innerWidth < 992) {
         body.classList.remove('sidebar-open');
