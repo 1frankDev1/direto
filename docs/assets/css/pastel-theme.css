@@ -432,35 +432,35 @@ body {
 
 /* --- THEMES --- */
 
-/* Light / Yellow Theme */
+/* Light / Yellow Theme - Soft Creamy Pastel */
 [data-bs-theme="light"] {
-    --bs-body-bg: #fffdf0;
-    --bs-primary: #f1c40f;
-    --bs-primary-rgb: 241, 196, 15;
-    --bs-body-color: #444;
+    --bs-body-bg: #fffcf0;
+    --bs-primary: #eab308;
+    --bs-primary-rgb: 234, 179, 8;
+    --bs-body-color: #475569;
 }
-[data-bs-theme="light"] .navbar { background-color: #fdfd96; }
-[data-bs-theme="light"] .hero { background-color: #fef9c3; }
+[data-bs-theme="light"] .navbar { background-color: #fef9c3; border-bottom: 1px solid #fef08a; }
+[data-bs-theme="light"] .hero { background: linear-gradient(180deg, #fef9c3 0%, #fffcf0 100%); }
 
-/* Dark Mode */
+/* Dark Mode - Slate & Amber */
 [data-bs-theme="dark"] {
     --bs-body-bg: #0f172a;
-    --bs-body-color: #f1f5f9;
-    --bs-primary: #fbbc05;
-    --bs-primary-rgb: 251, 188, 5;
+    --bs-body-color: #f8fafc;
+    --bs-primary: #fbbf24;
+    --bs-primary-rgb: 251, 191, 36;
 }
-[data-bs-theme="dark"] .navbar { background-color: #1e293b; }
-[data-bs-theme="dark"] .hero { background-color: #111827; }
+[data-bs-theme="dark"] .navbar { background-color: #1e293b; border-bottom: 1px solid #334155; }
+[data-bs-theme="dark"] .hero { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); }
 
-/* Medio / Soft Indigo */
+/* Medio / Soft Mode - Lavender & Indigo */
 [data-bs-theme="medio"] {
-    --bs-body-bg: #f8fafc;
-    --bs-body-color: #334155;
-    --bs-primary: #6366f1;
-    --bs-primary-rgb: 99, 102, 241;
+    --bs-body-bg: #fdfaff;
+    --bs-body-color: #4338ca;
+    --bs-primary: #818cf8;
+    --bs-primary-rgb: 129, 140, 248;
 }
-[data-bs-theme="medio"] .navbar { background-color: #e0e7ff; }
-[data-bs-theme="medio"] .hero { background-color: #f1f5f9; }
+[data-bs-theme="medio"] .navbar { background-color: #eef2ff; border-bottom: 1px solid #e0e7ff; }
+[data-bs-theme="medio"] .hero { background: linear-gradient(180deg, #eef2ff 0%, #fdfaff 100%); }
 
 /* User Profile Menu */
 .user-menu-wrapper {

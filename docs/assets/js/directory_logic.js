@@ -198,24 +198,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         const sAddress = escapeHtml(item.address);
         const sState = escapeHtml(item.state);
         const sWebsite = escapeHtml(item.website || item.menuUrl);
+        const btnBg = item.btn_bg_color || '#f1c40f';
+        const btnText = item.btn_text_color || '#ffffff';
 
         // Social Media
         let socialHtml = '';
         if (item.social_media) {
             if (item.social_media.facebook) socialHtml += `<a href="${escapeHtml(item.social_media.facebook)}" target="_blank" class="social-link-icon"><i class="bi bi-facebook"></i></a>`;
             if (item.social_media.instagram) socialHtml += `<a href="${escapeHtml(item.social_media.instagram)}" target="_blank" class="social-link-icon"><i class="bi bi-instagram"></i></a>`;
-            if (item.social_media.whatsapp) socialHtml += `<a href="https://wa.me/${escapeHtml(item.social_media.whatsapp)}" target="_blank" class="social-link-icon"><i class="bi bi-whatsapp"></i></a>`;
+            if (item.social_media.whatsapp) {
+                const waNum = item.social_media.whatsapp.replace(/\D/g, '');
+                socialHtml += `<a href="https://wa.me/${waNum}" target="_blank" class="social-link-icon"><i class="bi bi-whatsapp"></i></a>`;
+            }
         }
 
         // Menutech & Orders
         let actionHtml = '';
         if (item.cuid && item.ruid) {
             actionHtml = `
-                <div class="menutech-container shadow-sm border">
-                    <h6 class="fw-bold mb-3 text-center"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas</h6>
-                    <div class="row g-2">
-                        <div class="col-12 mb-2">
-                            <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#f1c40f" textColor="#ffffff"></menutech-orders>
+                <div class="menutech-container shadow-sm border-0 bg-light-subtle rounded-4 p-4">
+                    <h6 class="fw-bold mb-4 text-center opacity-75"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas</h6>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="${btnText}" background="${btnBg}" textColor="${btnText}"></menutech-orders>
                         </div>
                         ${item.has_reservation ? `
                         <div class="col-12">
@@ -227,11 +232,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             if (item.order_url || item.reservation_url || sWebsite) {
                 actionHtml = `
-                    <div class="menutech-container shadow-sm border">
-                        <div class="d-grid gap-2">
-                            ${item.order_url ? `<a href="${escapeHtml(item.order_url)}" target="_blank" class="btn btn-warning fw-bold rounded-pill py-2"><i class="bi bi-bag-check me-2"></i>Ordena Ahora</a>` : ''}
-                            ${item.reservation_url ? `<a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-info text-white fw-bold rounded-pill py-2"><i class="bi bi-calendar-event me-2"></i>Reserva Mesa</a>` : ''}
-                            ${sWebsite ? `<a href="${sWebsite}" target="_blank" class="btn btn-outline-primary fw-bold rounded-pill py-2"><i class="bi bi-globe me-2"></i>Ver Menú / Sitio Web</a>` : ''}
+                    <div class="menutech-container shadow-sm border-0 bg-light-subtle rounded-4 p-4">
+                         <h6 class="fw-bold mb-4 text-center opacity-75"><i class="bi bi-link-45deg me-2"></i>Enlaces Directos</h6>
+                        <div class="d-grid gap-3">
+                            ${item.order_url ? `<a href="${escapeHtml(item.order_url)}" target="_blank" class="btn fw-bold rounded-pill py-3 shadow-sm transition-all" style="background-color: ${btnBg}; color: ${btnText}; border: none;"><i class="bi bi-bag-check me-2"></i>Ordena Ahora</a>` : ''}
+                            ${item.reservation_url ? `<a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-info text-white fw-bold rounded-pill py-3 shadow-sm transition-all"><i class="bi bi-calendar-event me-2"></i>Reserva Mesa</a>` : ''}
+                            ${sWebsite ? `<a href="${sWebsite}" target="_blank" class="btn btn-outline-primary fw-bold rounded-pill py-3 transition-all"><i class="bi bi-globe me-2"></i>Ver Menú / Sitio Web</a>` : ''}
                         </div>
                     </div>
                 `;
@@ -286,6 +292,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
 
         menuModal.show();
+
+        // Re-initialize Menutech if scripts are present
+        if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
+            window.MenutechUI.init();
+        }
     }
 
     searchBtn.addEventListener('click', () => {
