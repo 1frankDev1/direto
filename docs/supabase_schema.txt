@@ -5,6 +5,10 @@
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS cuid TEXT;
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS ruid TEXT;
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS has_reservation BOOLEAN DEFAULT FALSE;
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS order_bg_color TEXT DEFAULT '#f2a04a';
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS order_text_color TEXT DEFAULT '#ffffff';
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS res_bg_color TEXT DEFAULT '#2f4854';
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS res_text_color TEXT DEFAULT '#ffffff';
 
 -- 2. Create the directory_users table for user management
 CREATE TABLE IF NOT EXISTS directory_users (

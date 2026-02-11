@@ -202,28 +202,6 @@
                         </div>
                     </div>
 
-                    <!-- Button Customization -->
-                    <div class="form-section animate-fade-in delay-2">
-                        <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-palette me-2"></i>Diseño de Botones</h5>
-                        <p class="small text-muted mb-4">Personaliza los colores de los botones de acción en tu tarjeta de negocio.</p>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Color de Fondo (Botón Principal)</label>
-                                <div class="d-flex align-items-center">
-                                    <input type="color" id="btnBgColor" class="form-control form-control-color me-3" value="#f1c40f" title="Elige un color">
-                                    <input type="text" id="btnBgText" class="form-control" value="#f1c40f" placeholder="#f1c40f">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Color de Texto (Botón Principal)</label>
-                                <div class="d-flex align-items-center">
-                                    <input type="color" id="btnTextColor" class="form-control form-control-color me-3" value="#ffffff" title="Elige un color">
-                                    <input type="text" id="btnTextText" class="form-control" value="#ffffff" placeholder="#ffffff">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Restaurant Options -->
                     <div class="form-section animate-fade-in delay-2" id="restaurantFields" style="display: none;">
                         <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-egg-fried me-2"></i>Opciones de Restaurante</h5>
@@ -235,6 +213,44 @@
                             <div class="col-md-6">
                                 <label class="form-label">RUID (Menutech)</label>
                                 <input type="text" id="bizRuid" class="form-control" placeholder="010d211a-...">
+                            </div>
+
+                            <!-- Menutech Orders Button Design -->
+                            <div class="col-md-12 mt-2">
+                                <h6 class="fw-bold small text-muted text-uppercase mb-3">Botón Órdenes en Línea</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color de Fondo</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="color" id="orderBgColor" class="form-control form-control-color me-3" value="#f2a04a" title="Elige un color">
+                                    <input type="text" id="orderBgText" class="form-control" value="#f2a04a" placeholder="#f2a04a">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color de Texto</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="color" id="orderTextColor" class="form-control form-control-color me-3" value="#ffffff" title="Elige un color">
+                                    <input type="text" id="orderTextText" class="form-control" value="#ffffff" placeholder="#ffffff">
+                                </div>
+                            </div>
+
+                            <!-- Menutech Reservations Button Design -->
+                            <div class="col-md-12 mt-3">
+                                <h6 class="fw-bold small text-muted text-uppercase mb-3">Botón Reservaciones</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color de Fondo</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="color" id="resBgColor" class="form-control form-control-color me-3" value="#2f4854" title="Elige un color">
+                                    <input type="text" id="resBgText" class="form-control" value="#2f4854" placeholder="#2f4854">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color de Texto</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="color" id="resTextColor" class="form-control form-control-color me-3" value="#ffffff" title="Elige un color">
+                                    <input type="text" id="resTextText" class="form-control" value="#ffffff" placeholder="#ffffff">
+                                </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-check form-switch mt-2">
@@ -351,11 +367,18 @@
             reader.readAsDataURL(file);
         }
 
-        // Color sync
-        document.getElementById('btnBgColor').oninput = (e) => document.getElementById('btnBgText').value = e.target.value.toUpperCase();
-        document.getElementById('btnBgText').oninput = (e) => document.getElementById('btnBgColor').value = e.target.value;
-        document.getElementById('btnTextColor').oninput = (e) => document.getElementById('btnTextText').value = e.target.value.toUpperCase();
-        document.getElementById('btnTextText').oninput = (e) => document.getElementById('btnTextColor').value = e.target.value;
+        // Color sync helpers
+        function setupColorSync(pickerId, textId) {
+            const picker = document.getElementById(pickerId);
+            const text = document.getElementById(textId);
+            picker.oninput = (e) => text.value = e.target.value.toUpperCase();
+            text.oninput = (e) => picker.value = e.target.value;
+        }
+
+        setupColorSync('orderBgColor', 'orderBgText');
+        setupColorSync('orderTextColor', 'orderTextText');
+        setupColorSync('resBgColor', 'resBgText');
+        setupColorSync('resTextColor', 'resTextText');
 
         function ensureHttps(url) {
             if (!url) return '';
@@ -435,11 +458,13 @@
                     address_detail: document.getElementById('bizAddress').value,
                     logo_url: logoUrl,
                     website: ensureHttps(document.getElementById('bizWebsite').value),
-                    btn_bg_color: document.getElementById('btnBgColor').value,
-                    btn_text_color: document.getElementById('btnTextColor').value,
                     is_restaurant: bizCategory.value === 'Restaurantes',
                     cuid: document.getElementById('bizCuid').value,
                     ruid: document.getElementById('bizRuid').value,
+                    order_bg_color: document.getElementById('orderBgColor').value,
+                    order_text_color: document.getElementById('orderTextColor').value,
+                    res_bg_color: document.getElementById('resBgColor').value,
+                    res_text_color: document.getElementById('resTextColor').value,
                     has_reservation: document.getElementById('hasReservation').checked,
                     order_url: ensureHttps(document.getElementById('bizOrder').value),
                     reservation_url: ensureHttps(document.getElementById('bizReservation').value),

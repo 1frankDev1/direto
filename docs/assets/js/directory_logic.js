@@ -171,9 +171,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </p>
 
                             <div class="mt-auto">
-                                <button class="btn btn-custom-primary w-100 view-details-btn" data-id="${item.id || index}">
-                                    <i class="bi ${mainButtonIcon} me-2"></i>${mainButtonText}
-                                </button>
+                                ${isRestaurant && item.cuid && item.ruid ? `
+                                    <div class="menutech-card-buttons d-grid gap-2">
+                                        <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="${item.order_text_color || '#ffffff'}" background="${item.order_bg_color || '#f2a04a'}" textColor="${item.order_text_color || '#ffffff'}"></menutech-orders>
+                                        ${item.has_reservation ? `
+                                            <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="${item.res_text_color || '#ffffff'}" background="${item.res_bg_color || '#2f4854'}" textColor="${item.res_text_color || '#ffffff'}"></menutech-reservations>
+                                        ` : ''}
+                                        <button class="btn btn-outline-secondary btn-sm rounded-pill mt-1 view-details-btn" data-id="${item.id || index}">
+                                            <i class="bi bi-info-circle me-1"></i>Detalles
+                                        </button>
+                                    </div>
+                                ` : `
+                                    <button class="btn btn-custom-primary w-100 view-details-btn" data-id="${item.id || index}">
+                                        <i class="bi ${mainButtonIcon} me-2"></i>${mainButtonText}
+                                    </button>
+                                `}
                             </div>
                         </div>
                     </div>
@@ -187,6 +199,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             resultsContainer.classList.remove('results-hidden');
+
+            // Initialize Menutech components on cards
+            if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
+                setTimeout(() => window.MenutechUI.init(), 100);
+            }
         }, 300);
     }
 
@@ -220,11 +237,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <h6 class="fw-bold mb-4 text-center opacity-75"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas</h6>
                     <div class="row g-3">
                         <div class="col-12">
-                            <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="${btnText}" background="${btnBg}" textColor="${btnText}"></menutech-orders>
+                            <menutech-orders cuid="${item.cuid}" ruid="${item.ruid}" color="${item.order_text_color || '#ffffff'}" background="${item.order_bg_color || '#f2a04a'}" textColor="${item.order_text_color || '#ffffff'}"></menutech-orders>
                         </div>
                         ${item.has_reservation ? `
                         <div class="col-12">
-                            <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="#ffffff" background="#2f4854" textColor="#ffffff"></menutech-reservations>
+                            <menutech-reservations cuid="${item.cuid}" ruid="${item.ruid}" color="${item.res_text_color || '#ffffff'}" background="${item.res_bg_color || '#2f4854'}" textColor="${item.res_text_color || '#ffffff'}"></menutech-reservations>
                         </div>` : ''}
                     </div>
                 </div>
