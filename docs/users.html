@@ -78,12 +78,14 @@
                 <span class="fw-bold">Admin Panel</span>
             </a>
             <div class="ms-auto d-flex align-items-center">
-                <div class="theme-switcher-bar d-flex align-items-center me-3">
+                <div id="authButtons" class="me-3">
+                    <!-- Unified User Menu -->
+                </div>
+                <div class="theme-switcher-bar d-flex align-items-center">
                     <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
                     <button class="theme-btn" data-theme-value="dark" title="Modo Oscuro"><i class="bi bi-moon-stars-fill"></i></button>
                     <button class="theme-btn" data-theme-value="medio" title="Modo Suave"><i class="bi bi-palette-fill"></i></button>
                 </div>
-                <button class="btn btn-outline-danger btn-sm" onclick="logout()">Cerrar Sesión</button>
             </div>
         </div>
     </nav>
@@ -180,6 +182,10 @@
         const userModal = new bootstrap.Modal(document.getElementById('userModal'));
         const userForm = document.getElementById('userForm');
 
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUserMenu('authButtons');
+        });
+
         // Auth Protection
         const sessionUser = getLoggedInUser();
         if (!sessionUser || sessionUser.role !== 'Admin') {
@@ -204,8 +210,9 @@
                 data.forEach(u => {
                     const tr = document.createElement('tr');
                     const isActive = u.is_active;
-                    const businessNames = u.businesses && u.businesses.length > 0
-                        ? u.businesses.map(b => b.name).join(', ')
+                    const businessNamesStr = u.businesses?.map(b => b.name).join(', ') || '';
+                    const businessHtml = u.businesses && u.businesses.length > 0
+                        ? escapeHtml(businessNamesStr)
                         : '<span class="text-muted small">Sin negocios</span>';
 
                     tr.innerHTML = `
@@ -215,13 +222,13 @@
                                     <i class="bi bi-person-fill fs-5"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-bold">${u.name}</div>
+                                    <div class="fw-bold">${escapeHtml(u.name)}</div>
                                     <div class="small text-muted" style="font-size: 0.7rem;">ID: ${u.id.substring(0,8)}</div>
                                 </div>
                             </div>
                         </td>
                         <td class="border-0">
-                           <code class="bg-light p-1 rounded small">${u.password}</code>
+                           <code class="bg-light p-1 rounded small">${escapeHtml(u.password)}</code>
                         </td>
                         <td class="border-0">
                             <span class="badge-role ${u.role === 'Admin' ? 'bg-danger bg-opacity-10 text-danger' : 'bg-success bg-opacity-10 text-success'}">
@@ -229,35 +236,52 @@
                             </span>
                         </td>
                         <td class="border-0">
-                            <div class="small text-truncate" style="max-width: 150px;" title="${u.businesses?.map(b=>b.name).join(', ')}">
-                                ${businessNames}
+                            <div class="small text-truncate" style="max-width: 150px;" title="${escapeHtml(businessNamesStr)}">
+                                ${businessHtml}
                             </div>
                         </td>
                         <td class="border-0 fw-bold text-muted">${u.max_businesses}</td>
                         <td class="border-0">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" ${isActive ? 'checked' : ''}
-                                    onchange="toggleUserStatus('${u.id}', this.checked)"
+                                <input class="form-check-input status-toggle" type="checkbox" data-id="${u.id}" ${isActive ? 'checked' : ''}
                                     ${u.id === sessionUser.id ? 'disabled' : ''}>
                                 <label class="form-check-label small ms-1">${isActive ? 'Activo' : 'Suspendido'}</label>
                             </div>
                         </td>
                         <td class="border-0 text-center">
-                            <button class="action-btn" title="Editar Datos" onclick="openUserModal('${u.id}', '${u.name}', '${u.role}', ${u.max_businesses})">
+                            <button class="action-btn edit-user" title="Editar Datos"
+                                data-id="${u.id}" data-name="${escapeHtml(u.name)}" data-role="${u.role}" data-limit="${u.max_businesses}">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
-                            <button class="action-btn" title="Registrar Negocio" onclick="window.location.href='./directorymap.html?owner_id=${u.id}'">
+                            <button class="action-btn register-biz" title="Registrar Negocio" data-id="${u.id}">
                                 <i class="bi bi-plus-circle-dotted"></i>
                             </button>
-                            <button class="action-btn" title="Gestionar Grid" onclick="window.location.href='./admin.html?owner_id=${u.id}'">
+                            <button class="action-btn manage-grid" title="Gestionar Grid" data-id="${u.id}">
                                 <i class="bi bi-grid-3x3-gap"></i>
                             </button>
-                            <button class="action-btn text-danger" title="Eliminar" onclick="deleteUser('${u.id}')" ${u.id === sessionUser.id ? 'disabled' : ''}>
+                            <button class="action-btn text-danger delete-user" title="Eliminar" data-id="${u.id}" ${u.id === sessionUser.id ? 'disabled' : ''}>
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </td>
                     `;
                     tbody.appendChild(tr);
+                });
+
+                // Attach event listeners
+                tbody.querySelectorAll('.status-toggle').forEach(el => {
+                    el.onchange = () => toggleUserStatus(el.dataset.id, el.checked);
+                });
+                tbody.querySelectorAll('.edit-user').forEach(el => {
+                    el.onclick = () => openUserModal(el.dataset.id, el.dataset.name, el.dataset.role, el.dataset.limit);
+                });
+                tbody.querySelectorAll('.register-biz').forEach(el => {
+                    el.onclick = () => window.location.href=`./directorymap.html?owner_id=${el.dataset.id}`;
+                });
+                tbody.querySelectorAll('.manage-grid').forEach(el => {
+                    el.onclick = () => window.location.href=`./admin.html?owner_id=${el.dataset.id}`;
+                });
+                tbody.querySelectorAll('.delete-user').forEach(el => {
+                    el.onclick = () => deleteUser(el.dataset.id);
                 });
             } catch (err) {
                 console.error(err);

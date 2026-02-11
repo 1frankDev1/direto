@@ -61,6 +61,19 @@ function getLoggedInUser() {
     return session ? JSON.parse(session) : null;
 }
 
+/**
+ * Basic HTML escaping to prevent XSS
+ */
+function escapeHtml(unsafe) {
+    if (!unsafe) return "";
+    return unsafe.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function logout() {
     sessionStorage.removeItem('tragalero_user');
     window.location.href = './login.html';
@@ -77,4 +90,83 @@ function checkAccess(roleRequired) {
         return null;
     }
     return user;
+}
+
+/**
+ * Renders the unified circular user menu
+ * Expects a container with id "userMenuContainer" or similar
+ */
+function renderUserMenu(containerId = 'authButtons') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const user = getLoggedInUser();
+
+    if (!user) {
+        container.innerHTML = `
+            <div class="user-menu-wrapper">
+                <button class="user-avatar-btn shadow-sm" style="background: rgba(0,0,0,0.05); color: var(--bs-body-color);" id="userMenuBtn">
+                    <i class="bi bi-person"></i>
+                </button>
+                <div class="user-dropdown-menu" id="userDropdown">
+                    <div class="user-info-header text-center">
+                        <div class="fw-bold text-muted">Invitado</div>
+                        <div class="small text-muted">No has iniciado sesión</div>
+                    </div>
+                    <a href="./login.html" class="user-dropdown-item">
+                        <i class="bi bi-box-arrow-in-right"></i>Iniciar Sesión
+                    </a>
+                    <a href="./restaurantapp.html" class="user-dropdown-item">
+                        <i class="bi bi-search"></i>Explorar Directorio
+                    </a>
+                </div>
+            </div>
+        `;
+    } else {
+
+        container.innerHTML = `
+            <div class="user-menu-wrapper">
+                <button class="user-avatar-btn shadow-sm" id="userMenuBtn">
+                    <i class="bi bi-person-fill"></i>
+                </button>
+                <div class="user-dropdown-menu" id="userDropdown">
+                    <div class="user-info-header text-center">
+                        <div class="fw-bold text-primary">${user.name}</div>
+                        <div class="small text-muted">${user.role}</div>
+                    </div>
+                    <a href="./admin.html" class="user-dropdown-item">
+                        <i class="bi bi-grid-fill"></i>Mi Panel
+                    </a>
+                    <a href="./directorymap.html" class="user-dropdown-item">
+                        <i class="bi bi-plus-circle"></i>Nuevo Negocio
+                    </a>
+                    ${user.role === 'Admin' ? `
+                        <a href="./users.html" class="user-dropdown-item">
+                            <i class="bi bi-people-fill"></i>Usuarios
+                        </a>
+                    ` : ''}
+                    <hr class="my-2 opacity-10">
+                    <a href="#" onclick="logout(); return false;" class="user-dropdown-item logout">
+                        <i class="bi bi-box-arrow-right"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
+    const btn = document.getElementById('userMenuBtn');
+    const dropdown = document.getElementById('userDropdown');
+
+    if (btn && dropdown) {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        };
+
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target) && e.target !== btn) {
+                dropdown.classList.remove('show');
+            }
+        });
+    }
 }
