@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentCategory = '';
     let renderTimeout;
     let allDirectoryData = [];
+    let currentFilteredData = [];
 
     // Fetch data from Supabase + Local
     async function loadAllData() {
@@ -104,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTimeout = setTimeout(() => {
             resultsContainer.innerHTML = '';
 
-            const filtered = allDirectoryData.filter(item => {
+            currentFilteredData = allDirectoryData.filter(item => {
                 const searchLower = filterText.toLowerCase();
                 const matchesText = !filterText ||
                     item.name.toLowerCase().includes(searchLower) ||
@@ -120,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return matchesText && matchesCity && matchesCategory;
             });
 
-            if (filtered.length === 0) {
+            if (currentFilteredData.length === 0) {
                 resultsContainer.innerHTML = `
                     <div class="col-12 text-center py-5 animate-fade-in">
                         <i class="bi bi-search display-1 text-muted opacity-25"></i>
@@ -130,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            filtered.forEach((item, index) => {
+            currentFilteredData.forEach((item, index) => {
                 const col = document.createElement('div');
                 col.className = 'col-md-6 col-lg-4';
 
@@ -147,12 +148,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Social Media icons
                 let socialHtml = '';
-                if (item.social_media) {
-                    if (item.social_media.facebook) socialHtml += `<span class="text-primary ms-2"><i class="bi bi-facebook"></i></span>`;
+                if (item.social_media && item.social_media.facebook) {
+                    socialHtml += `<span class="text-primary ms-2"><i class="bi bi-facebook"></i></span>`;
                 }
 
+                // New Card Design: Single Purple Button
+                const buttonText = isRestaurant ? 'Ver Menú' : 'Ver Detalles';
+
                 col.innerHTML = `
-                    <div class="card h-100 restaurant-card border-0 shadow-sm overflow-hidden animate-fade-in" style="animation-delay: ${delay}s">
+                    <div class="card h-100 restaurant-card border-0 shadow-sm overflow-hidden animate-fade-in" style="animation-delay: ${delay}s; cursor: pointer;">
                         <div class="card-img-wrapper position-relative" style="background: white; padding: 25px; height: 180px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(0,0,0,0.02);">
                             <img src="${sLogo}" alt="${sName}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                             <span class="badge position-absolute top-0 start-0 m-3" style="background: #7c83fd; color: white; border-radius: 10px; padding: 6px 12px; font-weight: 600; font-size: 0.7rem; text-transform: uppercase;">${sCategory}</span>
@@ -168,45 +172,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </p>
 
                             <div class="mt-auto">
-                                ${isRestaurant && item.cuid && item.ruid ? `
-                                    <div class="menutech-card-buttons d-grid gap-3">
-                                        <menutech-orders
-                                            cuid="${item.cuid}"
-                                            ruid="${item.ruid}"
-                                            color="${item.order_text_color || '#ffffff'}"
-                                            background="${item.order_bg_color || '#f2a04a'}"
-                                            textColor="${item.order_text_color || '#ffffff'}"
-                                            data-glf-cuid="${item.cuid}"
-                                            data-glf-ruid="${item.ruid}"
-                                        ></menutech-orders>
-                                        ${item.has_reservation ? `
-                                            <menutech-reservations
-                                                cuid="${item.cuid}"
-                                                ruid="${item.ruid}"
-                                                color="${item.res_text_color || '#ffffff'}"
-                                                background="${item.res_bg_color || '#2f4854'}"
-                                                textColor="${item.res_text_color || '#ffffff'}"
-                                                data-glf-cuid="${item.cuid}"
-                                                data-glf-ruid="${item.ruid}"
-                                                data-glf-reservation="true"
-                                            ></menutech-reservations>
-                                        ` : ''}
-                                        <button class="btn btn-outline-secondary w-100 rounded-pill py-2 mt-1 view-details-btn" style="border-color: #ddd; color: #666; font-size: 0.9rem;" data-id="${item.id || index}">
-                                            <i class="bi bi-info-circle me-1"></i>Detalles
-                                        </button>
-                                    </div>
-                                ` : `
-                                    <button class="btn btn-custom-primary w-100 rounded-pill py-3 view-details-btn" style="background: #7c83fd; color: white;" data-id="${item.id || index}">
-                                        <i class="bi bi-qr-code-scan me-2"></i>Ver Menú
-                                    </button>
-                                `}
+                                <button class="btn btn-custom-primary w-100 rounded-pill py-3" style="background: #7c83fd !important; color: white; border: none;">
+                                    <i class="bi bi-qr-code-scan me-2"></i>${buttonText}
+                                </button>
                             </div>
                         </div>
                     </div>
                 `;
 
-                col.querySelector('.view-details-btn').addEventListener('click', () => {
-                    openBusinessCard(item);
+                // Add click event to the whole card
+                col.querySelector('.restaurant-card').addEventListener('click', (e) => {
+                    // Prevent opening modal if clicking social icons (if links are added later)
+                    if (!e.target.closest('a') && !e.target.closest('.social-link-icon')) {
+                        showBusinessDetails(item.id || item.name);
+                    }
                 });
 
                 resultsContainer.appendChild(col);
@@ -214,22 +193,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             resultsContainer.classList.remove('results-hidden');
 
-            // Initialize Menutech components on cards
-            const tryInitMenutech = () => {
-                if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
-                    window.MenutechUI.init();
-                    // Double check after a moment
-                    setTimeout(() => window.MenutechUI.init(), 500);
-                } else {
-                    // Try to wait for script
-                    setTimeout(tryInitMenutech, 300);
-                }
-            };
-            tryInitMenutech();
+            // Force library initialization
+            forceLibraryInit();
         }, 300);
     }
 
-    function openBusinessCard(item) {
+    function forceLibraryInit() {
+        const hasMenutech = window.MenutechUI && typeof window.MenutechUI.init === 'function';
+        const hasGlf = typeof window.glfBindButtons === 'function';
+
+        if (hasMenutech) window.MenutechUI.init();
+        if (hasGlf) window.glfBindButtons();
+
+        // Retry for dynamic/delayed rendering
+        setTimeout(() => {
+            if (hasMenutech) window.MenutechUI.init();
+            if (hasGlf) window.glfBindButtons();
+        }, 500);
+    }
+
+    window.showBusinessDetails = function(id) {
+        const item = allDirectoryData.find(b => (b.id && b.id == id) || b.name == id);
+        if (!item) return;
+
+        const isRestaurant = item.category === 'Restaurantes' || item.is_restaurant;
         const sName = escapeHtml(item.name);
         const sLogo = escapeHtml(item.logo);
         const sCity = escapeHtml(item.city);
@@ -243,28 +230,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Social Media
         let socialHtml = '';
         if (item.social_media) {
-            if (item.social_media.facebook) socialHtml += `<a href="${escapeHtml(item.social_media.facebook)}" target="_blank" class="social-link-icon"><i class="bi bi-facebook"></i></a>`;
-            if (item.social_media.instagram) socialHtml += `<a href="${escapeHtml(item.social_media.instagram)}" target="_blank" class="social-link-icon"><i class="bi bi-instagram"></i></a>`;
+            if (item.social_media.facebook) socialHtml += `<a href="${escapeHtml(item.social_media.facebook)}" target="_blank" class="social-link-icon me-2 text-primary fs-4"><i class="bi bi-facebook"></i></a>`;
+            if (item.social_media.instagram) socialHtml += `<a href="${escapeHtml(item.social_media.instagram)}" target="_blank" class="social-link-icon me-2 text-danger fs-4"><i class="bi bi-instagram"></i></a>`;
             if (item.social_media.whatsapp) {
                 const waNum = item.social_media.whatsapp.replace(/\D/g, '');
-                socialHtml += `<a href="https://wa.me/${waNum}" target="_blank" class="social-link-icon"><i class="bi bi-whatsapp"></i></a>`;
+                socialHtml += `<a href="https://wa.me/${waNum}" target="_blank" class="social-link-icon text-success fs-4"><i class="bi bi-whatsapp"></i></a>`;
             }
         }
 
-        // Menutech & Orders
+        // Action Buttons (Menutech & Gloria Food)
         let actionHtml = '';
-        if (item.cuid && item.ruid) {
+        if (isRestaurant && item.cuid && item.ruid) {
             actionHtml = `
-                <div class="menutech-container shadow-sm border-0 bg-light-subtle rounded-4 p-4">
-                    <h6 class="fw-bold mb-4 text-center opacity-75"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas</h6>
+                <div class="menutech-container shadow-sm border-0 bg-light-subtle rounded-4 p-4 mt-4">
+                    <h6 class="fw-bold mb-3 text-center opacity-75">
+                        <i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas
+                    </h6>
                     <div class="row g-3">
+                        <!-- Botones apilados verticalmente (col-12) -->
                         <div class="col-12">
                             <menutech-orders
                                 cuid="${item.cuid}"
                                 ruid="${item.ruid}"
-                                color="${item.order_text_color || '#ffffff'}"
-                                background="${item.order_bg_color || '#f2a04a'}"
-                                textColor="${item.order_text_color || '#ffffff'}"
+                                button-bg="${item.order_bg_color || '#f2a04a'}"
+                                button-color="${item.order_text_color || '#ffffff'}"
                                 data-glf-cuid="${item.cuid}"
                                 data-glf-ruid="${item.ruid}"
                             ></menutech-orders>
@@ -274,9 +263,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <menutech-reservations
                                 cuid="${item.cuid}"
                                 ruid="${item.ruid}"
-                                color="${item.res_text_color || '#ffffff'}"
-                                background="${item.res_bg_color || '#2f4854'}"
-                                textColor="${item.res_text_color || '#ffffff'}"
+                                button-bg="${item.res_bg_color || '#2f4854'}"
+                                button-color="${item.res_text_color || '#ffffff'}"
                                 data-glf-cuid="${item.cuid}"
                                 data-glf-ruid="${item.ruid}"
                                 data-glf-reservation="true"
@@ -285,26 +273,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 </div>
             `;
-        } else {
-            if (item.order_url || item.reservation_url || sWebsite) {
-                actionHtml = `
-                    <div class="menutech-container shadow-sm border-0 bg-light-subtle rounded-4 p-4">
-                         <h6 class="fw-bold mb-4 text-center opacity-75"><i class="bi bi-link-45deg me-2"></i>Enlaces Directos</h6>
-                        <div class="d-grid gap-3">
-                            ${item.order_url ? `<a href="${escapeHtml(item.order_url)}" target="_blank" class="btn fw-bold rounded-pill py-3 shadow-sm transition-all" style="background-color: ${btnBg}; color: ${btnText}; border: none;"><i class="bi bi-bag-check me-2"></i>Ordena Ahora</a>` : ''}
-                            ${item.reservation_url ? `<a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-info text-white fw-bold rounded-pill py-3 shadow-sm transition-all"><i class="bi bi-calendar-event me-2"></i>Reserva Mesa</a>` : ''}
-                            ${sWebsite ? `<a href="${sWebsite}" target="_blank" class="btn btn-outline-primary fw-bold rounded-pill py-3 transition-all"><i class="bi bi-globe me-2"></i>Ver Menú / Sitio Web</a>` : ''}
-                        </div>
+        } else if (item.order_url || item.reservation_url || sWebsite) {
+            actionHtml = `
+                <div class="menutech-container shadow-sm border-0 bg-light-subtle rounded-4 p-4 mt-4">
+                     <h6 class="fw-bold mb-3 text-center opacity-75"><i class="bi bi-link-45deg me-2"></i>Enlaces Directos</h6>
+                    <div class="d-grid gap-3">
+                        ${item.order_url ? `<a href="${escapeHtml(item.order_url)}" target="_blank" class="btn fw-bold rounded-pill py-3 shadow-sm" style="background-color: ${btnBg}; color: ${btnText}; border: none;"><i class="bi bi-bag-check me-2"></i>Ordena Ahora</a>` : ''}
+                        ${item.reservation_url ? `<a href="${escapeHtml(item.reservation_url)}" target="_blank" class="btn btn-info text-white fw-bold rounded-pill py-3 shadow-sm"><i class="bi bi-calendar-event me-2"></i>Reserva Mesa</a>` : ''}
+                        ${sWebsite ? `<a href="${sWebsite}" target="_blank" class="btn btn-outline-primary fw-bold rounded-pill py-3"><i class="bi bi-globe me-2"></i>Ver Menú / Sitio Web</a>` : ''}
                     </div>
-                `;
-            }
+                </div>
+            `;
         }
 
         modalContent.innerHTML = `
-            <div class="business-card-header">
+            <div class="business-card-header text-center p-4" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; position: relative; border-radius: 1.5rem 1.5rem 0 0;">
                 <button type="button" class="btn-close position-absolute top-0 end-0 m-4 shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-                <img src="${sLogo}" alt="${sName}" class="business-logo-lg">
-                <h2 class="fw-bold mb-1">${sName}</h2>
+                <img src="${sLogo}" alt="${sName}" class="business-logo-lg mb-3" style="max-height: 120px; max-width: 100%; object-fit: contain;">
+                <h2 class="fw-bold mb-1" style="color: #1e293b;">${sName}</h2>
                 <div class="badge bg-primary px-3 py-2 mb-3 rounded-pill">${sCategory}</div>
                 <div class="d-flex justify-content-center">
                     ${socialHtml}
@@ -349,17 +335,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         menuModal.show();
 
-        // Re-initialize Menutech if scripts are present
-        const initModalMenutech = () => {
-            if (window.MenutechUI && typeof window.MenutechUI.init === 'function') {
-                window.MenutechUI.init();
-                setTimeout(() => window.MenutechUI.init(), 300);
-            } else {
-                setTimeout(initModalMenutech, 200);
-            }
-        };
-        initModalMenutech();
-    }
+        // Ensure libraries bind to the new modal content
+        forceLibraryInit();
+    };
 
     const handleSearch = (val) => {
         if (searchInput) searchInput.value = val;
