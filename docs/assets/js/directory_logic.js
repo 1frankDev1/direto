@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentCategory = '';
     let renderTimeout;
     let allDirectoryData = [];
-    let currentFilteredData = [];
 
     // Fetch data from Supabase + Local
     async function loadAllData() {
@@ -105,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTimeout = setTimeout(() => {
             resultsContainer.innerHTML = '';
 
-            currentFilteredData = allDirectoryData.filter(item => {
+            const filtered = allDirectoryData.filter(item => {
                 const searchLower = filterText.toLowerCase();
                 const matchesText = !filterText ||
                     item.name.toLowerCase().includes(searchLower) ||
@@ -121,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return matchesText && matchesCity && matchesCategory;
             });
 
-            if (currentFilteredData.length === 0) {
+            if (filtered.length === 0) {
                 resultsContainer.innerHTML = `
                     <div class="col-12 text-center py-5 animate-fade-in">
                         <i class="bi bi-search display-1 text-muted opacity-25"></i>
@@ -131,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            currentFilteredData.forEach((item, index) => {
+            filtered.forEach((item, index) => {
                 const col = document.createElement('div');
                 col.className = 'col-md-6 col-lg-4';
 
@@ -146,12 +145,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sAddress = escapeHtml(item.address);
                 const sLogo = escapeHtml(item.logo);
 
-                // Social Media icons
-                let socialHtml = '';
-                if (item.social_media && item.social_media.facebook) {
-                    socialHtml += `<span class="text-primary ms-2"><i class="bi bi-facebook"></i></span>`;
-                }
-
                 // New Card Design: Single Purple Button
                 const buttonText = isRestaurant ? 'Ver Menú' : 'Ver Detalles';
 
@@ -165,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="card-body d-flex flex-column p-4">
                             <div class="d-flex justify-content-between align-items-start mb-1">
                                 <h4 class="fw-bold mb-0" style="color: #4338ca; font-size: 1.4rem;">${sName}</h4>
-                                <div class="fs-5">${socialHtml}</div>
                             </div>
                             <p class="text-muted mb-4" style="font-size: 0.95rem;">
                                 <i class="bi bi-geo-alt-fill me-1" style="color: #7c83fd;"></i>${sState} ${sAddress}
@@ -182,7 +174,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Add click event to the whole card
                 col.querySelector('.restaurant-card').addEventListener('click', (e) => {
-                    // Prevent opening modal if clicking social icons (if links are added later)
+                    // Prevent opening modal if clicking social icons
                     if (!e.target.closest('a') && !e.target.closest('.social-link-icon')) {
                         showBusinessDetails(item.id || item.name);
                     }
@@ -247,13 +239,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas
                     </h6>
                     <div class="row g-3">
-                        <!-- Botones apilados verticalmente (col-12) -->
                         <div class="col-12">
                             <menutech-orders
                                 cuid="${item.cuid}"
                                 ruid="${item.ruid}"
-                                button-bg="${item.order_bg_color || '#f2a04a'}"
-                                button-color="${item.order_text_color || '#ffffff'}"
+                                background="${item.order_bg_color || '#f2a04a'}"
+                                color="${item.order_text_color || '#ffffff'}"
+                                textColor="${item.order_text_color || '#ffffff'}"
                                 data-glf-cuid="${item.cuid}"
                                 data-glf-ruid="${item.ruid}"
                             ></menutech-orders>
@@ -263,8 +255,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <menutech-reservations
                                 cuid="${item.cuid}"
                                 ruid="${item.ruid}"
-                                button-bg="${item.res_bg_color || '#2f4854'}"
-                                button-color="${item.res_text_color || '#ffffff'}"
+                                background="${item.res_bg_color || '#2f4854'}"
+                                color="${item.res_text_color || '#ffffff'}"
+                                textColor="${item.res_text_color || '#ffffff'}"
                                 data-glf-cuid="${item.cuid}"
                                 data-glf-ruid="${item.ruid}"
                                 data-glf-reservation="true"
@@ -334,8 +327,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
 
         menuModal.show();
-
-        // Ensure libraries bind to the new modal content
         forceLibraryInit();
     };
 
