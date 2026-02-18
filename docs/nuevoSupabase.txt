@@ -1,0 +1,87 @@
+# Configuración de Nuevo Supabase - Tragalero
+
+## 1. Configuración del Proyecto
+Copia estas credenciales en tu archivo `docs/assets/js/supabase_logic.js` una vez que tengas la nueva cuenta.
+
+**URL:** https://cnoiesjjupubkrgyhbof.supabase.co
+**Anon Key:** eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNub2llc2pqdXB1YmtyZ3loYm9mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2MjYxMjIsImV4cCI6MjA4NjIwMjEyMn0.GZ3gGs7Wk4IJm0Ebp-3bAUlFtKHPV6jTpLATacLcJhA
+
+---
+
+## 2. Script SQL Inicial
+Copia y pega este script en el **SQL Editor** de Supabase para crear las tablas necesarias.
+
+```sql
+-- 1. Crear tabla de usuarios
+CREATE TABLE IF NOT EXISTS directory_users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'User',
+    is_active BOOLEAN DEFAULT TRUE,
+    max_businesses INTEGER DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Crear tabla de negocios
+CREATE TABLE IF NOT EXISTS businesses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT,
+    category TEXT,
+    city TEXT,
+    state TEXT,
+    zip TEXT,
+    address_detail TEXT,
+    logo_url TEXT,
+    website TEXT,
+    social_media JSONB DEFAULT '{}'::jsonb,
+    hours JSONB DEFAULT '{}'::jsonb,
+    owner_id UUID REFERENCES directory_users(id),
+    is_visible BOOLEAN DEFAULT TRUE,
+    is_restaurant BOOLEAN DEFAULT FALSE,
+    cuid TEXT,
+    ruid TEXT,
+    has_reservation BOOLEAN DEFAULT FALSE,
+    order_bg_color TEXT DEFAULT '#f2a04a',
+    order_text_color TEXT DEFAULT '#ffffff',
+    res_bg_color TEXT DEFAULT '#2f4854',
+    res_text_color TEXT DEFAULT '#ffffff',
+    order_url TEXT,
+    reservation_url TEXT,
+    btn_bg_color TEXT DEFAULT '#f1c40f',
+    btn_text_color TEXT DEFAULT '#ffffff',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 3. Crear tabla para el Bento Grid
+CREATE TABLE IF NOT EXISTS bento_grid (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES directory_users(id) ON DELETE CASCADE,
+  label text NOT NULL,
+  link_url text,
+  col_span int DEFAULT 1,
+  row_span int DEFAULT 1,
+  bg_color text DEFAULT '#dcf0fa',
+  position int DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+-- 4. Insertar usuario administrador inicial
+INSERT INTO directory_users (name, password, role)
+VALUES ('Antonio', '123', 'Admin')
+ON CONFLICT (name) DO NOTHING;
+```
+
+---
+
+## 3. Configuración de Almacenamiento (Storage)
+1. Ve a la sección **Storage** en tu panel de Supabase.
+2. Crea un nuevo bucket llamado `logos`.
+3. Asegúrate de que el bucket sea **Público** (Public) para que las imágenes se puedan ver en el directorio.
+4. (Opcional) Configura las políticas de RLS para permitir la subida de archivos si es necesario, aunque por ahora el sistema está configurado para acceso simplificado.
+
+---
+
+## 4. Notas Adicionales
+- Si el sistema no reconoce nuevas columnas después de ejecutarlas, ve a **Settings > API** y presiona **Reload PostgREST schema**.
+- No se ha configurado Supabase Auth nativo todavía, el sistema sigue usando la tabla `directory_users` para la gestión manual de sesiones.
