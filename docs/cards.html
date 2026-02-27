@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Mi Tarjeta Digital - Tragalero</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./assets/css/pastel-theme.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card-container {
+            max-width: 500px;
+            margin: 20px auto;
+            background: var(--bs-body-bg);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .designer-panel {
+            background: rgba(var(--bs-primary-rgb), 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            height: 200px;
+            background: linear-gradient(135deg, #7c83fd, #96b9fd);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 40px;
+        }
+
+        .profile-pic-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            background: #eee;
+            position: absolute;
+            bottom: -60px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .profile-pic-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Social Icons */
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            transition: transform 0.2s;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        /* Portfolio */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .portfolio-item {
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #eee;
+            position: relative;
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-drop-zone {
+            border: 2px dashed rgba(var(--bs-primary-rgb), 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            background: rgba(var(--bs-primary-rgb), 0.02);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .upload-drop-zone:hover, .upload-drop-zone.dragover {
+            border-color: var(--bs-primary);
+            background: rgba(var(--bs-primary-rgb), 0.05);
+        }
+
+        .upload-drop-zone i {
+            font-size: 1.5rem;
+            color: var(--bs-primary);
+            opacity: 0.5;
+        }
+
+        /* Before/After Slider */
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 15px;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .comparison-slider .before-img,
+        .comparison-slider .after-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .comparison-slider .before-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comparison-slider .after-img {
+            width: 50%;
+            z-index: 2;
+            border-right: 3px solid white;
+        }
+
+        .comparison-slider .after-img img {
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            /* width will be set via JS to match slider container */
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: white;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 11;
+        }
+
+        /* QR Modal */
+        #qrCanvas {
+            max-width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container px-4">
+            <a class="navbar-brand d-flex align-items-center" href="./admin.html">
+                <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="40" class="me-2">
+                <span class="fw-bold">Tragalero</span>
+            </a>
+            <div class="ms-auto d-flex align-items-center">
+                <div id="authButtons" class="me-3">
+                    <!-- Unified User Menu -->
+                </div>
+                <div class="theme-switcher-bar d-flex align-items-center">
+                    <button class="theme-btn" data-theme-value="light" title="Modo Amarillo"><i class="bi bi-sun-fill"></i></button>
+                    <button class="theme-btn" data-theme-value="dark" title="Modo Oscuro"><i class="bi bi-moon-stars-fill"></i></button>
+                    <button class="theme-btn" data-theme-value="medio" title="Modo Suave"><i class="bi bi-palette-fill"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <div class="row">
+            <!-- Designer Controls -->
+            <div class="col-lg-5">
+                <div class="designer-panel animate-fade-in">
+                    <h4 class="fw-bold mb-4">Diseña tu Tarjeta</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Nombre</label>
+                        <input type="text" id="inputName" class="form-control" placeholder="Tu nombre">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Profesión / Bio</label>
+                        <textarea id="inputBio" class="form-control" rows="2" placeholder="Desarrollador, Fotógrafo..."></textarea>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="fw-bold small text-muted text-uppercase mb-3">Redes Sociales</h6>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <input type="text" id="inputWA" class="form-control form-control-sm" placeholder="WhatsApp (número)">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="inputIG" class="form-control form-control-sm" placeholder="Instagram (usuario)">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="inputFB" class="form-control form-control-sm" placeholder="Facebook (url)">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="inputWeb" class="form-control form-control-sm" placeholder="Sitio Web">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="fw-bold small text-muted text-uppercase mb-3">Portafolio</h6>
+                    <div class="upload-drop-zone" id="portfolioDropZone">
+                        <i class="bi bi-images mb-2 d-block"></i>
+                        <span class="small">Arrastra hasta 4 imágenes aquí</span>
+                        <input type="file" id="portfolioUpload" style="display:none;" multiple accept="image/*">
+                    </div>
+
+                    <hr>
+
+                    <h6 class="fw-bold small text-muted text-uppercase mb-3">Antes y Después</h6>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <div class="upload-drop-zone p-2" id="beforeDropZone">
+                                <i class="bi bi-image small d-block"></i>
+                                <span style="font-size: 0.7rem;">Antes</span>
+                                <input type="file" id="beforeUpload" style="display:none;" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="upload-drop-zone p-2" id="afterDropZone">
+                                <i class="bi bi-image-fill small d-block"></i>
+                                <span style="font-size: 0.7rem;">Después</span>
+                                <input type="file" id="afterUpload" style="display:none;" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button class="btn btn-primary fw-bold" id="saveCardBtn">
+                            <i class="bi bi-cloud-arrow-up me-2"></i>Guardar Cambios
+                        </button>
+                        <button class="btn btn-outline-dark fw-bold" id="shareBtn">
+                            <i class="bi bi-qr-code me-2"></i>Compartir QR
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Card -->
+            <div class="col-lg-7">
+                <div class="card-container animate-fade-in delay-1" id="digitalCard">
+                    <!-- Header -->
+                    <div class="profile-header" id="cardHeader">
+                        <div class="profile-pic-container" id="profilePicTrigger">
+                            <img src="https://via.placeholder.com/150" id="profileImg" alt="Profile">
+                            <input type="file" id="profileUpload" style="display:none;" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5 pt-3 px-4">
+                        <h3 class="fw-bold mb-0" id="displayName">Tu Nombre</h3>
+                        <p class="text-muted" id="displayBio">Tu profesión o biografía corta aparecerá aquí.</p>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="social-links" id="displaySocials">
+                        <!-- Links will be injected here -->
+                    </div>
+
+                    <!-- Portfolio -->
+                    <div class="px-4 mb-3">
+                        <h6 class="fw-bold small text-muted text-uppercase mb-3">Portafolio</h6>
+                        <div class="portfolio-grid" id="displayPortfolio">
+                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
+                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
+                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
+                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
+                        </div>
+                    </div>
+
+                    <!-- Before/After -->
+                    <div class="px-4 mb-4">
+                        <h6 class="fw-bold small text-muted text-uppercase mb-3">Trabajos Realizados (Antes/Después)</h6>
+                        <div class="comparison-slider" id="comparisonSlider">
+                            <div class="before-img">
+                                <img src="https://via.placeholder.com/800x450?text=Antes" alt="Before">
+                            </div>
+                            <div class="after-img" id="afterImgContainer">
+                                <img src="https://via.placeholder.com/800x450?text=Después" alt="After" id="afterImg">
+                            </div>
+                            <div class="slider-handle" id="sliderHandle"></div>
+                            <div class="slider-button" id="sliderBtn">
+                                <i class="bi bi-arrows-left-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center pb-4">
+                        <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="20" class="opacity-50">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- QR Modal -->
+    <div class="modal fade" id="qrModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="border-radius: 20px;">
+                <div class="modal-body text-center p-4">
+                    <h5 class="fw-bold mb-3">Tu Código QR</h5>
+                    <div id="qrContainer" class="mb-3 bg-white p-3 rounded shadow-sm"></div>
+                    <p class="small text-muted mb-4">Escanea para ver mi tarjeta digital</p>
+                    <button class="btn btn-primary w-100" id="downloadQR">Descargar PNG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="./assets/js/theme.js"></script>
+    <script src="./assets/js/supabase_logic.js"></script>
+
+    <script>
+        // Check Access & Mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewUserId = urlParams.get('user');
+        const user = getLoggedInUser();
+        const isViewOnly = !!viewUserId;
+
+        if (!isViewOnly && !user) window.location.href = './login.html';
+
+        // State
+        let cardConfig = {
+            name: '',
+            bio: '',
+            profilePic: '',
+            socials: { whatsapp: '', instagram: '', facebook: '', website: '' },
+            portfolio: [],
+            beforeAfter: { before: '', after: '' }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isViewOnly) {
+                document.querySelector('.col-lg-5').style.display = 'none';
+                document.querySelector('.col-lg-7').className = 'col-lg-12';
+                document.querySelector('.card-container').style.maxWidth = '600px';
+                document.getElementById('authButtons').style.display = 'none';
+            } else {
+                renderUserMenu('authButtons');
+                setupLivePreview();
+            }
+            initSlider();
+            loadCardData();
+        });
+
+        function setupLivePreview() {
+            // Text Inputs
+            const inputName = document.getElementById('inputName');
+            const inputBio = document.getElementById('inputBio');
+            const displayName = document.getElementById('displayName');
+            const displayBio = document.getElementById('displayBio');
+
+            inputName.addEventListener('input', () => {
+                cardConfig.name = inputName.value;
+                displayName.textContent = cardConfig.name || 'Tu Nombre';
+            });
+
+            inputBio.addEventListener('input', () => {
+                cardConfig.bio = inputBio.value;
+                displayBio.textContent = cardConfig.bio || 'Tu profesión o biografía corta aparecerá aquí.';
+            });
+
+            // Social Inputs
+            const socialInputs = ['WA', 'IG', 'FB', 'Web'];
+            socialInputs.forEach(key => {
+                const input = document.getElementById(`input${key}`);
+                input.addEventListener('input', () => {
+                    const configKey = key === 'WA' ? 'whatsapp' : key === 'IG' ? 'instagram' : key === 'FB' ? 'facebook' : 'website';
+                    cardConfig.socials[configKey] = input.value;
+                    renderSocials();
+                });
+            });
+
+            // Profile Picture
+            const profilePicTrigger = document.getElementById('profilePicTrigger');
+            const profileUpload = document.getElementById('profileUpload');
+            const profileImg = document.getElementById('profileImg');
+
+            profilePicTrigger.onclick = () => profileUpload.click();
+            profileUpload.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        const url = await uploadToSupabase(file);
+                        cardConfig.profilePic = url;
+                        profileImg.src = url;
+                    } catch (err) {
+                        alert("Error al subir imagen: " + err.message);
+                    }
+                }
+            };
+
+            // Portfolio Upload
+            setupUpload('portfolioDropZone', 'portfolioUpload', async (files) => {
+                const filesArray = Array.from(files).slice(0, 4);
+                cardConfig.portfolio = [];
+                for (const file of filesArray) {
+                    try {
+                        const url = await uploadToSupabase(file);
+                        cardConfig.portfolio.push(url);
+                    } catch (err) {
+                        console.error("Error upload:", err);
+                    }
+                }
+                renderPortfolio();
+            });
+
+            // Before/After Upload
+            setupUpload('beforeDropZone', 'beforeUpload', async (files) => {
+                const file = files[0];
+                if (file) {
+                    try {
+                        const url = await uploadToSupabase(file);
+                        cardConfig.beforeAfter.before = url;
+                        document.querySelector('.before-img img').src = url;
+                    } catch (err) {
+                        alert("Error upload before:", err.message);
+                    }
+                }
+            });
+
+            setupUpload('afterDropZone', 'afterUpload', async (files) => {
+                const file = files[0];
+                if (file) {
+                    try {
+                        const url = await uploadToSupabase(file);
+                        cardConfig.beforeAfter.after = url;
+                        document.querySelector('#afterImgContainer img').src = url;
+                    } catch (err) {
+                        alert("Error upload after:", err.message);
+                    }
+                }
+            });
+        }
+
+        async function uploadToSupabase(file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user.id}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const filePath = `cards/${fileName}`;
+
+            const { error: uploadError } = await supabaseClient
+                .storage
+                .from('logos')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicUrlData } = supabaseClient
+                .storage
+                .from('logos')
+                .getPublicUrl(filePath);
+
+            return publicUrlData.publicUrl;
+        }
+
+        function setupUpload(zoneId, inputId, callback) {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+
+            zone.onclick = () => input.click();
+
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('dragover');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    callback(e.dataTransfer.files);
+                }
+            });
+
+            input.onchange = (e) => {
+                if (e.target.files.length) {
+                    callback(e.target.files);
+                }
+            };
+        }
+
+        function renderPortfolio() {
+            const container = document.getElementById('displayPortfolio');
+            container.innerHTML = '';
+
+            // Fill with uploaded images or placeholders
+            const items = [...cardConfig.portfolio];
+            while (items.length < 4) {
+                items.push('https://via.placeholder.com/300');
+            }
+
+            items.forEach(src => {
+                const div = document.createElement('div');
+                div.className = 'portfolio-item';
+                div.innerHTML = `<img src="${src}" alt="Portfolio">`;
+                container.appendChild(div);
+            });
+        }
+
+        function renderSocials() {
+            const container = document.getElementById('displaySocials');
+            container.innerHTML = '';
+
+            const icons = {
+                whatsapp: { icon: 'whatsapp', color: '#25D366', prefix: 'https://wa.me/' },
+                instagram: { icon: 'instagram', color: '#E4405F', prefix: 'https://instagram.com/' },
+                facebook: { icon: 'facebook', color: '#1877F2', prefix: '' },
+                website: { icon: 'globe', color: '#7c83fd', prefix: '' }
+            };
+
+            Object.entries(cardConfig.socials).forEach(([key, value]) => {
+                if (value) {
+                    let url = value;
+                    if (icons[key].prefix && !value.startsWith('http')) {
+                        url = icons[key].prefix + value;
+                    }
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.target = '_blank';
+                    a.className = 'social-icon';
+                    a.style.backgroundColor = icons[key].color;
+                    a.innerHTML = `<i class="bi bi-${icons[key].icon}"></i>`;
+                    container.appendChild(a);
+                }
+            });
+        }
+
+        // Supabase Logic
+        async function loadCardData() {
+            const targetId = viewUserId || user.id;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('digital_cards')
+                    .select('config')
+                    .eq('user_id', targetId)
+                    .single();
+
+                if (data && data.config) {
+                    cardConfig = data.config;
+                    updateUIFromConfig();
+                }
+            } catch (err) {
+                console.error("Error loading card data:", err);
+            }
+        }
+
+        function updateUIFromConfig() {
+            document.getElementById('inputName').value = cardConfig.name || '';
+            document.getElementById('inputBio').value = cardConfig.bio || '';
+            document.getElementById('displayName').textContent = cardConfig.name || 'Tu Nombre';
+            document.getElementById('displayBio').textContent = cardConfig.bio || 'Tu profesión o biografía corta aparecerá aquí.';
+
+            document.getElementById('inputWA').value = cardConfig.socials.whatsapp || '';
+            document.getElementById('inputIG').value = cardConfig.socials.instagram || '';
+            document.getElementById('inputFB').value = cardConfig.socials.facebook || '';
+            document.getElementById('inputWeb').value = cardConfig.socials.website || '';
+
+            if (cardConfig.profilePic) {
+                document.getElementById('profileImg').src = cardConfig.profilePic;
+            }
+
+            renderSocials();
+            renderPortfolio();
+
+            if (cardConfig.beforeAfter.before) {
+                document.querySelector('.before-img img').src = cardConfig.beforeAfter.before;
+            }
+            if (cardConfig.beforeAfter.after) {
+                document.querySelector('#afterImgContainer img').src = cardConfig.beforeAfter.after;
+            }
+        }
+
+        document.getElementById('saveCardBtn').onclick = async () => {
+            const btn = document.getElementById('saveCardBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('digital_cards')
+                    .upsert([{ user_id: user.id, config: cardConfig }], { onConflict: 'user_id' });
+
+                if (error) throw error;
+
+                alert("¡Tarjeta guardada con éxito!");
+            } catch (err) {
+                console.error("Error saving card:", err);
+                alert("Error al guardar: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-cloud-arrow-up me-2"></i>Guardar Cambios';
+            }
+        };
+
+        // QR Logic
+        document.getElementById('shareBtn').onclick = () => {
+            const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+            const qrContainer = document.getElementById('qrContainer');
+            qrContainer.innerHTML = '';
+
+            // Generate QR pointing to the user's card (using a simulated public URL)
+            const publicUrl = window.location.origin + window.location.pathname + '?user=' + user.id;
+
+            const canvas = document.createElement('canvas');
+            QRCode.toCanvas(canvas, publicUrl, { width: 250, margin: 2 }, (error) => {
+                if (error) console.error(error);
+                qrContainer.appendChild(canvas);
+            });
+
+            qrModal.show();
+        };
+
+        document.getElementById('downloadQR').onclick = () => {
+            const canvas = document.querySelector('#qrContainer canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = 'mi-tarjeta-qr.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+        };
+
+        // Slider Logic
+        function initSlider() {
+            const slider = document.getElementById('comparisonSlider');
+            const afterContainer = document.getElementById('afterImgContainer');
+            const afterImg = document.getElementById('afterImg');
+            const handle = document.getElementById('sliderHandle');
+            const btn = document.getElementById('sliderBtn');
+
+            const updateAfterImgSize = () => {
+                afterImg.style.width = slider.offsetWidth + 'px';
+            };
+            window.addEventListener('resize', updateAfterImgSize);
+            setTimeout(updateAfterImgSize, 500); // Initial set
+
+            let isDragging = false;
+
+            const move = (e) => {
+                if (!isDragging) return;
+                let x = e.pageX || (e.touches ? e.touches[0].pageX : 0);
+                let rect = slider.getBoundingClientRect();
+                let position = ((x - rect.left) / rect.width) * 100;
+
+                if (position < 0) position = 0;
+                if (position > 100) position = 100;
+
+                afterContainer.style.width = position + '%';
+                handle.style.left = position + '%';
+                btn.style.left = position + '%';
+            };
+
+            slider.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                move(e);
+            });
+            window.addEventListener('mouseup', () => isDragging = false);
+            window.addEventListener('mousemove', move);
+
+            slider.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                move(e);
+            });
+            window.addEventListener('touchend', () => isDragging = false);
+            window.addEventListener('touchmove', move);
+        }
+    </script>
+</body>
+
+</html>

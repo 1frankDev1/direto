@@ -49,5 +49,14 @@ CREATE TABLE bento_grid (
 );
 
 -- 5. Enable RLS (Optional but recommended)
+-- 5. Digital Cards Table
+CREATE TABLE IF NOT EXISTS digital_cards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES directory_users(id) ON DELETE CASCADE UNIQUE,
+    config JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 6. Enable RLS (Optional but recommended)
 -- ALTER TABLE directory_users ENABLE ROW LEVEL SECURITY;
 -- CREATE POLICY "Admins can do everything" ON directory_users FOR ALL TO anon USING (TRUE);

@@ -67,6 +67,15 @@ CREATE TABLE IF NOT EXISTS bento_grid (
 );
 
 -- 4. Insertar usuario administrador inicial
+-- 4. Crear tabla para Tarjetas Digitales
+CREATE TABLE IF NOT EXISTS digital_cards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES directory_users(id) ON DELETE CASCADE UNIQUE,
+    config JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 5. Insertar usuario administrador inicial
 INSERT INTO directory_users (name, password, role)
 VALUES ('Antonio', '123', 'Admin')
 ON CONFLICT (name) DO NOTHING;
