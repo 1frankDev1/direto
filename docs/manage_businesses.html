@@ -157,6 +157,17 @@
                                     <label class="form-label small fw-bold">Dirección Detallada</label>
                                     <input type="text" id="editBizAddress" class="form-control">
                                 </div>
+                                <div class="col-md-12 mt-2">
+                                    <label class="form-label small fw-bold">Geolocalización</label>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <input type="number" step="any" id="editBizLat" class="form-control" placeholder="Latitud">
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" step="any" id="editBizLng" class="form-control" placeholder="Longitud">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -274,6 +285,8 @@
                 document.getElementById('editBizState').value = biz.state || '';
                 document.getElementById('editBizZip').value = biz.zip || '';
                 document.getElementById('editBizAddress').value = biz.address_detail || '';
+                document.getElementById('editBizLat').value = biz.latitude || '';
+                document.getElementById('editBizLng').value = biz.longitude || '';
                 document.getElementById('editBizWebsite').value = biz.website || '';
 
                 // Social Media
@@ -371,6 +384,8 @@
                     has_reservation: document.getElementById('editHasReservation').checked,
                     order_url: ensureHttps(document.getElementById('editBizOrderUrl').value),
                     reservation_url: ensureHttps(document.getElementById('editBizReservationUrl').value),
+                    latitude: document.getElementById('editBizLat').value ? parseFloat(document.getElementById('editBizLat').value) : null,
+                    longitude: document.getElementById('editBizLng').value ? parseFloat(document.getElementById('editBizLng').value) : null,
                     social_media: {
                         facebook: ensureHttps(document.getElementById('editBizFB').value),
                         instagram: ensureHttps(document.getElementById('editBizIG').value),

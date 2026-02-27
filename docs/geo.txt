@@ -1,0 +1,5 @@
+-- SQL para integrar geolocalización en Tragalero
+-- Ejecuta este script en el SQL Editor de Supabase
+
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS latitude FLOAT8;
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS longitude FLOAT8;
