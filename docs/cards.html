@@ -273,6 +273,15 @@
 
                     <hr>
 
+                    <h6 class="fw-bold small text-muted text-uppercase mb-3">Video de Presentación</h6>
+                    <div class="upload-drop-zone" id="videoDropZone">
+                        <i class="bi bi-play-btn mb-2 d-block"></i>
+                        <span class="small">Sube un video corto</span>
+                        <input type="file" id="videoUpload" style="display:none;" accept="video/*">
+                    </div>
+
+                    <hr>
+
                     <h6 class="fw-bold small text-muted text-uppercase mb-3">Portafolio</h6>
                     <div class="upload-drop-zone" id="portfolioDropZone">
                         <i class="bi bi-images mb-2 d-block"></i>
@@ -325,6 +334,11 @@
                     <div class="text-center mt-5 pt-3 px-4">
                         <h3 class="fw-bold mb-0" id="displayName">Tu Nombre</h3>
                         <p class="text-muted" id="displayBio">Tu profesión o biografía corta aparecerá aquí.</p>
+                    </div>
+
+                    <!-- Video Preview -->
+                    <div id="videoContainer" class="px-4 mb-3" style="display: none;">
+                        <video id="displayVideo" controls class="w-100 rounded-4 shadow-sm" style="max-height: 300px; background: #000;"></video>
                     </div>
 
                     <!-- Social Links -->
@@ -403,6 +417,7 @@
             name: '',
             bio: '',
             profilePic: '',
+            videoUrl: '',
             socials: { whatsapp: '', instagram: '', facebook: '', website: '' },
             portfolio: [],
             beforeAfter: { before: '', after: '' }
@@ -460,7 +475,7 @@
                 const file = e.target.files[0];
                 if (file) {
                     try {
-                        const url = await uploadToSupabase(file);
+                        const url = await uploadToCloudinary(file);
                         cardConfig.profilePic = url;
                         profileImg.src = url;
                     } catch (err) {
@@ -475,7 +490,7 @@
                 cardConfig.portfolio = [];
                 for (const file of filesArray) {
                     try {
-                        const url = await uploadToSupabase(file);
+                        const url = await uploadToCloudinary(file);
                         cardConfig.portfolio.push(url);
                     } catch (err) {
                         console.error("Error upload:", err);
@@ -489,11 +504,11 @@
                 const file = files[0];
                 if (file) {
                     try {
-                        const url = await uploadToSupabase(file);
+                        const url = await uploadToCloudinary(file);
                         cardConfig.beforeAfter.before = url;
                         document.querySelector('.before-img img').src = url;
                     } catch (err) {
-                        alert("Error upload before:", err.message);
+                        alert("Error upload before: " + err.message);
                     }
                 }
             });
@@ -502,34 +517,63 @@
                 const file = files[0];
                 if (file) {
                     try {
-                        const url = await uploadToSupabase(file);
+                        const url = await uploadToCloudinary(file);
                         cardConfig.beforeAfter.after = url;
                         document.querySelector('#afterImgContainer img').src = url;
                     } catch (err) {
-                        alert("Error upload after:", err.message);
+                        alert("Error upload after: " + err.message);
+                    }
+                }
+            });
+
+            // Video Upload
+            setupUpload('videoDropZone', 'videoUpload', async (files) => {
+                const file = files[0];
+                if (file) {
+                    try {
+                        const url = await uploadToCloudinary(file);
+                        cardConfig.videoUrl = url;
+                        renderVideo();
+                    } catch (err) {
+                        alert("Error video upload: " + err.message);
                     }
                 }
             });
         }
 
-        async function uploadToSupabase(file) {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${user.id}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-            const filePath = `cards/${fileName}`;
+        function renderVideo() {
+            const container = document.getElementById('videoContainer');
+            const video = document.getElementById('displayVideo');
+            if (cardConfig.videoUrl) {
+                video.src = cardConfig.videoUrl;
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
 
-            const { error: uploadError } = await supabaseClient
-                .storage
-                .from('logos')
-                .upload(filePath, file);
+        async function uploadToCloudinary(file) {
+            const CLOUD_NAME = "dbbjxhvz5";
+            const UPLOAD_PRESET = "Tragalero";
+            const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
-            if (uploadError) throw uploadError;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+            formData.append('folder', `cards/${user.id}`);
 
-            const { data: publicUrlData } = supabaseClient
-                .storage
-                .from('logos')
-                .getPublicUrl(filePath);
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
 
-            return publicUrlData.publicUrl;
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error.message || "Error al subir a Cloudinary");
+            }
+
+            const data = await response.json();
+            return data.secure_url;
         }
 
         function setupUpload(zoneId, inputId, callback) {
@@ -645,6 +689,7 @@
 
             renderSocials();
             renderPortfolio();
+            renderVideo();
 
             if (cardConfig.beforeAfter.before) {
                 document.querySelector('.before-img img').src = cardConfig.beforeAfter.before;

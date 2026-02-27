@@ -1,0 +1,13 @@
+-- SQL para la tabla de Tarjetas Digitales
+-- Esta tabla almacena la configuración de las tarjetas, incluyendo las URLs de Cloudinary.
+
+CREATE TABLE IF NOT EXISTS digital_cards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES directory_users(id) ON DELETE CASCADE UNIQUE,
+    config JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Configuración de Cloudinary para el frontend:
+-- Cloud Name: dbbjxhvz5
+-- Upload Preset: Tragalero
