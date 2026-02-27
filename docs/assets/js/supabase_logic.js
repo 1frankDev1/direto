@@ -46,7 +46,9 @@ async function getBusinesses(showAll = false) {
                 order_url: item.order_url,
                 reservation_url: item.reservation_url,
                 is_visible: item.is_visible,
-                owner_id: item.owner_id
+                owner_id: item.owner_id,
+                latitude: item.latitude,
+                longitude: item.longitude
             }));
         }
     } catch (e) {

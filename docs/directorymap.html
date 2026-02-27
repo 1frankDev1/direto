@@ -176,6 +176,23 @@
                                 <label class="form-label">Dirección Detallada</label>
                                 <input type="text" id="bizAddress" class="form-control" placeholder="Calle, Número, etc.">
                             </div>
+                            <div class="col-md-12 mt-3">
+                                <label class="form-label">Geolocalización (Opcional)</label>
+                                <div class="row g-2">
+                                    <div class="col-md-5">
+                                        <input type="number" step="any" id="bizLat" class="form-control" placeholder="Latitud">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="number" step="any" id="bizLng" class="form-control" placeholder="Longitud">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" id="detectLoc" class="btn btn-outline-primary w-100 h-100" title="Detectar mi ubicación actual">
+                                            <i class="bi bi-geo-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="text-muted">Las coordenadas ayudan a que los usuarios te encuentren más fácilmente por cercanía.</small>
+                            </div>
                         </div>
                     </div>
 
@@ -380,6 +397,32 @@
         setupColorSync('resBgColor', 'resBgText');
         setupColorSync('resTextColor', 'resTextText');
 
+        // Geolocation Detector
+        document.getElementById('detectLoc').onclick = () => {
+            const btn = document.getElementById('detectLoc');
+            const icon = btn.querySelector('i');
+
+            if (!navigator.geolocation) {
+                alert("Tu navegador no soporta geolocalización.");
+                return;
+            }
+
+            icon.className = 'spinner-border spinner-border-sm';
+            btn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition((pos) => {
+                document.getElementById('bizLat').value = pos.coords.latitude;
+                document.getElementById('bizLng').value = pos.coords.longitude;
+                icon.className = 'bi bi-geo-fill';
+                btn.disabled = false;
+            }, (err) => {
+                console.error(err);
+                alert("Error al obtener ubicación: " + err.message);
+                icon.className = 'bi bi-geo-fill';
+                btn.disabled = false;
+            }, { enableHighAccuracy: true });
+        };
+
         function ensureHttps(url) {
             if (!url) return '';
             url = url.trim();
@@ -468,6 +511,8 @@
                     has_reservation: document.getElementById('hasReservation').checked,
                     order_url: ensureHttps(document.getElementById('bizOrder').value),
                     reservation_url: ensureHttps(document.getElementById('bizReservation').value),
+                    latitude: document.getElementById('bizLat').value ? parseFloat(document.getElementById('bizLat').value) : null,
+                    longitude: document.getElementById('bizLng').value ? parseFloat(document.getElementById('bizLng').value) : null,
                     social_media: {
                         facebook: ensureHttps(document.getElementById('bizFB').value),
                         instagram: ensureHttps(document.getElementById('bizIG').value),

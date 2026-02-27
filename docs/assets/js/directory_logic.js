@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentCategory = '';
     let renderTimeout;
     let allDirectoryData = [];
+    let userLocation = null;
+    let isProximityMode = false;
 
     // Fetch data from Supabase + Local
     async function loadAllData() {
@@ -95,6 +97,65 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             categoryContainer.appendChild(btn);
         });
+
+        // Add Proximity Chip
+        const proximityBtn = document.createElement('button');
+        proximityBtn.className = 'chip proximity-chip';
+        proximityBtn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Cerca de mí';
+        proximityBtn.addEventListener('click', toggleProximity);
+        categoryContainer.appendChild(proximityBtn);
+    }
+
+    async function toggleProximity() {
+        const btn = document.querySelector('.proximity-chip');
+
+        if (isProximityMode) {
+            isProximityMode = false;
+            btn.classList.remove('active');
+            renderDirectory(searchInput.value, currentCity, currentCategory);
+            return;
+        }
+
+        if (!userLocation) {
+            if (!navigator.geolocation) {
+                alert("Geolocalización no soportada por tu navegador.");
+                return;
+            }
+
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Localizando...';
+
+            navigator.geolocation.getCurrentPosition((pos) => {
+                userLocation = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude
+                };
+                isProximityMode = true;
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Cerca de mí';
+                renderDirectory(searchInput.value, currentCity, currentCategory);
+            }, (err) => {
+                console.error(err);
+                alert("No pudimos obtener tu ubicación.");
+                btn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Cerca de mí';
+            }, { enableHighAccuracy: true });
+        } else {
+            isProximityMode = true;
+            btn.classList.add('active');
+            renderDirectory(searchInput.value, currentCity, currentCategory);
+        }
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        if (!lat1 || !lon1 || !lat2 || !lon2) return Infinity;
+        const R = 6371; // Radius of the earth in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in km
     }
 
     function renderDirectory(filterText = '', cityFilter = '', catFilter = '') {
@@ -104,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTimeout = setTimeout(() => {
             resultsContainer.innerHTML = '';
 
-            const filtered = allDirectoryData.filter(item => {
+            let filtered = allDirectoryData.filter(item => {
                 const searchLower = filterText.toLowerCase();
                 const matchesText = !filterText ||
                     item.name.toLowerCase().includes(searchLower) ||
@@ -119,6 +180,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 return matchesText && matchesCity && matchesCategory;
             });
+
+            // Handle Proximity Sorting
+            if (isProximityMode && userLocation) {
+                filtered = filtered.map(item => ({
+                    ...item,
+                    distance: calculateDistance(userLocation.lat, userLocation.lng, item.latitude, item.longitude)
+                })).sort((a, b) => a.distance - b.distance);
+            }
 
             if (filtered.length === 0) {
                 resultsContainer.innerHTML = `
@@ -140,6 +209,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Sanitize values
                 const sName = escapeHtml(item.name);
                 const sCity = escapeHtml(item.city);
+                const distanceLabel = (isProximityMode && item.distance !== Infinity)
+                    ? `<span class="badge bg-success position-absolute bottom-0 end-0 m-3 shadow-sm border-0" style="border-radius: 20px; padding: 8px 18px; font-size: 0.8rem; font-weight: 500;">${item.distance.toFixed(1)} km</span>`
+                    : '';
                 const sCategory = escapeHtml(item.category);
                 const sState = escapeHtml(item.state);
                 const sAddress = escapeHtml(item.address);
@@ -154,6 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <img src="${sLogo}" alt="${sName}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                             <span class="badge position-absolute top-0 start-0 m-3" style="background: #7c83fd; color: white; border-radius: 10px; padding: 6px 12px; font-weight: 600; font-size: 0.7rem; text-transform: uppercase;">${sCategory}</span>
                             <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3 shadow-sm border-0" style="border-radius: 20px; padding: 8px 18px; font-size: 0.8rem; font-weight: 500;">${sCity}</span>
+                            ${distanceLabel}
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <div class="d-flex justify-content-between align-items-start mb-1">
