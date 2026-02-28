@@ -465,7 +465,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="./assets/js/theme.js"></script>
     <script src="./assets/js/supabase_logic.js"></script>
 
@@ -948,7 +948,9 @@
 
         // Sharing Logic
         document.getElementById('shareBtn').onclick = () => {
-            const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+            console.log("Sharing logic triggered");
+            const modalEl = document.getElementById('qrModal');
+            const qrModal = bootstrap.Modal.getOrCreateInstance(modalEl);
             const qrContainer = document.getElementById('qrContainer');
             const shareUrlInput = document.getElementById('shareUrlInput');
             const nativeShareBtn = document.getElementById('nativeShareBtn');
