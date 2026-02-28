@@ -110,8 +110,14 @@
             aspect-ratio: 1;
             border-radius: 15px;
             overflow: hidden;
-            background: #eee;
+            background: #f8f9fa;
             position: relative;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
         }
 
         .portfolio-item img {
@@ -152,8 +158,8 @@
             user-select: none;
         }
 
-        .comparison-slider .before-img,
-        .comparison-slider .after-img {
+        .comparison-slider .bg-img,
+        .comparison-slider .overlay-img {
             position: absolute;
             top: 0;
             left: 0;
@@ -161,20 +167,20 @@
             height: 100%;
         }
 
-        .comparison-slider .before-img img {
+        .comparison-slider .bg-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .comparison-slider .after-img {
+        .comparison-slider .overlay-img {
             width: 50%;
             z-index: 2;
             border-right: 3px solid white;
             overflow: hidden;
         }
 
-        .comparison-slider .after-img img {
+        .comparison-slider .overlay-img img {
             height: 100%;
             object-fit: cover;
             position: absolute;
@@ -198,16 +204,18 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: white;
             transform: translate(-50%, -50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
             z-index: 11;
+            border: 3px solid rgba(var(--bs-primary-rgb), 0.5);
+            color: var(--bs-primary);
         }
 
         /* QR Modal */
@@ -289,11 +297,40 @@
 
                     <hr>
 
-                    <h6 class="fw-bold small text-muted text-uppercase mb-3">Portafolio</h6>
-                    <div class="upload-drop-zone" id="portfolioDropZone">
-                        <i class="bi bi-images mb-2 d-block"></i>
-                        <span class="small">Arrastra hasta 4 imágenes aquí</span>
-                        <input type="file" id="portfolioUpload" style="display:none;" multiple accept="image/*">
+                    <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelDesignerPortfolio">Portafolio (4 imágenes)</h6>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone0" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                                <i class="bi bi-image small d-block"></i>
+                                <span style="font-size: 0.7rem;">1</span>
+                                <input type="file" id="portfolioUpload0" style="display:none;" accept="image/*">
+                                <img src="" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone1" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                                <i class="bi bi-image small d-block"></i>
+                                <span style="font-size: 0.7rem;">2</span>
+                                <input type="file" id="portfolioUpload1" style="display:none;" accept="image/*">
+                                <img src="" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone2" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                                <i class="bi bi-image small d-block"></i>
+                                <span style="font-size: 0.7rem;">3</span>
+                                <input type="file" id="portfolioUpload2" style="display:none;" accept="image/*">
+                                <img src="" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone3" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                                <i class="bi bi-image small d-block"></i>
+                                <span style="font-size: 0.7rem;">4</span>
+                                <input type="file" id="portfolioUpload3" style="display:none;" accept="image/*">
+                                <img src="" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
+                            </div>
+                        </div>
                     </div>
 
                     <hr>
@@ -357,10 +394,10 @@
                     <div class="px-4 mb-3">
                         <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelPortfolio">Portafolio</h6>
                         <div class="portfolio-grid" id="displayPortfolio">
-                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
-                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
-                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
-                            <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
+                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p1/400" alt=""></div>
+                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p2/400" alt=""></div>
+                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p3/400" alt=""></div>
+                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p4/400" alt=""></div>
                         </div>
                     </div>
 
@@ -368,11 +405,11 @@
                     <div class="px-4 mb-4">
                         <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelBeforeAfter">Trabajos Realizados (Antes/Después)</h6>
                         <div class="comparison-slider" id="comparisonSlider">
-                            <div class="before-img">
-                                <img src="https://via.placeholder.com/800x450?text=Antes" alt="Before">
+                            <div class="bg-img">
+                                <img src="https://picsum.photos/seed/after/800/450" alt="After" id="displayAfter">
                             </div>
-                            <div class="after-img" id="afterImgContainer">
-                                <img src="https://via.placeholder.com/800x450?text=Después" alt="After" id="afterImg">
+                            <div class="overlay-img" id="beforeImgContainer">
+                                <img src="https://picsum.photos/seed/before/800/450" alt="Before" id="displayBefore" style="filter: grayscale(1);">
                             </div>
                             <div class="slider-handle" id="sliderHandle"></div>
                             <div class="slider-button" id="sliderBtn">
@@ -427,7 +464,7 @@
             videoUrl: '',
             lang: 'es',
             socials: { whatsapp: '', instagram: '', facebook: '', website: '' },
-            portfolio: [],
+            portfolio: ['', '', '', ''],
             beforeAfter: { before: '', after: '' }
         };
 
@@ -444,11 +481,17 @@
                 placeholderBioInput: 'Desarrollador, Fotógrafo...',
                 placeholderBioDisplay: 'Tu profesión o biografía corta aparecerá aquí.',
                 placeholderVideo: 'Sube un video corto',
-                placeholderPortfolio: 'Arrastra hasta 4 imágenes aquí',
+                placeholderPortfolio: 'Portafolio (4 imágenes)',
                 placeholderBefore: 'Antes',
                 placeholderAfter: 'Después',
                 save: 'Guardar Cambios',
-                share: 'Compartir QR'
+                saving: 'Guardando...',
+                saveSuccess: '¡Tarjeta guardada con éxito!',
+                saveError: 'Error al guardar: ',
+                share: 'Compartir QR',
+                qrTitle: 'Tu Código QR',
+                qrSubtitle: 'Escanea para ver mi tarjeta digital',
+                qrDownload: 'Descargar PNG'
             },
             en: {
                 designerTitle: 'Design Your Card',
@@ -462,11 +505,17 @@
                 placeholderBioInput: 'Developer, Photographer...',
                 placeholderBioDisplay: 'Your profession or short bio will appear here.',
                 placeholderVideo: 'Upload a short video',
-                placeholderPortfolio: 'Drag up to 4 images here',
+                placeholderPortfolio: 'Portfolio (4 images)',
                 placeholderBefore: 'Before',
                 placeholderAfter: 'After',
                 save: 'Save Changes',
-                share: 'Share QR'
+                saving: 'Saving...',
+                saveSuccess: 'Card saved successfully!',
+                saveError: 'Error saving: ',
+                share: 'Share QR',
+                qrTitle: 'Your QR Code',
+                qrSubtitle: 'Scan to view my digital card',
+                qrDownload: 'Download PNG'
             }
         };
 
@@ -521,17 +570,22 @@
                 const sectionTitles = document.querySelectorAll('.designer-panel h6');
                 if (sectionTitles[0]) sectionTitles[0].textContent = t.labelSocials;
                 if (sectionTitles[1]) sectionTitles[1].textContent = t.labelVideo;
-                if (sectionTitles[2]) sectionTitles[2].textContent = t.labelPortfolio;
+                if (sectionTitles[2]) sectionTitles[2].textContent = t.placeholderPortfolio;
                 if (sectionTitles[3]) sectionTitles[3].textContent = t.labelBeforeAfter;
 
                 // Dropzone labels
                 document.querySelector('#videoDropZone .small').textContent = t.placeholderVideo;
-                document.querySelector('#portfolioDropZone .small').textContent = t.placeholderPortfolio;
+                // document.querySelector('#portfolioDropZone .small').textContent = t.placeholderPortfolio; // Removed old
                 document.querySelector('#beforeDropZone span').textContent = t.placeholderBefore;
                 document.querySelector('#afterDropZone span').textContent = t.placeholderAfter;
 
                 document.getElementById('saveCardBtn').innerHTML = `<i class="bi bi-cloud-arrow-up me-2"></i>${t.save}`;
                 document.getElementById('shareBtn').innerHTML = `<i class="bi bi-qr-code me-2"></i>${t.share}`;
+
+                // QR Modal
+                document.querySelector('#qrModal h5').textContent = t.qrTitle;
+                document.querySelector('#qrModal p').textContent = t.qrSubtitle;
+                document.querySelector('#downloadQR').textContent = t.qrDownload;
             }
         }
 
@@ -543,13 +597,15 @@
             const displayBio = document.getElementById('displayBio');
 
             inputName.addEventListener('input', () => {
+                const t = translations[cardConfig.lang || 'es'];
                 cardConfig.name = inputName.value;
-                displayName.textContent = cardConfig.name || 'Tu Nombre';
+                displayName.textContent = cardConfig.name || t.placeholderName;
             });
 
             inputBio.addEventListener('input', () => {
+                const t = translations[cardConfig.lang || 'es'];
                 cardConfig.bio = inputBio.value;
-                displayBio.textContent = cardConfig.bio || 'Tu profesión o biografía corta aparecerá aquí.';
+                displayBio.textContent = cardConfig.bio || t.placeholderBioDisplay;
             });
 
             // Social Inputs
@@ -582,20 +638,21 @@
                 }
             };
 
-            // Portfolio Upload
-            setupUpload('portfolioDropZone', 'portfolioUpload', async (files) => {
-                const filesArray = Array.from(files).slice(0, 4);
-                cardConfig.portfolio = [];
-                for (const file of filesArray) {
-                    try {
-                        const url = await uploadToCloudinary(file);
-                        cardConfig.portfolio.push(url);
-                    } catch (err) {
-                        console.error("Error upload:", err);
+            // Portfolio Upload (4 individual zones)
+            for (let i = 0; i < 4; i++) {
+                setupUpload(`portfolioZone${i}`, `portfolioUpload${i}`, async (files) => {
+                    const file = files[0];
+                    if (file) {
+                        try {
+                            const url = await uploadToCloudinary(file);
+                            cardConfig.portfolio[i] = url;
+                            renderPortfolio();
+                        } catch (err) {
+                            alert("Error upload portfolio " + (i+1) + ": " + err.message);
+                        }
                     }
-                }
-                renderPortfolio();
-            });
+                });
+            }
 
             // Before/After Upload
             setupUpload('beforeDropZone', 'beforeUpload', async (files) => {
@@ -604,7 +661,11 @@
                     try {
                         const url = await uploadToCloudinary(file);
                         cardConfig.beforeAfter.before = url;
-                        document.querySelector('.before-img img').src = url;
+                        const displayBefore = document.getElementById('displayBefore');
+                        displayBefore.src = url;
+                        // Trigger size update
+                        const slider = document.getElementById('comparisonSlider');
+                        displayBefore.style.width = slider.offsetWidth + 'px';
                     } catch (err) {
                         alert("Error upload before: " + err.message);
                     }
@@ -617,11 +678,7 @@
                     try {
                         const url = await uploadToCloudinary(file);
                         cardConfig.beforeAfter.after = url;
-                        document.getElementById('afterImg').src = url;
-                        // Trigger size update
-                        const slider = document.getElementById('comparisonSlider');
-                        const afterImg = document.getElementById('afterImg');
-                        afterImg.style.width = slider.offsetWidth + 'px';
+                        document.getElementById('displayAfter').src = url;
                     } catch (err) {
                         alert("Error upload after: " + err.message);
                     }
@@ -714,15 +771,33 @@
 
             // Fill with uploaded images or placeholders
             const items = [...cardConfig.portfolio];
-            while (items.length < 4) {
-                items.push('https://via.placeholder.com/300');
-            }
 
-            items.forEach(src => {
+            items.forEach((src, idx) => {
+                const displaySrc = src || `https://picsum.photos/seed/p${idx+1}/400`;
                 const div = document.createElement('div');
                 div.className = 'portfolio-item';
-                div.innerHTML = `<img src="${src}" alt="Portfolio">`;
+                div.innerHTML = `<img src="${displaySrc}" alt="Portfolio">`;
                 container.appendChild(div);
+
+                // Update designer preview if it exists
+                if (!isViewOnly) {
+                    const zone = document.getElementById(`portfolioZone${idx}`);
+                    if (zone) {
+                        const img = zone.querySelector('img');
+                        const icon = zone.querySelector('i');
+                        const span = zone.querySelector('span');
+                        if (src) {
+                            img.src = src;
+                            img.style.display = 'block';
+                            icon.style.opacity = '0';
+                            span.style.opacity = '0';
+                        } else {
+                            img.style.display = 'none';
+                            icon.style.opacity = '1';
+                            span.style.opacity = '1';
+                        }
+                    }
+                }
             });
         }
 
@@ -775,10 +850,11 @@
         }
 
         function updateUIFromConfig() {
+            const t = translations[cardConfig.lang || 'es'];
             document.getElementById('inputName').value = cardConfig.name || '';
             document.getElementById('inputBio').value = cardConfig.bio || '';
-            document.getElementById('displayName').textContent = cardConfig.name || 'Tu Nombre';
-            document.getElementById('displayBio').textContent = cardConfig.bio || 'Tu profesión o biografía corta aparecerá aquí.';
+            document.getElementById('displayName').textContent = cardConfig.name || t.placeholderName;
+            document.getElementById('displayBio').textContent = cardConfig.bio || t.placeholderBioDisplay;
 
             document.getElementById('inputWA').value = cardConfig.socials.whatsapp || '';
             document.getElementById('inputIG').value = cardConfig.socials.instagram || '';
@@ -802,17 +878,19 @@
             }
 
             if (cardConfig.beforeAfter.before) {
-                document.querySelector('.before-img img').src = cardConfig.beforeAfter.before;
+                document.getElementById('displayBefore').src = cardConfig.beforeAfter.before;
             }
             if (cardConfig.beforeAfter.after) {
-                document.querySelector('#afterImgContainer img').src = cardConfig.beforeAfter.after;
+                document.getElementById('displayAfter').src = cardConfig.beforeAfter.after;
             }
         }
 
         document.getElementById('saveCardBtn').onclick = async () => {
+            const l = cardConfig.lang || 'es';
+            const t = translations[l];
             const btn = document.getElementById('saveCardBtn');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${t.saving}`;
 
             try {
                 const { error } = await supabaseClient
@@ -821,13 +899,13 @@
 
                 if (error) throw error;
 
-                alert("¡Tarjeta guardada con éxito!");
+                alert(t.saveSuccess);
             } catch (err) {
                 console.error("Error saving card:", err);
-                alert("Error al guardar: " + err.message);
+                alert(t.saveError + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-cloud-arrow-up me-2"></i>Guardar Cambios';
+                btn.innerHTML = `<i class="bi bi-cloud-arrow-up me-2"></i>${t.save}`;
             }
         };
 
@@ -862,16 +940,16 @@
         // Slider Logic
         function initSlider() {
             const slider = document.getElementById('comparisonSlider');
-            const afterContainer = document.getElementById('afterImgContainer');
-            const afterImg = document.getElementById('afterImg');
+            const beforeContainer = document.getElementById('beforeImgContainer');
+            const beforeImg = document.getElementById('displayBefore');
             const handle = document.getElementById('sliderHandle');
             const btn = document.getElementById('sliderBtn');
 
-            const updateAfterImgSize = () => {
-                afterImg.style.width = slider.offsetWidth + 'px';
+            const updateBeforeImgSize = () => {
+                beforeImg.style.width = slider.offsetWidth + 'px';
             };
-            window.addEventListener('resize', updateAfterImgSize);
-            setTimeout(updateAfterImgSize, 500); // Initial set
+            window.addEventListener('resize', updateBeforeImgSize);
+            setTimeout(updateBeforeImgSize, 500); // Initial set
 
             let isDragging = false;
 
@@ -884,7 +962,7 @@
                 if (position < 0) position = 0;
                 if (position > 100) position = 100;
 
-                afterContainer.style.width = position + '%';
+                beforeContainer.style.width = position + '%';
                 handle.style.left = position + '%';
                 btn.style.left = position + '%';
             };
