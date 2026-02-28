@@ -431,10 +431,32 @@
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content" style="border-radius: 20px;">
                 <div class="modal-body text-center p-4">
-                    <h5 class="fw-bold mb-3">Tu Código QR</h5>
+                    <h5 class="fw-bold mb-3" id="qrModalTitle">Compartir Tarjeta</h5>
+
                     <div id="qrContainer" class="mb-3 bg-white p-3 rounded shadow-sm"></div>
-                    <p class="small text-muted mb-4">Escanea para ver mi tarjeta digital</p>
-                    <button class="btn btn-primary w-100" id="downloadQR">Descargar PNG</button>
+
+                    <p class="small text-muted mb-3" id="qrModalSubtitle">Escanea para ver mi tarjeta digital</p>
+
+                    <div class="d-flex justify-content-center gap-3 mb-3">
+                        <a id="shareWA" href="#" target="_blank" class="text-success fs-2"><i class="bi bi-whatsapp"></i></a>
+                        <a id="shareFB" href="#" target="_blank" class="text-primary fs-2"><i class="bi bi-facebook"></i></a>
+                        <a id="shareTG" href="#" target="_blank" class="text-info fs-2"><i class="bi bi-telegram"></i></a>
+                        <a id="shareEmail" href="#" target="_blank" class="text-secondary fs-2"><i class="bi bi-envelope"></i></a>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <input type="text" id="shareUrlInput" class="form-control form-control-sm" readonly>
+                        <button class="btn btn-outline-primary btn-sm" type="button" id="copyLinkBtn">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary w-100" id="downloadQR">Descargar PNG</button>
+                        <button class="btn btn-outline-dark w-100" id="nativeShareBtn" style="display: none;">
+                            <i class="bi bi-share me-2"></i>Compartir...
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -490,10 +512,14 @@
                 saving: 'Guardando...',
                 saveSuccess: '¡Tarjeta guardada con éxito!',
                 saveError: 'Error al guardar: ',
-                share: 'Compartir QR',
+                share: 'Compartir Tarjeta',
                 qrTitle: 'Tu Código QR',
                 qrSubtitle: 'Escanea para ver mi tarjeta digital',
-                qrDownload: 'Descargar PNG'
+                qrDownload: 'Descargar PNG',
+                copyLink: 'Copiar Enlace',
+                linkCopied: '¡Enlace Copiado!',
+                shareNative: 'Compartir...',
+                shareTitle: 'Mira mi tarjeta digital en Tragalero'
             },
             en: {
                 designerTitle: 'Design Your Card',
@@ -514,10 +540,14 @@
                 saving: 'Saving...',
                 saveSuccess: 'Card saved successfully!',
                 saveError: 'Error saving: ',
-                share: 'Share QR',
+                share: 'Share Card',
                 qrTitle: 'Your QR Code',
                 qrSubtitle: 'Scan to view my digital card',
-                qrDownload: 'Download PNG'
+                qrDownload: 'Download PNG',
+                copyLink: 'Copy Link',
+                linkCopied: 'Link Copied!',
+                shareNative: 'Share...',
+                shareTitle: 'Check out my digital business card on Tragalero'
             }
         };
 
@@ -582,12 +612,13 @@
                 document.querySelector('#afterDropZone span').textContent = t.placeholderAfter;
 
                 document.getElementById('saveCardBtn').innerHTML = `<i class="bi bi-cloud-arrow-up me-2"></i>${t.save}`;
-                document.getElementById('shareBtn').innerHTML = `<i class="bi bi-qr-code me-2"></i>${t.share}`;
+                document.getElementById('shareBtn').innerHTML = `<i class="bi bi-share me-2"></i>${t.share}`;
 
                 // QR Modal
-                document.querySelector('#qrModal h5').textContent = t.qrTitle;
-                document.querySelector('#qrModal p').textContent = t.qrSubtitle;
-                document.querySelector('#downloadQR').textContent = t.qrDownload;
+                document.getElementById('qrModalTitle').textContent = t.share;
+                document.getElementById('qrModalSubtitle').textContent = t.qrSubtitle;
+                document.getElementById('downloadQR').textContent = t.qrDownload;
+                document.getElementById('nativeShareBtn').innerHTML = `<i class="bi bi-share me-2"></i>${t.shareNative}`;
             }
         }
 
@@ -915,14 +946,39 @@
             }
         };
 
-        // QR Logic
+        // Sharing Logic
         document.getElementById('shareBtn').onclick = () => {
             const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
             const qrContainer = document.getElementById('qrContainer');
+            const shareUrlInput = document.getElementById('shareUrlInput');
+            const nativeShareBtn = document.getElementById('nativeShareBtn');
+
             qrContainer.innerHTML = '';
 
-            // Generate QR pointing to the user's card (using a simulated public URL)
+            // Generate public URL
             const publicUrl = window.location.origin + window.location.pathname + '?user=' + user.id;
+            shareUrlInput.value = publicUrl;
+
+            // Social Sharing Links
+            const encodedUrl = encodeURIComponent(publicUrl);
+            const encodedText = encodeURIComponent(translations[cardConfig.lang || 'es'].shareTitle || 'Mira mi tarjeta digital');
+
+            document.getElementById('shareWA').href = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+            document.getElementById('shareFB').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+            document.getElementById('shareTG').href = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
+            document.getElementById('shareEmail').href = `mailto:?subject=${encodedText}&body=${encodedUrl}`;
+
+            // Native Share API support check
+            if (navigator.share) {
+                nativeShareBtn.style.display = 'block';
+                nativeShareBtn.onclick = () => {
+                    navigator.share({
+                        title: cardConfig.name || 'Mi Tarjeta Digital',
+                        text: cardConfig.bio || 'Mira mi tarjeta digital en Tragalero',
+                        url: publicUrl,
+                    }).catch(console.error);
+                };
+            }
 
             const canvas = document.createElement('canvas');
             QRCode.toCanvas(canvas, publicUrl, { width: 250, margin: 2 }, (error) => {
@@ -931,6 +987,25 @@
             });
 
             qrModal.show();
+        };
+
+        document.getElementById('copyLinkBtn').onclick = () => {
+            const shareUrlInput = document.getElementById('shareUrlInput');
+            const copyBtn = document.getElementById('copyLinkBtn');
+            const t = translations[cardConfig.lang || 'es'];
+
+            shareUrlInput.select();
+            shareUrlInput.setSelectionRange(0, 99999); // For mobile
+            navigator.clipboard.writeText(shareUrlInput.value);
+
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="bi bi-check2"></i>';
+            copyBtn.classList.replace('btn-outline-primary', 'btn-success');
+
+            setTimeout(() => {
+                copyBtn.innerHTML = originalHTML;
+                copyBtn.classList.replace('btn-success', 'btn-outline-primary');
+            }, 2000);
         };
 
         document.getElementById('downloadQR').onclick = () => {
