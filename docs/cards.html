@@ -299,7 +299,7 @@
 
                     <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelDesignerPortfolio">Portafolio (4 imágenes)</h6>
                     <div class="row g-2 mb-3">
-                        <div class="col-6">
+                        <div class="col-3">
                             <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone0" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
                                 <i class="bi bi-image small d-block"></i>
                                 <span style="font-size: 0.7rem;">1</span>
@@ -307,7 +307,7 @@
                                 <img src="" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-3">
                             <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone1" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
                                 <i class="bi bi-image small d-block"></i>
                                 <span style="font-size: 0.7rem;">2</span>
@@ -315,7 +315,7 @@
                                 <img src="" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-3">
                             <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone2" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
                                 <i class="bi bi-image small d-block"></i>
                                 <span style="font-size: 0.7rem;">3</span>
@@ -323,7 +323,7 @@
                                 <img src="" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-3">
                             <div class="upload-drop-zone p-2 portfolio-zone" id="portfolioZone3" style="aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;">
                                 <i class="bi bi-image small d-block"></i>
                                 <span style="font-size: 0.7rem;">4</span>
@@ -394,10 +394,10 @@
                     <div class="px-4 mb-3">
                         <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelPortfolio">Portafolio</h6>
                         <div class="portfolio-grid" id="displayPortfolio">
-                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p1/400" alt=""></div>
-                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p2/400" alt=""></div>
-                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p3/400" alt=""></div>
-                            <div class="portfolio-item"><img src="https://picsum.photos/seed/p4/400" alt=""></div>
+                            <div class="portfolio-item"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN8/x8AAuMB8fL9p3MAAAAASUVORK5CYII=" alt=""></div>
+                            <div class="portfolio-item"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN8/x8AAuMB8fL9p3MAAAAASUVORK5CYII=" alt=""></div>
+                            <div class="portfolio-item"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN8/x8AAuMB8fL9p3MAAAAASUVORK5CYII=" alt=""></div>
+                            <div class="portfolio-item"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN8/x8AAuMB8fL9p3MAAAAASUVORK5CYII=" alt=""></div>
                         </div>
                     </div>
 
@@ -406,10 +406,10 @@
                         <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelBeforeAfter">Trabajos Realizados (Antes/Después)</h6>
                         <div class="comparison-slider" id="comparisonSlider">
                             <div class="bg-img">
-                                <img src="https://picsum.photos/seed/after/800/450" alt="After" id="displayAfter">
+                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN8/x8AAuMB8fL9p3MAAAAASUVORK5CYII=" alt="After" id="displayAfter">
                             </div>
                             <div class="overlay-img" id="beforeImgContainer">
-                                <img src="https://picsum.photos/seed/before/800/450" alt="Before" id="displayBefore" style="filter: grayscale(1);">
+                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN8/x8AAuMB8fL9p3MAAAAASUVORK5CYII=" alt="Before" id="displayBefore" style="filter: grayscale(1);">
                             </div>
                             <div class="slider-handle" id="sliderHandle"></div>
                             <div class="slider-button" id="sliderBtn">
@@ -455,6 +455,8 @@
         const isViewOnly = !!viewUserId;
 
         if (!isViewOnly && !user) window.location.href = './login.html';
+
+        const PLACEHOLDER_IMG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN8/x8AAuMB8fL9p3MAAAAASUVORK5CYII=";
 
         // State
         let cardConfig = {
@@ -773,7 +775,7 @@
             const items = [...cardConfig.portfolio];
 
             items.forEach((src, idx) => {
-                const displaySrc = src || `https://picsum.photos/seed/p${idx+1}/400`;
+                const displaySrc = src || PLACEHOLDER_IMG;
                 const div = document.createElement('div');
                 div.className = 'portfolio-item';
                 div.innerHTML = `<img src="${displaySrc}" alt="Portfolio">`;
@@ -879,9 +881,13 @@
 
             if (cardConfig.beforeAfter.before) {
                 document.getElementById('displayBefore').src = cardConfig.beforeAfter.before;
+            } else {
+                document.getElementById('displayBefore').src = PLACEHOLDER_IMG;
             }
             if (cardConfig.beforeAfter.after) {
                 document.getElementById('displayAfter').src = cardConfig.beforeAfter.after;
+            } else {
+                document.getElementById('displayAfter').src = PLACEHOLDER_IMG;
             }
         }
 
