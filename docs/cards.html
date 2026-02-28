@@ -171,6 +171,7 @@
             width: 50%;
             z-index: 2;
             border-right: 3px solid white;
+            overflow: hidden;
         }
 
         .comparison-slider .after-img img {
@@ -224,6 +225,12 @@
                 <span class="fw-bold">Tragalero</span>
             </a>
             <div class="ms-auto d-flex align-items-center">
+                <div class="btn-group btn-group-sm me-3" role="group" id="langSwitch">
+                    <input type="radio" class="btn-check" name="lang" id="langEs" value="es" checked>
+                    <label class="btn btn-outline-primary" for="langEs">ES</label>
+                    <input type="radio" class="btn-check" name="lang" id="langEn" value="en">
+                    <label class="btn btn-outline-primary" for="langEn">EN</label>
+                </div>
                 <div id="authButtons" class="me-3">
                     <!-- Unified User Menu -->
                 </div>
@@ -244,12 +251,12 @@
                     <h4 class="fw-bold mb-4">Diseña tu Tarjeta</h4>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Nombre</label>
+                        <label for="inputName" class="form-label small fw-bold">Nombre</label>
                         <input type="text" id="inputName" class="form-control" placeholder="Tu nombre">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Profesión / Bio</label>
+                        <label for="inputBio" class="form-label small fw-bold">Profesión / Bio</label>
                         <textarea id="inputBio" class="form-control" rows="2" placeholder="Desarrollador, Fotógrafo..."></textarea>
                     </div>
 
@@ -348,7 +355,7 @@
 
                     <!-- Portfolio -->
                     <div class="px-4 mb-3">
-                        <h6 class="fw-bold small text-muted text-uppercase mb-3">Portafolio</h6>
+                        <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelPortfolio">Portafolio</h6>
                         <div class="portfolio-grid" id="displayPortfolio">
                             <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
                             <div class="portfolio-item"><img src="https://via.placeholder.com/300" alt=""></div>
@@ -359,7 +366,7 @@
 
                     <!-- Before/After -->
                     <div class="px-4 mb-4">
-                        <h6 class="fw-bold small text-muted text-uppercase mb-3">Trabajos Realizados (Antes/Después)</h6>
+                        <h6 class="fw-bold small text-muted text-uppercase mb-3" id="labelBeforeAfter">Trabajos Realizados (Antes/Después)</h6>
                         <div class="comparison-slider" id="comparisonSlider">
                             <div class="before-img">
                                 <img src="https://via.placeholder.com/800x450?text=Antes" alt="Before">
@@ -418,9 +425,49 @@
             bio: '',
             profilePic: '',
             videoUrl: '',
+            lang: 'es',
             socials: { whatsapp: '', instagram: '', facebook: '', website: '' },
             portfolio: [],
             beforeAfter: { before: '', after: '' }
+        };
+
+        const translations = {
+            es: {
+                designerTitle: 'Diseña tu Tarjeta',
+                labelName: 'Nombre',
+                labelBio: 'Profesión / Bio',
+                labelSocials: 'Redes Sociales',
+                labelVideo: 'Video de Presentación',
+                labelPortfolio: 'Portafolio',
+                labelBeforeAfter: 'Antes y Después',
+                placeholderName: 'Tu nombre',
+                placeholderBioInput: 'Desarrollador, Fotógrafo...',
+                placeholderBioDisplay: 'Tu profesión o biografía corta aparecerá aquí.',
+                placeholderVideo: 'Sube un video corto',
+                placeholderPortfolio: 'Arrastra hasta 4 imágenes aquí',
+                placeholderBefore: 'Antes',
+                placeholderAfter: 'Después',
+                save: 'Guardar Cambios',
+                share: 'Compartir QR'
+            },
+            en: {
+                designerTitle: 'Design Your Card',
+                labelName: 'Name',
+                labelBio: 'Profession / Bio',
+                labelSocials: 'Social Media',
+                labelVideo: 'Intro Video',
+                labelPortfolio: 'Portfolio',
+                labelBeforeAfter: 'Before & After',
+                placeholderName: 'Your name',
+                placeholderBioInput: 'Developer, Photographer...',
+                placeholderBioDisplay: 'Your profession or short bio will appear here.',
+                placeholderVideo: 'Upload a short video',
+                placeholderPortfolio: 'Drag up to 4 images here',
+                placeholderBefore: 'Before',
+                placeholderAfter: 'After',
+                save: 'Save Changes',
+                share: 'Share QR'
+            }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -433,9 +480,60 @@
                 renderUserMenu('authButtons');
                 setupLivePreview();
             }
+            setupLangSwitch();
             initSlider();
             loadCardData();
         });
+
+        function setupLangSwitch() {
+            const langEs = document.getElementById('langEs');
+            const langEn = document.getElementById('langEn');
+
+            const changeLang = (l) => {
+                cardConfig.lang = l;
+                updateLabels();
+            };
+
+            langEs.addEventListener('change', () => changeLang('es'));
+            langEn.addEventListener('change', () => changeLang('en'));
+        }
+
+        function updateLabels() {
+            const l = cardConfig.lang || 'es';
+            const t = translations[l];
+
+            // Card Preview Labels
+            document.getElementById('labelPortfolio').textContent = t.labelPortfolio;
+            document.getElementById('labelBeforeAfter').textContent = t.labelBeforeAfter;
+            if (!cardConfig.bio) {
+                document.getElementById('displayBio').textContent = t.placeholderBioDisplay;
+            }
+
+            // Update labels in designer if not view only
+            if (!isViewOnly) {
+                document.querySelector('.designer-panel h4').textContent = t.designerTitle;
+                document.querySelector('label[for="inputName"]').textContent = t.labelName;
+                document.querySelector('label[for="inputBio"]').textContent = t.labelBio;
+                document.getElementById('inputName').placeholder = t.placeholderName;
+                document.getElementById('inputBio').placeholder = t.placeholderBioInput;
+
+                // Section titles
+                const sectionTitles = document.querySelectorAll('.designer-panel h6');
+                if (sectionTitles[0]) sectionTitles[0].textContent = t.labelSocials;
+                if (sectionTitles[1]) sectionTitles[1].textContent = t.labelVideo;
+                if (sectionTitles[2]) sectionTitles[2].textContent = t.labelPortfolio;
+                if (sectionTitles[3]) sectionTitles[3].textContent = t.labelBeforeAfter;
+
+                // Dropzone labels
+                document.querySelector('#videoDropZone .small').textContent = t.placeholderVideo;
+                document.querySelector('#portfolioDropZone .small').textContent = t.placeholderPortfolio;
+                document.querySelector('#beforeDropZone span').textContent = t.placeholderBefore;
+                document.querySelector('#afterDropZone span').textContent = t.placeholderAfter;
+
+                document.getElementById('saveCardBtn').innerHTML = `<i class="bi bi-cloud-arrow-up me-2"></i>${t.save}`;
+                document.getElementById('shareBtn').innerHTML = `<i class="bi bi-qr-code me-2"></i>${t.share}`;
+            }
+        }
 
         function setupLivePreview() {
             // Text Inputs
@@ -519,7 +617,11 @@
                     try {
                         const url = await uploadToCloudinary(file);
                         cardConfig.beforeAfter.after = url;
-                        document.querySelector('#afterImgContainer img').src = url;
+                        document.getElementById('afterImg').src = url;
+                        // Trigger size update
+                        const slider = document.getElementById('comparisonSlider');
+                        const afterImg = document.getElementById('afterImg');
+                        afterImg.style.width = slider.offsetWidth + 'px';
                     } catch (err) {
                         alert("Error upload after: " + err.message);
                     }
@@ -690,6 +792,14 @@
             renderSocials();
             renderPortfolio();
             renderVideo();
+            updateLabels();
+
+            // Set radio button
+            if (cardConfig.lang === 'en') {
+                document.getElementById('langEn').checked = true;
+            } else {
+                document.getElementById('langEs').checked = true;
+            }
 
             if (cardConfig.beforeAfter.before) {
                 document.querySelector('.before-img img').src = cardConfig.beforeAfter.before;
@@ -788,10 +898,14 @@
 
             slider.addEventListener('touchstart', (e) => {
                 isDragging = true;
+                if (e.cancelable) e.preventDefault();
                 move(e);
-            });
+            }, { passive: false });
             window.addEventListener('touchend', () => isDragging = false);
-            window.addEventListener('touchmove', move);
+            window.addEventListener('touchmove', (e) => {
+                if (isDragging && e.cancelable) e.preventDefault();
+                move(e);
+            }, { passive: false });
         }
     </script>
 </body>
