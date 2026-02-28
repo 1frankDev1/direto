@@ -222,6 +222,28 @@
         #qrCanvas {
             max-width: 100%;
         }
+
+        .transition-transform {
+            transition: transform 0.2s ease;
+        }
+
+        .transition-transform:hover {
+            transform: scale(1.15);
+        }
+
+        #qrContainer canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        @media (max-width: 576px) {
+            .modal-dialog {
+                margin: 1rem;
+            }
+            .modal-content {
+                border-radius: 25px;
+            }
+        }
     </style>
 </head>
 
@@ -428,20 +450,18 @@
 
     <!-- QR Modal -->
     <div class="modal fade" id="qrModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content" style="border-radius: 20px;">
-                <div class="modal-body text-center p-4">
-                    <h5 class="fw-bold mb-3" id="qrModalTitle">Compartir Tarjeta</h5>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 30px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+                <div class="modal-body text-center p-4 p-md-5">
+                    <h4 class="fw-bold mb-4" id="qrModalTitle">Compartir Tarjeta</h4>
 
-                    <div id="qrContainer" class="mb-3 bg-white p-3 rounded shadow-sm"></div>
+                    <div id="qrContainer" class="mb-4 bg-white p-4 rounded-4 shadow-sm d-flex justify-content-center align-items-center mx-auto" style="max-width: 300px; aspect-ratio: 1;"></div>
 
-                    <p class="small text-muted mb-3" id="qrModalSubtitle">Escanea para ver mi tarjeta digital</p>
+                    <p class="text-muted mb-4" id="qrModalSubtitle">Escanea para ver mi tarjeta digital</p>
 
-                    <div class="d-flex justify-content-center gap-3 mb-3">
-                        <a id="shareWA" href="#" target="_blank" class="text-success fs-2"><i class="bi bi-whatsapp"></i></a>
-                        <a id="shareFB" href="#" target="_blank" class="text-primary fs-2"><i class="bi bi-facebook"></i></a>
-                        <a id="shareTG" href="#" target="_blank" class="text-info fs-2"><i class="bi bi-telegram"></i></a>
-                        <a id="shareEmail" href="#" target="_blank" class="text-secondary fs-2"><i class="bi bi-envelope"></i></a>
+                    <div class="d-flex justify-content-center gap-4 mb-4">
+                        <a id="shareWA" href="#" target="_blank" class="text-success fs-1 transition-transform"><i class="bi bi-whatsapp"></i></a>
+                        <a id="shareFB" href="#" target="_blank" class="text-primary fs-1 transition-transform"><i class="bi bi-facebook"></i></a>
                     </div>
 
                     <div class="input-group mb-3">
@@ -967,8 +987,6 @@
 
             document.getElementById('shareWA').href = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
             document.getElementById('shareFB').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-            document.getElementById('shareTG').href = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
-            document.getElementById('shareEmail').href = `mailto:?subject=${encodedText}&body=${encodedUrl}`;
 
             // Native Share API support check
             if (navigator.share) {
