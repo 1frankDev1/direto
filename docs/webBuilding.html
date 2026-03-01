@@ -225,6 +225,10 @@
                                 <label class="form-label">Menutech RUID</label>
                                 <input type="text" class="form-control" id="inputGeneralRUID" oninput="updateConfig('general.ruid', this.value)">
                             </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="inputGeneralHasRes" onchange="updateConfig('general.hasReservation', this.checked)">
+                                <label class="form-check-label">Habilitar Reservas</label>
+                            </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
                                     <label class="form-label">Fondo Botón</label>
@@ -253,8 +257,12 @@
                                 <input type="text" class="form-control" id="inputHeaderLogo" oninput="updateConfig('header.logo', this.value)">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Texto Botón</label>
+                                <label class="form-label">Texto Botón Pedido</label>
                                 <input type="text" class="form-control" id="inputHeaderBtn" oninput="updateConfig('header.btnText', this.value)">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Texto Botón Reserva</label>
+                                <input type="text" class="form-control" id="inputHeaderResBtn" oninput="updateConfig('header.resBtnText', this.value)">
                             </div>
                         </div>
                     </div>
@@ -398,10 +406,24 @@
                                 <textarea class="form-control" id="inputCTAText" rows="2" oninput="updateConfig('cta.text', this.value)"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Imagen</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('cta.img')">
+                                <label class="form-label">Imagen de Fondo</label>
+                                <div class="upload-drop-zone" onclick="triggerUpload('cta.bgImg')">
                                     <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar imagen</span>
+                                    <span class="small">Cambiar fondo</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Imagen Principal</label>
+                                <div class="upload-drop-zone" onclick="triggerUpload('cta.bannerImg')">
+                                    <i class="bi bi-image"></i>
+                                    <span class="small">Cambiar banner</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Insignia Oferta (badge)</label>
+                                <div class="upload-drop-zone" onclick="triggerUpload('cta.saleImg')">
+                                    <i class="bi bi-image"></i>
+                                    <span class="small">Cambiar badge</span>
                                 </div>
                             </div>
                         </div>
@@ -424,6 +446,20 @@
                             <div class="mb-3">
                                 <label class="form-label">Texto</label>
                                 <textarea class="form-control" id="inputDeliveryText" rows="2" oninput="updateConfig('delivery.text', this.value)"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Imagen Nubes (fondo)</label>
+                                <div class="upload-drop-zone" onclick="triggerUpload('delivery.bannerImg')">
+                                    <i class="bi bi-image"></i>
+                                    <span class="small">Cambiar fondo</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Repartidor (SVG/PNG)</label>
+                                <div class="upload-drop-zone" onclick="triggerUpload('delivery.boyImg')">
+                                    <i class="bi bi-image"></i>
+                                    <span class="small">Cambiar repartidor</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -514,6 +550,10 @@
                     <div id="collapseFooter" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
                         <div class="designer-section">
                             <div class="mb-3">
+                                <label class="form-label">Texto Footer</label>
+                                <textarea class="form-control" id="inputFooterText" rows="2" oninput="updateConfig('footer.text', this.value)"></textarea>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Email</label>
                                 <input type="text" class="form-control" id="inputFooterEmail" oninput="updateConfig('footer.email', this.value)">
                             </div>
@@ -524,6 +564,32 @@
                             <div class="mb-3">
                                 <label class="form-label">Dirección</label>
                                 <input type="text" class="form-control" id="inputFooterAddress" oninput="updateConfig('footer.address', this.value)">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Redes Sociales</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text"><i class="bi bi-facebook"></i></span>
+                                    <input type="text" class="form-control" id="inputFooterFb" oninput="updateConfig('footer.social.facebook', this.value)">
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text"><i class="bi bi-twitter"></i></span>
+                                    <input type="text" class="form-control" id="inputFooterTw" oninput="updateConfig('footer.social.twitter', this.value)">
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text"><i class="bi bi-instagram"></i></span>
+                                    <input type="text" class="form-control" id="inputFooterIg" oninput="updateConfig('footer.social.instagram', this.value)">
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text"><i class="bi bi-pinterest"></i></span>
+                                    <input type="text" class="form-control" id="inputFooterPi" oninput="updateConfig('footer.social.pinterest', this.value)">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Horarios</label>
+                                <div id="footerHoursContainer"></div>
+                                <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('footerHours')">
+                                    <i class="bi bi-plus-lg me-1"></i> Añadir Horario
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -576,7 +642,7 @@
                 orderBgColor: '#ff9d2d',
                 orderTextColor: '#ffffff'
             },
-            header: { logo: 'Foodie', btnText: 'Order Now' },
+            header: { logo: 'Foodie', btnText: 'Order Now', resBtnText: 'Book A Table' },
             hero: {
                 subtitle: 'Eat Sleep And',
                 title: 'Supper delicious Burger in town!',
@@ -652,9 +718,16 @@
                 ]
             },
             footer: {
+                text: 'Financial experts support or help you to to find out which way you can raise your funds more.',
                 email: 'Info@YourGmail24.com',
                 phone: '+1 (062) 109-9222',
                 address: '153 Williamson Plaza, Maggieberg, MT 09514',
+                social: {
+                    facebook: '#',
+                    twitter: '#',
+                    instagram: '#',
+                    pinterest: '#'
+                },
                 hours: [
                     'Monday-Friday: 08:00-22:00',
                     'Tuesday 4PM: Till Mid Night',
@@ -679,6 +752,40 @@
                 return '';
             }
             return trimmed.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function sanitizeSvg(svgString) {
+            if (!svgString) return '';
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(svgString, 'image/svg+xml');
+                const errorNode = doc.querySelector('parsererror');
+                if (errorNode) return '';
+
+                const svg = doc.querySelector('svg');
+                if (!svg) return '';
+
+                // Basic sanitation: remove scripts and event handlers
+                const scripts = svg.querySelectorAll('script');
+                scripts.forEach(s => s.remove());
+
+                const allElements = [svg, ...svg.querySelectorAll('*')];
+                allElements.forEach(el => {
+                    const attrs = el.attributes;
+                    for (let i = attrs.length - 1; i >= 0; i--) {
+                        const attrName = attrs[i].name.toLowerCase();
+                        const attrValue = attrs[i].value.toLowerCase();
+                        if (attrName.startsWith('on') ||
+                            (attrName.includes('href') && attrValue.includes('javascript:'))) {
+                            el.removeAttribute(attrs[i].name);
+                        }
+                    }
+                });
+                return svg.outerHTML;
+            } catch (e) {
+                console.error("SVG Sanitize error:", e);
+                return '';
+            }
         }
 
         function setPreviewSize(size, btn) {
@@ -737,7 +844,12 @@
 
         function addItem(type) {
             if (type === 'promos') {
-                webConfig.promos.push({ title: 'Nueva Promo', text: 'Descripción...', img: 'https://via.placeholder.com/300' });
+                webConfig.promos.push({
+                    title: 'Nueva Promo',
+                    text: 'Descripción...',
+                    img: 'https://via.placeholder.com/300',
+                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M43.033.002L42.563 0c-7.896 0-15.555 1.546-22.767 4.597-6.965 2.946-13.22 7.163-18.592 12.535l-.043.044c-1.548 1.551-1.546 4.075.004 5.625l2.256 2.257c.754.754 1.76 1.17 2.832 1.17h.001a3.98 3.98 0 0 0 2.834-1.171l.04-.04a1.7 1.7 0 0 1 1.21-.499h.021a1.73 1.73 0 0 1 1.238.537l4.596 4.807c.466.488 1.095.761 1.768.768h.028c.663 0 1.285-.258 1.756-.729.975-.975.993-2.58.04-3.577l-3.308-3.46c-.295-.309-.311-.797-.035-1.087a.76.76 0 0 1 .554-.239h.001a.76.76 0 0 1 .553.236l1.041 1.09c.95.994 2.49 1.079 3.507.195a2.5 2.5 0 0 0 .865-1.787 2.53 2.53 0 0 0-.696-1.858l-.755-.79a1.72 1.72 0 0 1-.454-1.511c.099-.549.444-1.003.944-1.245a46.86 46.86 0 0 1 20.561-4.69l.419.002c1.07.011 2.07-.399 2.827-1.149a3.96 3.96 0 0 0 1.179-2.828V3.984A4 4 0 0 0 43.033.002h0zm2.2 7.199a2.21 2.21 0 0 1-.659 1.581 2.18 2.18 0 0 1-1.575.641l-.435-.002a48.6 48.6 0 0 0-21.325 4.865A3.44 3.44 0 0 0 19.33 16.8a3.46 3.46 0 0 0 .912 3.037l.756.79a.76.76 0 0 1-.052 1.106c-.303.263-.789.226-1.085-.083l-1.041-1.089a2.53 2.53 0 0 0-1.822-.779 2.5 2.5 0 0 0-1.827.784c-.929.976-.912 2.518.037 3.512l3.308 3.46a.82.82 0 0 1-.012 1.121.74.74 0 0 1-.523.215c-.197-.002-.381-.083-.519-.226l-4.596-4.808a3.47 3.47 0 0 0-2.487-1.08h-.042a3.44 3.44 0 0 0-2.449 1.011l-.014.014-.009.009-.022.022c-.423.423-.988.656-1.591.656s-1.168-.232-1.591-.655L2.404 21.56a2.23 2.23 0 0 1 0-3.145l.042-.042A56.54 56.54 0 0 1 20.48 6.214c6.994-2.958 14.423-4.458 22.083-4.458l.454.002h0a2.24 2.24 0 0 1 2.215 2.226v3.218zm-.908 6.202a.88.88 0 0 0-.878.878v43.292c0 .412-.314.574-.411.614s-.433.147-.724-.144L11.436 27.166a.88.88 0 0 0-1.242 0 .88.88 0 0 0 0 1.242l30.877 30.877c.469.469 1.073.715 1.696.715.314 0 .633-.063.942-.19a2.38 2.38 0 0 0 1.494-2.237V14.281a.88.88 0 0 0-.878-.878h0zm-6.657-1.125c-2.112 0-3.83 1.718-3.83 3.83s1.718 3.83 3.83 3.83 3.83-1.718 3.83-3.83-1.718-3.83-3.83-3.83zm0 5.903c-1.143 0-2.074-.93-2.074-2.074s.93-2.073 2.074-2.073 2.073.93 2.073 2.073-.93 2.074-2.073 2.074zM22.575 34.938a3.55 3.55 0 0 0 3.547 3.547 3.55 3.55 0 0 0 3.547-3.547 3.55 3.55 0 0 0-3.547-3.547 3.55 3.55 0 0 0-3.547 3.547h0zm3.547-1.791c.987 0 1.791.803 1.791 1.791s-.803 1.791-1.791 1.791-1.791-.803-1.791-1.791.804-1.791 1.791-1.791zm12.81-2.283a3.68 3.68 0 0 0-3.672 3.672 3.68 3.68 0 0 0 3.672 3.672 3.68 3.68 0 0 0 3.672-3.672 3.68 3.68 0 0 0-3.672-3.672zm0 5.588a1.92 1.92 0 0 1-1.916-1.915 1.92 1.92 0 0 1 1.916-1.916 1.92 1.92 0 0 1 1.915 1.916 1.92 1.92 0 0 1-1.915 1.915zm2.97 8.702a3.92 3.92 0 0 0-3.913-3.912h-.645a3.92 3.92 0 0 0-3.913 3.912 1.7 1.7 0 0 0 1.697 1.697h.23l-.037.687a1.57 1.57 0 0 0 .427 1.16c.294.31.709.488 1.136.488h1.562a1.57 1.57 0 0 0 1.136-.488c.294-.31.45-.733.428-1.16l-.037-.687h.23a1.7 1.7 0 0 0 1.697-1.697h0zm-2.515-.059a1.2 1.2 0 0 0-.87.374c-.225.238-.345.562-.327.889l.057 1.073h-1.16l.057-1.073a1.2 1.2 0 0 0-1.198-1.263h-.758a2.16 2.16 0 0 1 2.156-2.097h.645a2.16 2.16 0 0 1 2.155 2.097h-.758zm-9.689-26.32a4.46 4.46 0 0 0-4.454 4.455v.76a4.46 4.46 0 0 0 4.454 4.455c1.017 0 1.844-.827 1.844-1.843v-.437l.975.052a1.69 1.69 0 0 0 1.251-.46c.335-.318.526-.764.526-1.225v-1.841c0-.461-.192-.908-.526-1.225s-.792-.485-1.251-.46l-.975.052v-.437c0-1.017-.827-1.844-1.844-1.844zm2.84 3.986v1.697l-1.43-.076c-.344-.017-.682.107-.931.343s-.392.569-.392.912v.963c0 .049-.039.087-.087.087A2.7 2.7 0 0 1 27 23.99v-.761a2.7 2.7 0 0 1 2.698-2.698c.048 0 .087.039.087.087v.964c0 .343.143.676.392.912a1.26 1.26 0 0 0 .931.343l1.43-.076z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`
+                });
             } else if (type === 'menu') {
                 webConfig.menu.items.push({ title: 'Nuevo Plato', category: 'Varios', price: '10.00', oldPrice: '15.00', img: 'https://via.placeholder.com/300', badge: '' });
             } else if (type === 'testimonials') {
@@ -748,6 +860,8 @@
                 webConfig.banners.push({ subtitle: 'Subtitle', title: 'New Banner', text: 'Desc...', img: 'https://via.placeholder.com/550x450', size: 'sm' });
             } else if (type === 'blog') {
                 webConfig.blog.items.push({ title: 'New Post', text: 'Desc...', date: 'Today', author: 'Admin', category: 'General', img: 'https://via.placeholder.com/600x390' });
+            } else if (type === 'footerHours') {
+                webConfig.footer.hours.push('Lunes-Viernes: 08:00-22:00');
             }
             renderDesigner();
             renderPreview();
@@ -756,6 +870,8 @@
         function removeItem(type, index) {
             if(type === 'aboutFeatures') {
                 webConfig.about.features.splice(index, 1);
+            } else if (type === 'footerHours') {
+                webConfig.footer.hours.splice(index, 1);
             } else if (['menu', 'testimonials', 'blog'].includes(type)) {
                 webConfig[type].items.splice(index, 1);
             } else {
@@ -769,10 +885,12 @@
             if(isViewOnly) return;
             document.getElementById('inputGeneralCUID').value = webConfig.general.cuid || '';
             document.getElementById('inputGeneralRUID').value = webConfig.general.ruid || '';
+            document.getElementById('inputGeneralHasRes').checked = !!webConfig.general.hasReservation;
             document.getElementById('inputOrderBgColor').value = webConfig.general.orderBgColor || '#ff9d2d';
             document.getElementById('inputOrderTextColor').value = webConfig.general.orderTextColor || '#ffffff';
             document.getElementById('inputHeaderLogo').value = webConfig.header.logo;
             document.getElementById('inputHeaderBtn').value = webConfig.header.btnText;
+            document.getElementById('inputHeaderResBtn').value = webConfig.header.resBtnText || 'Book A Table';
             document.getElementById('inputHeroSubtitle').value = webConfig.hero.subtitle;
             document.getElementById('inputHeroTitle').value = webConfig.hero.title;
             document.getElementById('inputHeroText').value = webConfig.hero.text;
@@ -791,9 +909,29 @@
             document.getElementById('inputBlogSubtitle').value = webConfig.blog.subtitle || '';
             document.getElementById('inputBlogTitle').value = webConfig.blog.title || '';
             document.getElementById('inputBlogText').value = webConfig.blog.text || '';
+            document.getElementById('inputFooterText').value = webConfig.footer.text || '';
             document.getElementById('inputFooterEmail').value = webConfig.footer.email;
             document.getElementById('inputFooterPhone').value = webConfig.footer.phone;
             document.getElementById('inputFooterAddress').value = webConfig.footer.address;
+            document.getElementById('inputFooterFb').value = webConfig.footer.social?.facebook || '';
+            document.getElementById('inputFooterTw').value = webConfig.footer.social?.twitter || '';
+            document.getElementById('inputFooterIg').value = webConfig.footer.social?.instagram || '';
+            document.getElementById('inputFooterPi').value = webConfig.footer.social?.pinterest || '';
+
+            // Render Footer Hours
+            const hoursContainer = document.getElementById('footerHoursContainer');
+            if (hoursContainer) {
+                hoursContainer.innerHTML = '';
+                webConfig.footer.hours.forEach((h, i) => {
+                    hoursContainer.innerHTML += `
+                        <div class="d-flex mb-2 align-items-center">
+                            <i class="bi bi-grip-vertical drag-handle me-2"></i>
+                            <input type="text" class="form-control form-control-sm" value="${h}" oninput="webConfig.footer.hours[${i}] = this.value; renderPreview()">
+                            <button class="btn btn-sm text-danger ms-2" onclick="removeItem('footerHours', ${i})"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                    `;
+                });
+            }
 
             // Render Promos
             const promoContainer = document.getElementById('promoListContainer');
@@ -807,8 +945,10 @@
                                 <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('promos', ${i})"><i class="bi bi-trash"></i></button>
                             </div>
                         </div>
-                        <input type="text" class="form-control form-control-sm mb-2" value="${promo.title}" oninput="webConfig.promos[${i}].title = this.value; renderPreview()">
-                        <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('promos.${i}.img')">
+                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Título" value="${promo.title}" oninput="webConfig.promos[${i}].title = this.value; renderPreview()">
+                        <textarea class="form-control form-control-sm mb-2" placeholder="Descripción" rows="2" oninput="webConfig.promos[${i}].text = this.value; renderPreview()">${promo.text || ''}</textarea>
+                        <textarea class="form-control form-control-sm mb-2" placeholder="Icono SVG (opcional)" rows="2" oninput="webConfig.promos[${i}].iconSvg = this.value; renderPreview()">${promo.iconSvg || ''}</textarea>
+                        <div class="upload-drop-zone p-2 mb-2" onclick="triggerUpload('promos.${i}.img')">
                             <img src="${promo.img}" style="height: 40px; border-radius: 4px;" class="me-2">
                             <span class="small">Cambiar imagen</span>
                         </div>
@@ -844,7 +984,11 @@
                         <input type="text" class="form-control form-control-sm mb-2" placeholder="Nombre" value="${item.title}" oninput="webConfig.menu.items[${i}].title = this.value; renderPreview()">
                         <div class="row g-2 mb-2">
                             <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Precio" value="${item.price}" oninput="webConfig.menu.items[${i}].price = this.value; renderPreview()"></div>
+                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Precio Anterior" value="${item.oldPrice || ''}" oninput="webConfig.menu.items[${i}].oldPrice = this.value; renderPreview()"></div>
+                        </div>
+                        <div class="row g-2 mb-2">
                             <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Categoría" value="${item.category}" oninput="webConfig.menu.items[${i}].category = this.value; renderPreview()"></div>
+                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Insignia (ej: -15%)" value="${item.badge || ''}" oninput="webConfig.menu.items[${i}].badge = this.value; renderPreview()"></div>
                         </div>
                         <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('menu.items.${i}.img')">
                             <img src="${item.img}" style="height: 40px; border-radius: 4px;" class="me-2">
@@ -867,7 +1011,8 @@
                             </div>
                         </div>
                         <input type="text" class="form-control form-control-sm mb-2" placeholder="Nombre" value="${testi.name}" oninput="webConfig.testimonials.items[${i}].name = this.value; renderPreview()">
-                        <textarea class="form-control form-control-sm mb-2" rows="2" oninput="webConfig.testimonials.items[${i}].text = this.value; renderPreview()">${testi.text}</textarea>
+                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Cargo/Empresa" value="${testi.title || ''}" oninput="webConfig.testimonials.items[${i}].title = this.value; renderPreview()">
+                        <textarea class="form-control form-control-sm mb-2" placeholder="Opinión" rows="2" oninput="webConfig.testimonials.items[${i}].text = this.value; renderPreview()">${testi.text}</textarea>
                         <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('testimonials.items.${i}.img')">
                             <img src="${testi.img}" style="height: 40px; border-radius: 4px;" class="me-2">
                             <span class="small">Cambiar avatar</span>
@@ -888,7 +1033,14 @@
                                 <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('banners', ${i})"><i class="bi bi-trash"></i></button>
                             </div>
                         </div>
-                        <input type="text" class="form-control form-control-sm mb-2" value="${banner.title}" oninput="webConfig.banners[${i}].title = this.value; renderPreview()">
+                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Subtítulo" value="${banner.subtitle || ''}" oninput="webConfig.banners[${i}].subtitle = this.value; renderPreview()">
+                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Título" value="${banner.title}" oninput="webConfig.banners[${i}].title = this.value; renderPreview()">
+                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Texto descriptivo" value="${banner.text || ''}" oninput="webConfig.banners[${i}].text = this.value; renderPreview()">
+                        <select class="form-select form-select-sm mb-2" onchange="webConfig.banners[${i}].size = this.value; renderPreview()">
+                            <option value="lg" ${banner.size === 'lg' ? 'selected' : ''}>Grande (2x2)</option>
+                            <option value="md" ${banner.size === 'md' ? 'selected' : ''}>Mediano (Abajo)</option>
+                            <option value="sm" ${banner.size === 'sm' ? 'selected' : ''}>Pequeño (Derecha)</option>
+                        </select>
                         <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('banners.${i}.img')">
                             <img src="${banner.img}" style="height: 40px; border-radius: 4px;" class="me-2">
                             <span class="small">Cambiar imagen</span>
@@ -909,7 +1061,13 @@
                                 <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('blog', ${i})"><i class="bi bi-trash"></i></button>
                             </div>
                         </div>
-                        <input type="text" class="form-control form-control-sm mb-2" value="${post.title}" oninput="webConfig.blog.items[${i}].title = this.value; renderPreview()">
+                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Título" value="${post.title}" oninput="webConfig.blog.items[${i}].title = this.value; renderPreview()">
+                        <div class="row g-2 mb-2">
+                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Fecha" value="${post.date || ''}" oninput="webConfig.blog.items[${i}].date = this.value; renderPreview()"></div>
+                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Autor" value="${post.author || ''}" oninput="webConfig.blog.items[${i}].author = this.value; renderPreview()"></div>
+                        </div>
+                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Categoría" value="${post.category || ''}" oninput="webConfig.blog.items[${i}].category = this.value; renderPreview()">
+                        <textarea class="form-control form-control-sm mb-2" placeholder="Resumen" rows="2" oninput="webConfig.blog.items[${i}].text = this.value; renderPreview()">${post.text || ''}</textarea>
                         <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('blog.items.${i}.img')">
                             <img src="${post.img}" style="height: 40px; border-radius: 4px;" class="me-2">
                             <span class="small">Cambiar imagen</span>
@@ -922,7 +1080,7 @@
         }
 
         function initSortable() {
-            ['promoListContainer', 'menuListContainer', 'testiListContainer', 'aboutFeaturesContainer', 'bannerListContainer', 'blogListContainer'].forEach(id => {
+            ['promoListContainer', 'menuListContainer', 'testiListContainer', 'aboutFeaturesContainer', 'bannerListContainer', 'blogListContainer', 'footerHoursContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
                     new Sortable(el, {
@@ -931,9 +1089,14 @@
                         onEnd: (evt) => {
                             let type = id.replace('ListContainer', '').replace('FeaturesContainer', 'Features');
                             if(type === 'promo') type = 'promos';
+                            if(type === 'banner') type = 'banners';
+
                             if(type === 'aboutFeatures') {
                                 const item = webConfig.about.features.splice(evt.oldIndex, 1)[0];
                                 webConfig.about.features.splice(evt.newIndex, 0, item);
+                            } else if (type === 'footerHours') {
+                                const item = webConfig.footer.hours.splice(evt.oldIndex, 1)[0];
+                                webConfig.footer.hours.splice(evt.newIndex, 0, item);
                             } else if (['menu', 'testimonials', 'blog'].includes(type)) {
                                 const item = webConfig[type].items.splice(evt.oldIndex, 1)[0];
                                 webConfig[type].items.splice(evt.newIndex, 0, item);
@@ -964,13 +1127,21 @@
                     data-glf-cuid="${webConfig.general.cuid}"
                     data-glf-ruid="${webConfig.general.ruid}"
                    ></menutech-orders>`
-                : `<button class="btn">${escapeHtml(webConfig.header.btnText)}</button>`;
+                : `<button class="btn btn-hover">${escapeHtml(webConfig.header.btnText)}</button>`;
+
+            const reservationButtonHtml = (isMenutechEnabled && webConfig.general.hasReservation)
+                ? `<button class="btn btn-hover"
+                    style="--bg-color: #333;"
+                    data-glf-cuid="${webConfig.general.cuid}"
+                    data-glf-ruid="${webConfig.general.ruid}"
+                    data-glf-reservation="true">${escapeHtml(webConfig.header.resBtnText || 'Book A Table')}</button>`
+                : `<button class="btn btn-hover" style="--bg-color: #333;">${escapeHtml(webConfig.header.resBtnText || 'Book A Table')}</button>`;
 
             const promosHtml = webConfig.promos.map((p, i) => `
                 <li class="promo-item">
                   <div class="promo-card">
                     <div class="card-icon">
-                      ${p.iconSvg || `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M43.033.002L42.563 0c-7.896 0-15.555 1.546-22.767 4.597-6.965 2.946-13.22 7.163-18.592 12.535l-.043.044c-1.548 1.551-1.546 4.075.004 5.625l2.256 2.257c.754.754 1.76 1.17 2.832 1.17h.001a3.98 3.98 0 0 0 2.834-1.171l.04-.04a1.7 1.7 0 0 1 1.21-.499h.021a1.73 1.73 0 0 1 1.238.537l4.596 4.807c.466.488 1.095.761 1.768.768h.028c.663 0 1.285-.258 1.756-.729.975-.975.993-2.58.04-3.577l-3.308-3.46c-.295-.309-.311-.797-.035-1.087a.76.76 0 0 1 .554-.239h.001a.76.76 0 0 1 .553.236l1.041 1.09c.95.994 2.49 1.079 3.507.195a2.5 2.5 0 0 0 .865-1.787 2.53 2.53 0 0 0-.696-1.858l-.755-.79a1.72 1.72 0 0 1-.454-1.511c.099-.549.444-1.003.944-1.245a46.86 46.86 0 0 1 20.561-4.69l.419.002c1.07.011 2.07-.399 2.827-1.149a3.96 3.96 0 0 0 1.179-2.828V3.984A4 4 0 0 0 43.033.002h0zm2.2 7.199a2.21 2.21 0 0 1-.659 1.581 2.18 2.18 0 0 1-1.575.641l-.435-.002a48.6 48.6 0 0 0-21.325 4.865A3.44 3.44 0 0 0 19.33 16.8a3.46 3.46 0 0 0 .912 3.037l.756.79a.76.76 0 0 1-.052 1.106c-.303.263-.789.226-1.085-.083l-1.041-1.089a2.53 2.53 0 0 0-1.822-.779 2.5 2.5 0 0 0-1.827.784c-.929.976-.912 2.518.037 3.512l3.308 3.46a.82.82 0 0 1-.012 1.121.74.74 0 0 1-.523.215c-.197-.002-.381-.083-.519-.226l-4.596-4.808a3.47 3.47 0 0 0-2.487-1.08h-.042a3.44 3.44 0 0 0-2.449 1.011l-.014.014-.009.009-.022.022c-.423.423-.988.656-1.591.656s-1.168-.232-1.591-.655L2.404 21.56a2.23 2.23 0 0 1 0-3.145l.042-.042A56.54 56.54 0 0 1 20.48 6.214c6.994-2.958 14.423-4.458 22.083-4.458l.454.002h0a2.24 2.24 0 0 1 2.215 2.226v3.218zm-.908 6.202a.88.88 0 0 0-.878.878v43.292c0 .412-.314.574-.411.614s-.433.147-.724-.144L11.436 27.166a.88.88 0 0 0-1.242 0 .88.88 0 0 0 0 1.242l30.877 30.877c.469.469 1.073.715 1.696.715.314 0 .633-.063.942-.19a2.38 2.38 0 0 0 1.494-2.237V14.281a.88.88 0 0 0-.878-.878h0zm-6.657-1.125c-2.112 0-3.83 1.718-3.83 3.83s1.718 3.83 3.83 3.83 3.83-1.718 3.83-3.83-1.718-3.83-3.83-3.83zm0 5.903c-1.143 0-2.074-.93-2.074-2.074s.93-2.073 2.074-2.073 2.073.93 2.073 2.073-.93 2.074-2.073 2.074zM22.575 34.938a3.55 3.55 0 0 0 3.547 3.547 3.55 3.55 0 0 0 3.547-3.547 3.55 3.55 0 0 0-3.547-3.547 3.55 3.55 0 0 0-3.547 3.547h0zm3.547-1.791c.987 0 1.791.803 1.791 1.791s-.803 1.791-1.791 1.791-1.791-.803-1.791-1.791.804-1.791 1.791-1.791zm12.81-2.283a3.68 3.68 0 0 0-3.672 3.672 3.68 3.68 0 0 0 3.672 3.672 3.68 3.68 0 0 0 3.672-3.672 3.68 3.68 0 0 0-3.672-3.672zm0 5.588a1.92 1.92 0 0 1-1.916-1.915 1.92 1.92 0 0 1 1.916-1.916 1.92 1.92 0 0 1 1.915 1.916 1.92 1.92 0 0 1-1.915 1.915zm2.97 8.702a3.92 3.92 0 0 0-3.913-3.912h-.645a3.92 3.92 0 0 0-3.913 3.912 1.7 1.7 0 0 0 1.697 1.697h.23l-.037.687a1.57 1.57 0 0 0 .427 1.16c.294.31.709.488 1.136.488h1.562a1.57 1.57 0 0 0 1.136-.488c.294-.31.45-.733.428-1.16l-.037-.687h.23a1.7 1.7 0 0 0 1.697-1.697h0zm-2.515-.059a1.2 1.2 0 0 0-.87.374c-.225.238-.345.562-.327.889l.057 1.073h-1.16l.057-1.073a1.2 1.2 0 0 0-1.198-1.263h-.758a2.16 2.16 0 0 1 2.156-2.097h.645a2.16 2.16 0 0 1 2.155 2.097h-.758zm-9.689-26.32a4.46 4.46 0 0 0-4.454 4.455v.76a4.46 4.46 0 0 0 4.454 4.455c1.017 0 1.844-.827 1.844-1.843v-.437l.975.052a1.69 1.69 0 0 0 1.251-.46c.335-.318.526-.764.526-1.225v-1.841c0-.461-.192-.908-.526-1.225s-.792-.485-1.251-.46l-.975.052v-.437c0-1.017-.827-1.844-1.844-1.844zm2.84 3.986v1.697l-1.43-.076c-.344-.017-.682.107-.931.343s-.392.569-.392.912v.963c0 .049-.039.087-.087.087A2.7 2.7 0 0 1 27 23.99v-.761a2.7 2.7 0 0 1 2.698-2.698c.048 0 .087.039.087.087v.964c0 .343.143.676.392.912a1.26 1.26 0 0 0 .931.343l1.43-.076z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`}
+                      ${sanitizeSvg(p.iconSvg) || `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M43.033.002L42.563 0c-7.896 0-15.555 1.546-22.767 4.597-6.965 2.946-13.22 7.163-18.592 12.535l-.043.044c-1.548 1.551-1.546 4.075.004 5.625l2.256 2.257c.754.754 1.76 1.17 2.832 1.17h.001a3.98 3.98 0 0 0 2.834-1.171l.04-.04a1.7 1.7 0 0 1 1.21-.499h.021a1.73 1.73 0 0 1 1.238.537l4.596 4.807c.466.488 1.095.761 1.768.768h.028c.663 0 1.285-.258 1.756-.729.975-.975.993-2.58.04-3.577l-3.308-3.46c-.295-.309-.311-.797-.035-1.087a.76.76 0 0 1 .554-.239h.001a.76.76 0 0 1 .553.236l1.041 1.09c.95.994 2.49 1.079 3.507.195a2.5 2.5 0 0 0 .865-1.787 2.53 2.53 0 0 0-.696-1.858l-.755-.79a1.72 1.72 0 0 1-.454-1.511c.099-.549.444-1.003.944-1.245a46.86 46.86 0 0 1 20.561-4.69l.419.002c1.07.011 2.07-.399 2.827-1.149a3.96 3.96 0 0 0 1.179-2.828V3.984A4 4 0 0 0 43.033.002h0zm2.2 7.199a2.21 2.21 0 0 1-.659 1.581 2.18 2.18 0 0 1-1.575.641l-.435-.002a48.6 48.6 0 0 0-21.325 4.865A3.44 3.44 0 0 0 19.33 16.8a3.46 3.46 0 0 0 .912 3.037l.756.79a.76.76 0 0 1-.052 1.106c-.303.263-.789.226-1.085-.083l-1.041-1.089a2.53 2.53 0 0 0-1.822-.779 2.5 2.5 0 0 0-1.827.784c-.929.976-.912 2.518.037 3.512l3.308 3.46a.82.82 0 0 1-.012 1.121.74.74 0 0 1-.523.215c-.197-.002-.381-.083-.519-.226l-4.596-4.808a3.47 3.47 0 0 0-2.487-1.08h-.042a3.44 3.44 0 0 0-2.449 1.011l-.014.014-.009.009-.022.022c-.423.423-.988.656-1.591.656s-1.168-.232-1.591-.655L2.404 21.56a2.23 2.23 0 0 1 0-3.145l.042-.042A56.54 56.54 0 0 1 20.48 6.214c6.994-2.958 14.423-4.458 22.083-4.458l.454.002h0a2.24 2.24 0 0 1 2.215 2.226v3.218zm-.908 6.202a.88.88 0 0 0-.878.878v43.292c0 .412-.314.574-.411.614s-.433.147-.724-.144L11.436 27.166a.88.88 0 0 0-1.242 0 .88.88 0 0 0 0 1.242l30.877 30.877c.469.469 1.073.715 1.696.715.314 0 .633-.063.942-.19a2.38 2.38 0 0 0 1.494-2.237V14.281a.88.88 0 0 0-.878-.878h0zm-6.657-1.125c-2.112 0-3.83 1.718-3.83 3.83s1.718 3.83 3.83 3.83 3.83-1.718 3.83-3.83-1.718-3.83-3.83-3.83zm0 5.903c-1.143 0-2.074-.93-2.074-2.074s.93-2.073 2.074-2.073 2.073.93 2.073 2.073-.93 2.074-2.073 2.074zM22.575 34.938a3.55 3.55 0 0 0 3.547 3.547 3.55 3.55 0 0 0 3.547-3.547 3.55 3.55 0 0 0-3.547-3.547 3.55 3.55 0 0 0-3.547 3.547h0zm3.547-1.791c.987 0 1.791.803 1.791 1.791s-.803 1.791-1.791 1.791-1.791-.803-1.791-1.791.804-1.791 1.791-1.791zm12.81-2.283a3.68 3.68 0 0 0-3.672 3.672 3.68 3.68 0 0 0 3.672 3.672 3.68 3.68 0 0 0 3.672-3.672 3.68 3.68 0 0 0-3.672-3.672zm0 5.588a1.92 1.92 0 0 1-1.916-1.915 1.92 1.92 0 0 1 1.916-1.916 1.92 1.92 0 0 1 1.915 1.916 1.92 1.92 0 0 1-1.915 1.915zm2.97 8.702a3.92 3.92 0 0 0-3.913-3.912h-.645a3.92 3.92 0 0 0-3.913 3.912 1.7 1.7 0 0 0 1.697 1.697h.23l-.037.687a1.57 1.57 0 0 0 .427 1.16c.294.31.709.488 1.136.488h1.562a1.57 1.57 0 0 0 1.136-.488c.294-.31.45-.733.428-1.16l-.037-.687h.23a1.7 1.7 0 0 0 1.697-1.697h0zm-2.515-.059a1.2 1.2 0 0 0-.87.374c-.225.238-.345.562-.327.889l.057 1.073h-1.16l.057-1.073a1.2 1.2 0 0 0-1.198-1.263h-.758a2.16 2.16 0 0 1 2.156-2.097h.645a2.16 2.16 0 0 1 2.155 2.097h-.758zm-9.689-26.32a4.46 4.46 0 0 0-4.454 4.455v.76a4.46 4.46 0 0 0 4.454 4.455c1.017 0 1.844-.827 1.844-1.843v-.437l.975.052a1.69 1.69 0 0 0 1.251-.46c.335-.318.526-.764.526-1.225v-1.841c0-.461-.192-.908-.526-1.225s-.792-.485-1.251-.46l-.975.052v-.437c0-1.017-.827-1.844-1.844-1.844zm2.84 3.986v1.697l-1.43-.076c-.344-.017-.682.107-.931.343s-.392.569-.392.912v.963c0 .049-.039.087-.087.087A2.7 2.7 0 0 1 27 23.99v-.761a2.7 2.7 0 0 1 2.698-2.698c.048 0 .087.039.087.087v.964c0 .343.143.676.392.912a1.26 1.26 0 0 0 .931.343l1.43-.076z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`}
                     </div>
                     <h3 class="h3 card-title">${escapeHtml(p.title)}</h3>
                     <p class="card-text">${escapeHtml(p.text)}</p>
@@ -990,7 +1161,7 @@
                 <li>
                   <div class="food-menu-card">
                     <div class="card-banner">
-                      <img src="${sanitizeUrl(m.img)}" width="300" height="300" class="w-100" onerror="this.src='https://via.placeholder.com/300'">
+                      <img src="${sanitizeUrl(m.img)}" width="300" height="300" loading="lazy" class="w-100" onerror="this.src='https://via.placeholder.com/300'">
                       ${m.badge ? `<div class="badge">${escapeHtml(m.badge)}</div>` : ''}
                       ${isMenutechEnabled
                         ? `<menutech-orders
@@ -1003,11 +1174,13 @@
                             data-glf-ruid="${webConfig.general.ruid}"
                             class="food-menu-btn"
                            ></menutech-orders>`
-                        : `<button class="btn food-menu-btn">Order Now</button>`}
+                        : `<button class="btn food-menu-btn">${escapeHtml(webConfig.header.btnText)}</button>`}
                     </div>
                     <div class="wrapper">
                       <p class="category">${escapeHtml(m.category)}</p>
-                      <div class="rating-wrapper"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                      <div class="rating-wrapper">
+                        <ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon>
+                      </div>
                     </div>
                     <h3 class="h3 card-title">${escapeHtml(m.title)}</h3>
                     <div class="price-wrapper">
@@ -1022,15 +1195,19 @@
             const testiHtml = webConfig.testimonials.items.map(t => `
                 <li class="testi-item">
                   <div class="testi-card">
-                    <div class="profile-wrapper" style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
-                      <img src="${sanitizeUrl(t.img)}" width="80" height="80" style="border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/80'">
+                    <div class="profile-wrapper">
+                      <figure class="avatar">
+                        <img src="${sanitizeUrl(t.img)}" width="80" height="80" loading="lazy" onerror="this.src='https://via.placeholder.com/80'">
+                      </figure>
                       <div>
                         <h3 class="h4 testi-name">${escapeHtml(t.name)}</h3>
                         <p class="testi-title">${escapeHtml(t.title)}</p>
                       </div>
                     </div>
                     <blockquote class="testi-text">"${escapeHtml(t.text)}"</blockquote>
-                    <div class="rating-wrapper"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                    <div class="rating-wrapper">
+                      <ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon>
+                    </div>
                   </div>
                 </li>
             `).join('');
@@ -1038,7 +1215,7 @@
             const bannersHtml = webConfig.banners.map(b => `
                 <li class="banner-item banner-${b.size}">
                   <div class="banner-card">
-                    <img src="${sanitizeUrl(b.img)}" width="550" height="450" class="banner-img" onerror="this.src='https://via.placeholder.com/550x450'">
+                    <img src="${sanitizeUrl(b.img)}" width="550" height="450" loading="lazy" class="banner-img" onerror="this.src='https://via.placeholder.com/550x450'">
                     <div class="banner-item-content">
                       <p class="banner-subtitle">${escapeHtml(b.subtitle)}</p>
                       <h3 class="banner-title">${escapeHtml(b.title)}</h3>
@@ -1053,17 +1230,26 @@
                 <li>
                   <div class="blog-card">
                     <div class="card-banner">
-                      <img src="${sanitizeUrl(post.img)}" width="600" height="390" class="w-100" onerror="this.src='https://via.placeholder.com/600x390'">
+                      <img src="${sanitizeUrl(post.img)}" width="600" height="390" loading="lazy" class="w-100" onerror="this.src='https://via.placeholder.com/600x390'">
                       <div class="badge">${escapeHtml(post.category)}</div>
                     </div>
                     <div class="card-content">
                       <div class="card-meta-wrapper">
-                        <span class="card-meta-link"><i class="bi bi-calendar"></i> <time>${escapeHtml(post.date)}</time></span>
-                        <span class="card-meta-link"><i class="bi bi-person"></i> <p>${escapeHtml(post.author)}</p></span>
+                        <a href="#" class="card-meta-link">
+                          <ion-icon name="calendar-outline"></ion-icon>
+                          <time class="meta-info">${escapeHtml(post.date)}</time>
+                        </a>
+                        <a href="#" class="card-meta-link">
+                          <ion-icon name="person-outline"></ion-icon>
+                          <p class="meta-info">${escapeHtml(post.author)}</p>
+                        </a>
                       </div>
                       <h3 class="h3"><a href="#" class="card-title">${escapeHtml(post.title)}</a></h3>
                       <p class="card-text">${escapeHtml(post.text)}</p>
-                      <a href="#" class="btn-link"><span>Read More</span> <i class="bi bi-arrow-right"></i></a>
+                      <a href="#" class="btn-link">
+                        <span>Read More</span>
+                        <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+                      </a>
                     </div>
                   </div>
                 </li>
@@ -1081,277 +1267,1901 @@
                     <script src="https://www.fbgcdn.com/embedder/js/ewm2.js">${S_CLOSE}
                     <style>
                         :root {
-                          --rich-black-fogra-29: hsl(210, 26%, 7%);
-                          --champagne-pink_20: hsla(23, 61%, 86%, 0.2);
-                          --independence_30: hsla(245, 17%, 29%, 0.3);
-                          --gray-x-11-gray: hsl(0, 0%, 73%);
-                          --champagne-pink: hsl(23, 61%, 86%);
-                          --spanish-gray: hsl(0, 0%, 60%);
-                          --sonic-silver: hsl(0, 0%, 47%);
-                          --deep-saffron: hsl(32, 100%, 59%);
-                          --dark-orange: hsl(28, 100%, 58%);
-                          --desert-sand: hsl(23, 49%, 82%);
-                          --isabelline: hsl(38, 44%, 96%);
-                          --gainsboro: hsl(0, 0%, 87%);
-                          --tangerine: hsl(31, 84%, 50%);
-                          --cinnabar: hsl(3, 90%, 55%);
-                          --black_95: hsla(0, 0%, 0%, 0.95);
-                          --cultured: hsl(0, 0%, 93%);
-                          --white: hsl(0, 0%, 100%);
-                          --black: hsl(0, 0%, 0%);
-                          --onyx: hsl(0, 0%, 27%);
-                          --ff-shadows-into-light: 'Shadows Into Light', cursive;
-                          --ff-roboto: 'Roboto', sans-serif;
-                          --ff-rubik: 'Rubik', sans-serif;
-                          --fs-1: 3.2rem; --fs-2: 2.2rem; --fs-3: 1.8rem; --fs-4: 1.4rem; --fs-5: 1.2rem;
-                          --fw-500: 500; --fw-600: 600; --fw-700: 700;
-                          --section-padding: 60px;
-                          --shadow-1: 0 1px 4px hsla(0, 0%, 0%, 0.2);
-                          --shadow-2: 0 1px 2px hsla(0, 0%, 0%, 0.2);
-                          --transition-1: 0.25s ease;
-                          --transition-2: 0.5s ease;
-                          --clip-path-1: polygon(0 40%, 100% 0%, 100% 100%, 0 100%);
-                          --clip-path-2: polygon(0 0%, 100% 0%, 100% 100%, 0 100%);
-                        }
-                        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-                        li { list-style: none; }
-                        a { text-decoration: none; color: inherit; }
-                        img { display: block; height: auto; width: 100%; }
-                        button { background: none; border: none; font: inherit; cursor: pointer; display: block; }
-                        html { font-family: var(--ff-roboto); font-size: 10px; scroll-behavior: smooth; }
-                        body { background-color: var(--white); color: var(--sonic-silver); font-size: 1.6rem; line-height: 1.6; overflow-x: hidden; }
-                        .container { padding-inline: 15px; margin-inline: auto; max-width: 1200px; }
-                        .h1, .h2, .h3, .h4 { font-family: var(--ff-rubik); color: var(--rich-black-fogra-29); line-height: 1.2; letter-spacing: -1px; }
-                        .h1, .h2 { font-size: var(--fs-1); }
-                        .h2, .h3, .h4 { font-weight: var(--fw-600); }
-                        .h3 { font-size: var(--fs-2); }
-                        .h4 { font-size: var(--fs-3); }
-                        .btn { background-color: var(--deep-saffron); color: var(--white); font-family: var(--ff-rubik); font-size: var(--fs-4); font-weight: var(--fw-500); height: 45px; padding-inline: 35px; transition: var(--transition-1); display: flex; align-items: center; justify-content: center; }
-                        .btn:hover { background-color: var(--rich-black-fogra-29); }
-                        .section { padding-block: var(--section-padding); }
-                        .section-title > .span { display: inline-block; color: var(--deep-saffron); }
-                        .section-subtitle { color: var(--cinnabar); font-family: var(--ff-rubik); text-align: center; font-weight: var(--fw-500); margin-bottom: 10px; }
-                        .section-text { text-align: center; max-width: 600px; margin-inline: auto; margin-bottom: 30px; }
+                      --rich-black-fogra-29: hsl(210, 26%, 7%);
+                      --champagne-pink_20: hsla(23, 61%, 86%, 0.2);
+                      --independence_30: hsla(245, 17%, 29%, 0.3);
+                      --gray-x-11-gray: hsl(0, 0%, 73%);
+                      --champagne-pink: hsl(23, 61%, 86%);
+                      --spanish-gray: hsl(0, 0%, 60%);
+                      --sonic-silver: hsl(0, 0%, 47%);
+                      --deep-saffron: hsl(32, 100%, 59%);
+                      --dark-orange: hsl(28, 100%, 58%);
+                      --desert-sand: hsl(23, 49%, 82%);
+                      --isabelline: hsl(38, 44%, 96%);
+                      --gainsboro: hsl(0, 0%, 87%);
+                      --tangerine: hsl(31, 84%, 50%);
+                      --cinnabar: hsl(3, 90%, 55%);
+                      --black_95: hsla(0, 0%, 0%, 0.95);
+                      --cultured: hsl(0, 0%, 93%);
+                      --white: hsl(0, 0%, 100%);
+                      --black: hsl(0, 0%, 0%);
+                      --onyx: hsl(0, 0%, 27%);
 
-                        /* Header */
-                        .header { position: sticky; top: 0; left: 0; width: 100%; padding-block: 20px; background-color: var(--white); border-block-end: 1px solid var(--champagne-pink_20); z-index: 4; box-shadow: var(--shadow-1); }
-                        .header .container { display: flex; justify-content: space-between; align-items: center; }
-                        .logo { color: var(--rich-black-fogra-29); font-family: var(--ff-rubik); font-size: 2.8rem; font-weight: var(--fw-700); letter-spacing: -2px; }
-                        .logo .span { color: var(--deep-saffron); }
+                      --ff-shadows-into-light: 'Shadows Into Light', cursive;
+                      --ff-roboto: 'Roboto', sans-serif;
+                      --ff-rubik: 'Rubik', sans-serif;
 
-                        /* Hero */
-                        .hero { background-repeat: no-repeat; background-size: cover; background-position: center; padding-block: 145px 60px; text-align: center; position: relative; }
-                        .hero::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 0; }
-                        .hero .container { position: relative; z-index: 1; }
-                        .hero-subtitle { color: var(--dark-orange); font-family: var(--ff-shadows-into-light); font-size: var(--fs-3); letter-spacing: 1px; margin-block-end: 25px; }
-                        .hero-title { color: var(--champagne-pink); max-width: 15ch; margin-inline: auto; font-size: 4rem; }
-                        .hero-text { color: var(--desert-sand); margin-block: 15px 30px; max-width: 44ch; margin-inline: auto; }
-                        .hero .btn { margin-inline: auto; }
+                      --fs-1: 3.2rem;
+                      --fs-2: 2.2rem;
+                      --fs-3: 1.8rem;
+                      --fs-4: 1.4rem;
+                      --fs-5: 1.2rem;
 
-                        /* Promo */
-                        .promo-list { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; }
-                        .promo-item { min-width: 300px; flex: 1; }
-                        .promo-card { position: relative; background-color: var(--white); text-align: center; padding: 40px 30px; box-shadow: var(--shadow-2); z-index: 1; }
-                        .promo-card::after { content: ""; position: absolute; inset: 0; background-color: var(--deep-saffron); clip-path: var(--clip-path-1); transform: scaleY(0.3); transform-origin: bottom; z-index: -1; transition: var(--transition-1); }
-                        .promo-card:hover::after { clip-path: var(--clip-path-2); transform: scaleY(1); }
-                        .promo-card .card-icon svg { margin-inline: auto; }
-                        .promo-card:hover .card-icon path { fill: var(--white); }
-                        .promo-card:hover :is(.card-title, .card-text) { color: var(--white); }
-                        .promo-card .card-title { margin-block: 15px; transition: var(--transition-1); }
-                        .promo-card .card-text { margin-block-end: 15px; transition: var(--transition-1); }
+                      --fw-500: 500;
+                      --fw-600: 600;
+                      --fw-700: 700;
 
-                        /* About */
-                        .about { text-align: center; }
-                        .about-banner { position: relative; aspect-ratio: 1 / 0.9; margin-bottom: 40px; }
-                        .about-list { margin-block: 20px 30px; }
-                        .about-item { display: flex; justify-content: center; align-items: center; gap: 10px; margin-block-end: 10px; }
-                        .about-item ion-icon { background-color: var(--deep-saffron); color: var(--white); font-size: 1.2rem; padding: 4px; border-radius: 50%; }
-                        .about-item .span { color: var(--rich-black-fogra-29); font-family: var(--ff-rubik); font-weight: var(--fw-500); }
-                        .scale-up-anim { animation: scaleUp 1s linear infinite alternate; }
-                        @keyframes scaleUp { 0% { transform: scale(1);} 100% { transform: scale(1.05); } }
+                      --section-padding: 60px;
 
-                        /* Menu */
-                        .food-menu { background-color: var(--isabelline); text-align: center; }
-                        .food-menu-list { display: grid; gap: 30px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-                        .food-menu-card { background-color: var(--white); padding: 40px; box-shadow: var(--shadow-2); position: relative; }
-                        .food-menu-card .card-banner { position: relative; padding-block-start: 30px; max-width: max-content; margin-inline: auto; }
-                        .food-menu-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, 0); opacity: 0; transition: var(--transition-2); width: 60%; }
-                        .food-menu-card:hover .food-menu-btn { transform: translate(-50%, -50%); opacity: 1; }
-                        .food-menu-card .wrapper { display: flex; justify-content: center; align-items: center; gap: 15px; margin-block: 20px 10px; }
-                        .rating-wrapper { display: flex; gap: 5px; color: var(--deep-saffron); }
-                        .price-wrapper { display: flex; justify-content: center; gap: 5px; font-family: var(--ff-rubik); font-weight: var(--fw-600); }
-                        .price { color: var(--deep-saffron); }
-                        .del { color: var(--gray-x-11-gray); text-decoration: line-through; }
-                        .badge { position: absolute; top: 0; left: 0; background: var(--cinnabar); color: var(--white); font-size: var(--fs-5); font-weight: var(--fw-600); padding: 2px 15px; }
+                      /**
+                       * shadow
+                       */
 
-                        /* CTA */
-                        .cta { background-repeat: no-repeat; background-size: cover; background-position: center; text-align: center; color: var(--white); }
-                        .cta .h2 { color: var(--white); }
-                        .cta .section-text { color: var(--gainsboro); }
-                        .cta-banner { position: relative; aspect-ratio: 1 / 0.9; margin-top: 40px; }
+                      --shadow-1: 0 1px 4px hsla(0, 0%, 0%, 0.2);
+                      --shadow-2: 0 1px 2px hsla(0, 0%, 0%, 0.2);
 
-                        /* Delivery */
-                        .delivery { background-color: var(--isabelline); }
-                        .delivery-banner { position: relative; aspect-ratio: 1 / 0.86; overflow: hidden; height: 400px; }
-                        .delivery-img { position: absolute; top: 0; left: 0; transform: translateX(-80px); transition: var(--transition-2); }
+                      /**
+                       * transition
+                       */
 
-                        /* Testimonials */
-                        .testi-list { display: grid; gap: 30px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-                        .testi-card { background-color: var(--white); padding: 40px; text-align: left; box-shadow: var(--shadow-2); }
-                        .profile-wrapper { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-                        .avatar { min-width: 80px; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; }
+                      --transition-1: 0.25s ease;
+                      --transition-2: 0.5s ease;
 
-                        /* Banners */
-                        .banner-list { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); }
-                        .banner-card { position: relative; height: 100%; box-shadow: var(--shadow-2); overflow: hidden; }
-                        .banner-img { background-color: var(--gainsboro); width: 100%; height: 100%; object-fit: cover; transition: var(--transition-2); }
-                        .banner-card:hover .banner-img { transform: scale(1.05); }
-                        .banner-item-content { position: absolute; top: 50%; transform: translateY(-50%); left: 20px; right: 20px; color: white; }
-                        .banner-lg { grid-column: 1 / 3; grid-row: 1 / 3; height: 430px; }
-                        .banner-md { grid-column: 3 / 5; grid-row: 2 / 3; height: 210px; }
-                        .banner-sm { height: 210px; }
-                        .banner-title { font-size: var(--fs-2); color: white; margin-block: 5px 10px; }
+                      /**
+                       * clip path
+                       */
 
-                        /* Blog */
-                        .blog-list { display: grid; gap: 30px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-                        .blog-card { background-color: var(--white); text-align: left; box-shadow: var(--shadow-2); }
-                        .blog-card .card-content { padding: 30px; }
-                        .card-meta-wrapper { display: flex; gap: 20px; margin-bottom: 15px; font-size: 1.2rem; }
-                        .blog-card .card-title { font-size: var(--fs-3); margin-block: 10px; }
-                        .btn-link { display: flex; align-items: center; gap: 5px; color: var(--rich-black-fogra-29); font-weight: 600; }
+                      --clip-path-1: polygon(0 40%, 100% 0%, 100% 100%, 0 100%);
+                      --clip-path-2: polygon(0 0%, 100% 0%, 100% 100%, 0 100%);
 
-                        /* Footer */
-                        .footer { background-color: #111; color: var(--spanish-gray); padding-block: 60px; text-align: center; }
-                        .footer .logo { color: var(--white); margin-bottom: 20px; display: inline-block; }
-                        .footer-list { margin-block: 20px; }
+                    }
 
-                        /* Responsive */
-                        @media (min-width: 768px) {
-                            .hero, .about, .cta, .delivery { text-align: left; }
-                            .hero .container, .about .container, .cta .container, .delivery .container { display: flex; align-items: center; gap: 50px; }
-                            .hero-content, .about-content, .cta-content, .delivery-content { flex: 1; }
-                            .hero-banner, .about-banner, .cta-banner, .delivery-banner { flex: 1; display: block; }
-                            .hero .btn, .about .btn, .cta .btn, .delivery .btn { margin-inline: 0; }
-                            .about-item { justify-content: flex-start; }
-                        }
 
-                        /* Clickable Sections */
-                        [data-section] { cursor: pointer; transition: outline 0.2s; position: relative; }
-                        [data-section]:hover::before { content: "Click to Edit"; position: absolute; top: 0; right: 0; background: var(--deep-saffron); color: white; font-size: 10px; padding: 2px 5px; z-index: 10; }
-                        [data-section]:hover { outline: 2px dashed var(--deep-saffron); outline-offset: 2px; }
 
-                        /* Scrollbar */
-                        ::-webkit-scrollbar { width: 8px; }
-                        ::-webkit-scrollbar-track { background-color: var(--cultured); }
-                        ::-webkit-scrollbar-thumb { background-color: var(--deep-saffron); }
+
+
+                    /*-----------------------------------*\
+                      #RESET
+                    \*-----------------------------------*/
+
+                    *,
+                    *::before,
+                    *::after {
+                      margin: 0;
+                      padding: 0;
+                      box-sizing: border-box;
+                    }
+
+                    li { list-style: none; }
+
+                    a {
+                      text-decoration: none;
+                      color: inherit;
+                    }
+
+                    a,
+                    img,
+                    svg,
+                    span,
+                    input,
+                    select,
+                    button,
+                    textarea,
+                    ion-icon { display: block; }
+
+                    img { height: auto; }
+
+                    input,
+                    select,
+                    button,
+                    textarea {
+                      background: none;
+                      border: none;
+                      font: inherit;
+                    }
+
+                    input,
+                    select,
+                    textarea { width: 100%; }
+
+                    button { cursor: pointer; }
+
+                    ion-icon { pointer-events: none; }
+
+                    address { font-style: normal; }
+
+                    html {
+                      font-family: var(--ff-roboto);
+                      font-size: 10px;
+                      scroll-behavior: smooth;
+                    }
+
+                    body {
+                      background-color: var(--white);
+                      color: var(--sonic-silver);
+                      font-size: 1.6rem;
+                      line-height: 1.6;
+                      overflow-x: hidden;
+                    }
+
+                    body.active { overflow: hidden; }
+
+                    :focus-visible { outline-offset: 4px; }
+
+                    ::selection {
+                      background-color: var(--deep-saffron);
+                      color: var(--white);
+                    }
+
+                    ::-webkit-scrollbar { width: 8px; }
+
+                    ::-webkit-scrollbar-track { background-color: var(--cultured); }
+
+                    ::-webkit-scrollbar-thumb { background-color: var(--deep-saffron); }
+
+                    ::-webkit-scrollbar-thumb:hover { background-color: var(--tangerine); }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #REUSED STYLE
+                    \*-----------------------------------*/
+
+                    .container { padding-inline: 15px; }
+
+                    .h1,
+                    .h2,
+                    .h3,
+                    .h4 {
+                      font-family: var(--ff-rubik);
+                      color: var(--rich-black-fogra-29);
+                      line-height: 1.2;
+                      letter-spacing: -1px;
+                    }
+
+                    .h1,
+                    .h2 { font-size: var(--fs-1); }
+
+                    .h2,
+                    .h3,
+                    .h4 { font-weight: var(--fw-600); }
+
+                    .h3 { font-size: var(--fs-2); }
+
+                    .h4 { font-size: var(--fs-3); }
+
+                    .btn {
+                      background-color: var(--bg-color, var(--deep-saffron));
+                      color: var(--white);
+                      font-family: var(--ff-rubik);
+                      font-size: var(--fs-4);
+                      font-weight: var(--fw-500);
+                      height: var(--height, 45px);
+                      padding-inline: var(--padding-inline, 35px);
+                      transition: var(--transition-1);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      text-align: center;
+                    }
+
+                    .btn-hover {
+                      position: relative;
+                      overflow: hidden;
+                      z-index: 1;
+                    }
+
+                    .btn-hover::after {
+                      content: "";
+                      position: absolute;
+                      bottom: -1px;
+                      left: 20px;
+                      width: 1px;
+                      height: 1px;
+                      transform: translate(-50%, 51%) scale(var(--scale, 1));
+                      border-radius: 50%;
+                      background-color: var(--rich-black-fogra-29);
+                      z-index: -1;
+                      transition: var(--transition-2);
+                    }
+
+                    .btn-hover:is(:hover, :focus)::after { --scale: 500; }
+
+                    .section { padding-block: var(--section-padding); }
+
+                    .section.white { background-color: var(--isabelline); }
+
+                    .section-divider { position: relative; }
+
+                    .section-divider::before,
+                    .section-divider::after {
+                      content: "";
+                      position: absolute;
+                      bottom: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 15px;
+                      background-repeat: repeat no-repeat;
+                      background-position: bottom;
+                    }
+
+                    .section-divider.white::after { background-image: url("https://codewithsadee.github.io/foodie/assets/images/shape-white.png"); }
+
+                    .section-divider.gray::after { background-image: url("https://codewithsadee.github.io/foodie/assets/images/shape-grey.png"); }
+
+                    .w-100 { width: 100%; }
+
+                    .has-scrollbar {
+                      display: flex;
+                      gap: 10px;
+                      overflow-x: auto;
+                      scroll-snap-type: inline mandatory;
+                      padding-block-end: 40px;
+                    }
+
+                    .has-scrollbar::-webkit-scrollbar { height: 12px; }
+
+                    .has-scrollbar::-webkit-scrollbar-button { width: calc(25% - 40px); }
+
+                    .has-scrollbar::-webkit-scrollbar-track {
+                      outline: 2px solid var(--deep-saffron);
+                      border-radius: 50px;
+                    }
+
+                    .has-scrollbar::-webkit-scrollbar-thumb {
+                      border: 3px solid var(--cultured);
+                      border-radius: 50px;
+                    }
+
+                    .section-title > .span {
+                      display: inline-block;
+                      color: var(--deep-saffron);
+                    }
+
+                    .abs-img {
+                      position: absolute;
+                      transform: scale(1);
+                    }
+
+                    .scale-up-anim { animation: scaleUp 1s linear infinite alternate; }
+
+                    @keyframes scaleUp {
+                      0% { transform: scale(1);}
+                      100% { transform: scale(1.05); }
+                    }
+
+                    .section-subtitle {
+                      color: var(--cinnabar);
+                      font-family: var(--ff-rubik);
+                      text-align: center;
+                      font-weight: var(--fw-500);
+                    }
+
+                    .badge {
+                      position: absolute;
+                      background: var(--bg-color, var(--cinnabar));
+                      color: var(--white);
+                      font-size: var(--fs-5);
+                      font-weight: var(--fw-600);
+                      padding: var(--padding-block, 2px) 15px;
+                    }
+
+                    .rating-wrapper {
+                      display: flex;
+                      gap: 5px;
+                      color: var(--deep-saffron);
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #HEADER
+                    \*-----------------------------------*/
+
+                    /* .navbar, */
+                    .header-btn-group .btn { display: none; }
+
+                    .header {
+                      --color: var(--white);
+                      --btn-color: var(--champagne-pink);
+
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      padding-block: 20px;
+                      border-block-end: 1px solid var(--champagne-pink_20);
+                      z-index: 4;
+                    }
+
+                    .header.active {
+                      --color: var(--rich-black-fogra-29);
+                      --btn-color: var(--rich-black-fogra-29);
+
+                      position: fixed;
+                      top: -86px;
+                      background-color: var(--white);
+                      box-shadow: var(--shadow-1);
+                      animation: slideIn 0.5s ease-out forwards;
+                    }
+
+                    @keyframes slideIn {
+                      0% { transform: translateY(0); }
+                      100% { transform: translateY(100%); }
+                    }
+
+                    .header .container {
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                    }
+
+                    .logo {
+                      color: var(--rich-black-fogra-29);
+                      font-family: var(--ff-rubik);
+                      font-size: 2.8rem;
+                      font-weight: var(--fw-700);
+                      letter-spacing: -2px;
+                    }
+
+                    .logo .span {
+                      display: inline-block;
+                      color: var(--deep-saffron);
+                    }
+
+                    .header-btn-group {
+                      display: flex;
+                      align-items: center;
+                      gap: 20px;
+                    }
+
+                    .search-btn {
+                      color: var(--btn-color);
+                      font-size: 20px;
+                      display: none;
+                    }
+
+                    .search-btn ion-icon { --ionicon-stroke-width: 50px; }
+
+                    .nav-toggle-btn {
+                      display: grid;
+                      gap: 4px;
+                      display: none;
+                    }
+
+                    .line {
+                      width: 10px;
+                      height: 3px;
+                      background-color: var(--btn-color);
+                      border-radius: 5px;
+                      transition: var(--transition-1);
+                    }
+
+                    .line.middle { width: 20px; }
+
+                    .line.bottom { margin-left: auto; }
+
+                    .navbar {
+                      position: absolute;
+                      top: 100%;
+                      left: 50%;
+                      transform: translateX(-50%);
+                      width: calc(100% - 30px);
+                      background-color: var(--white);
+                      padding-inline: 20px;
+                      box-shadow: var(--shadow-1);
+                      height: 0;
+                      overflow: hidden;
+                      visibility: hidden;
+                      transition: var(--transition-1);
+                    }
+
+                    .navbar.active {
+                      height: 236px;
+                      visibility: visible;
+                    }
+
+                    .navbar-list { margin-block: 10px; }
+
+                    .nav-item:not(:last-child) { border-block-end: 1px solid hsla(0, 0%, 0%, 0.04); }
+
+                    .navbar-link {
+                      color: var(--rich-black-fogra-29);
+                      font-size: var(--fs-4);
+                      font-family: var(--ff-rubik);
+                      font-weight: var(--fw-500);
+                      padding: 10px 15px;
+                      transition: var(--transition-1);
+                    }
+
+                    .navbar-link:is(:hover, :focus) { color: var(--dark-orange); }
+
+
+
+                    /*-----------------------------------*\
+                      #SEARCH BOX
+                    \*-----------------------------------*/
+
+                    .search-container {
+                      position: fixed;
+                      top: -60%;
+                      left: 0;
+                      width: 100%;
+                      height: 110%;
+                      background-color: var(--black_95);
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      padding-inline: 15px;
+                      z-index: 5;
+                      visibility: hidden;
+                      opacity: 0;
+                      transition: var(--transition-2);
+                    }
+
+                    .search-container.active {
+                      visibility: visible;
+                      opacity: 1;
+                      transform: translateY(50%);
+                    }
+
+                    .search-box {
+                      position: relative;
+                      width: 100%;
+                      max-width: 500px;
+                    }
+
+                    .search-input {
+                      color: var(--gainsboro);
+                      font-size: 3rem;
+                      padding: 20px 15px;
+                      padding-inline-end: 70px;
+                    }
+
+                    .search-input::placeholder { color: var(--spanish-gray); }
+
+                    .search-input::-webkit-search-cancel-button { display: none; }
+
+                    .search-submit {
+                      position: absolute;
+                      top: 50%;
+                      transform: translateY(-50%);
+                      right: 15px;
+                      color: var(--onyx);
+                      font-size: 4rem;
+                      transition: var(--transition-1);
+                    }
+
+                    .search-submit:is(:hover, :focus) { color: var(--gainsboro); }
+
+                    .search-close-btn {
+                      position: absolute;
+                      inset: 0;
+                      z-index: -1;
+                      cursor: pointer;
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #HERO
+                    \*-----------------------------------*/
+
+                    .hero-banner { display: none; }
+
+                    .hero {
+                      background-repeat: no-repeat;
+                      background-size: cover;
+                      background-position: center;
+                      padding-block: 145px 60px;
+                      text-align: center;
+                    }
+
+                    .hero-subtitle {
+                      color: var(--dark-orange);
+                      font-family: var(--ff-shadows-into-light);
+                      font-size: var(--fs-3);
+                      letter-spacing: 1px;
+                      margin-block-end: 25px;
+                    }
+
+                    .hero-title {
+                      color: var(--champagne-pink);
+                      max-width: 12ch;
+                      margin-inline: auto;
+                    }
+
+                    .hero-text {
+                      color: var(--desert-sand);
+                      margin-block: 15px 30px;
+                      max-width: 44ch;
+                      margin-inline: auto;
+                    }
+
+                    .hero .btn { margin-inline: auto; }
+
+                    .hero .btn:is(:hover, :focus) {
+                      background-color: var(--white);
+                      color: var(--black);
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #PROMO
+                    \*-----------------------------------*/
+
+                    .promo-card {
+                      position: relative;
+                      background-color: var(--white);
+                      text-align: center;
+                      padding: 40px 30px;
+                      box-shadow: var(--shadow-2);
+                      z-index: 1;
+                    }
+
+                    .promo-card::after {
+                      content: "";
+                      position: absolute;
+                      inset: 0;
+                      background-color: var(--deep-saffron);
+                      clip-path: var(--clip-path-1);
+                      transform: scaleY(0.3);
+                      transform-origin: bottom;
+                      z-index: -1;
+                      transition: var(--transition-1);
+                    }
+
+                    .promo-card:hover::after {
+                      clip-path: var(--clip-path-2);
+                      transform: scaleY(1);
+                    }
+
+                    .promo-card .card-icon svg { margin-inline: auto; }
+
+                    .promo-card:hover .card-icon path { fill: var(--white); }
+
+                    .promo-card:hover :is(.card-title, .card-text) { color: var(--white); }
+
+                    .promo-card .card-title {
+                      margin-block: 15px;
+                      transition: var(--transition-1);
+                    }
+
+                    .promo-card .card-text {
+                      margin-block-end: 15px;
+                      transition: var(--transition-1);
+                    }
+
+                    .promo-card .card-banner {
+                      max-width: max-content;
+                      margin-inline: auto;
+                      aspect-ratio: 1 / 1;
+                    }
+
+                    .promo-item {
+                      min-width: 100%;
+                      scroll-snap-align: start;
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #ABOUT
+                    \*-----------------------------------*/
+
+                    .about { text-align: center; }
+
+                    .about-banner {
+                      position: relative;
+                      aspect-ratio: 1 / 0.9;
+                    }
+
+                    .about-img {
+                      max-width: max-content;
+                      margin-inline: auto;
+                    }
+
+                    .about-banner .abs-img {
+                      top: 0;
+                      left: 100px;
+                    }
+
+                    .about .section-title {
+                      max-width: 15ch;
+                      margin-block: 40px 10px;
+                      margin-inline: auto;
+                    }
+
+                    .about-list { margin-block: 20px 30px; }
+
+                    .about-item {
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      gap: 10px;
+                    }
+
+                    .about-item:not(:last-child) { margin-block-end: 10px; }
+
+                    .about-item ion-icon {
+                      background-color: var(--deep-saffron);
+                      color: var(--white);
+                      font-size: 1.2rem;
+                      padding: 4px;
+                      border-radius: 50%;
+                      --ionicon-stroke-width: 110px;
+                    }
+
+                    .about-item .span {
+                      color: var(--rich-black-fogra-29);
+                      font-family: var(--ff-rubik);
+                      font-weight: var(--fw-500);
+                    }
+
+                    .about .btn { margin-inline: auto; }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #FOOD MENU
+                    \*-----------------------------------*/
+
+                    .food-menu {
+                      background-color: var(--isabelline);
+                      text-align: center;
+                    }
+
+                    .food-menu .section-title { margin-block: 10px 20px; }
+
+                    .food-menu .section-text {
+                      max-width: 44ch;
+                      margin-inline: auto;
+                      margin-block-end: 30px;
+                    }
+
+                    .fiter-list {
+                      display: flex;
+                      flex-wrap: wrap;
+                      justify-content: center;
+                      gap: 10px;
+                      margin-block-end: 40px;
+                      display: none;
+                    }
+
+                    .filter-btn {
+                      background-color: var(--white);
+                      color: var(--color, var(--rich-black-fogra-29));
+                      font-family: var(--ff-rubik);
+                      font-weight: var(--fw-500);
+                      padding: 5px 20px;
+                      border: 1px solid var(--border-color, var(--cultured));
+                    }
+
+                    .filter-btn.active {
+                      background-color: var(--deep-saffron);
+                      --color: var(--white);
+                      --border-color: var(--deep-saffron);
+                    }
+
+                    .food-menu-list {
+                      display: grid;
+                      gap: 30px;
+                    }
+
+                    .food-menu-card {
+                      background-color: var(--white);
+                      padding: 40px;
+                      box-shadow: var(--shadow-2);
+                    }
+
+                    .food-menu-card:focus-within { outline: 1px auto -webkit-focus-ring-color; }
+
+                    .food-menu-card .card-banner {
+                      position: relative;
+                      padding-block-start: 30px;
+                      max-width: max-content;
+                      aspect-ratio: 1 / 1;
+                      margin-inline: auto;
+                    }
+
+                    .food-menu-card .badge {
+                      top: 0;
+                      left: 0;
+                    }
+
+                    .food-menu-btn {
+                      position: absolute;
+                      top: calc(50% + 15px);
+                      left: 50%;
+                      transform: translate(-50%, 0);
+                      min-width: max-content;
+                      --bg-color: var(--cinnabar);
+                      width: 60%;
+                      --height: 40px;
+                      --padding-inline: 20px;
+                      opacity: 0;
+                      transition: var(--transition-2);
+                    }
+
+                    .food-menu-btn:is(:hover, :focus) { --bg-color: var(--deep-saffron); }
+
+                    .food-menu-card:is(:hover, :focus-within) .food-menu-btn {
+                      transform: translate(-50%, -50%);
+                      opacity: 1;
+                    }
+
+                    .food-menu-card .wrapper {
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      gap: 15px;
+                      margin-block: 20px 10px;
+                    }
+
+                    .food-menu-card .category {
+                      font-family: var(--ff-rubik);
+                      font-weight: var(--fw-500);
+                    }
+
+                    .food-menu-card .rating-wrapper { font-size: 1.4rem; }
+
+                    .food-menu-card .card-title { margin-block-end: 10px; }
+
+                    .food-menu-card .price-wrapper {
+                      display: flex;
+                      justify-content: center;
+                      gap: 5px;
+                      font-family: var(--ff-rubik);
+                      font-weight: var(--fw-600);
+                    }
+
+                    .food-menu-card .price-text {
+                      color: var(--cinnabar);
+                      text-transform: uppercase;
+                      padding-inline-end: 5px;
+                    }
+
+                    .food-menu-card .price { color: var(--deep-saffron); }
+
+                    .food-menu-card .del { color: var(--gray-x-11-gray); text-decoration: line-through;}
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #CTA
+                    \*-----------------------------------*/
+
+                    .cta {
+                      background-repeat: no-repeat;
+                      background-size: cover;
+                      background-position: center;
+                      text-align: center;
+                      overflow: hidden;
+                    }
+
+                    .cta::before {
+                      bottom: auto;
+                      top: 0;
+                      background-image: url("https://codewithsadee.github.io/foodie/assets/images/shape-grey.png");
+                      transform: scaleY(-1);
+                    }
+
+                    .cta .section-title {
+                      color: var(--white);
+                      line-height: 1.5;
+                      letter-spacing: -2px;
+                      max-width: 17ch;
+                      margin-inline: auto;
+                    }
+
+                    .cta .section-text {
+                      color: var(--gainsboro);
+                      margin-block: 25px 20px;
+                    }
+
+                    .cta .btn { margin-inline: auto; }
+
+                    .cta-banner {
+                      position: relative;
+                      aspect-ratio: 1 / 0.9;
+                    }
+
+                    .cta-img { transform: scale(1.3) translateY(60px); }
+
+                    .cta-banner .abs-img {
+                      top: 50px;
+                      left: 10px;
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #DELIVERY
+                    \*-----------------------------------*/
+
+                    .delivery-content { margin-block-end: 40px; }
+
+                    .delivery .section-title {
+                      max-width: 17ch;
+                      line-height: 1.6;
+                      letter-spacing: -2px;
+                    }
+
+                    .delivery .section-text { margin-block: 15px 25px; }
+
+                    .delivery-banner {
+                      position: relative;
+                      aspect-ratio: 1 / 0.86;
+                    }
+
+                    .delivery-img {
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      transform: translateX(-80px);
+                      transition: var(--transition-2);
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #TESTIMONIALS
+                    \*-----------------------------------*/
+
+                    .testi { text-align: center; }
+
+                    .testi .section-title { margin-block: 10px 20px; }
+
+                    .testi .section-text {
+                      max-width: 44ch;
+                      margin-inline: auto;
+                      margin-block-end: 30px;
+                    }
+
+                    .testi-card {
+                      background-color: var(--white);
+                      padding: 40px;
+                      text-align: left;
+                      box-shadow: var(--shadow-2);
+                    }
+
+                    .testi-card .profile-wrapper {
+                      display: flex;
+                      align-items: center;
+                      gap: 15px;
+                    }
+
+                    .testi-card .avatar {
+                      min-width: max-content;
+                      border-radius: 50%;
+                      overflow: hidden;
+                    }
+
+                    .testi-card .testi-name { margin-block-end: 2px; }
+
+                    .testi-card .testi-title {
+                      font-family: var(--ff-rubik);
+                      font-size: var(--fs-4);
+                    }
+
+                    .testi-card .testi-text { margin-block: 20px 15px; }
+
+                    .testi-item {
+                      min-width: 100%;
+                      scroll-snap-align: start;
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #BANNER
+                    \*-----------------------------------*/
+
+                    .banner { color: var(--white); }
+
+                    .banner-list {
+                      display: grid;
+                      gap: 10px;
+                    }
+
+                    .banner-lg { height: 430px; }
+
+                    .banner-sm { height: 200px; }
+
+                    .banner-md { height: 240px; }
+
+                    .banner-card {
+                      position: relative;
+                      height: 100%;
+                      box-shadow: var(--shadow-2);
+                      overflow: hidden;
+                    }
+
+                    .banner-card .banner-img {
+                      background-color: var(--gainsboro);
+                      width: 100%;
+                      height: 100%;
+                      object-fit: cover;
+                      transform: scale(1);
+                      transition: var(--transition-2);
+                    }
+
+                    .banner-card:is(:hover, :focus-within) .banner-img { transform: scale(1.05); }
+
+                    .banner-item-content {
+                      position: absolute;
+                      top: 50%;
+                      transform: translateY(-50%);
+                      left: 20px;
+                      right: 20px;
+                      max-height: calc(100% - 30px);
+                    }
+
+                    .banner-md .banner-item-content { left: 50%; }
+
+                    .banner-subtitle,
+                    .banner-title {
+                      font-family: var(--ff-rubik);
+                      font-weight: var(--fw-600);
+                      line-height: 1.2;
+                      letter-spacing: -0.5px;
+                    }
+
+                    .banner-lg .banner-subtitle {
+                      font-size: var(--fs-2);
+                      margin-block-end: 10px;
+                    }
+
+                    .banner-lg .banner-title {
+                      font-size: var(--fs-1);
+                      max-width: 16ch;
+                    }
+
+                    :is(.banner-md, .banner-sm) .banner-title {
+                      font-size: var(--fs-2);
+                      max-width: 10ch;
+                    }
+
+                    .banner-card .banner-text { margin-block: 10px 15px; }
+
+                    .banner-card .btn {
+                      --bg-color: var(--dark-orange);
+                      --height: 40px;
+                      --padding-inline: 25px;
+                    }
+
+                    .banner-card .btn:is(:hover, :focus) { background-color: var(--rich-black-fogra-29); }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #BLOG
+                    \*-----------------------------------*/
+
+                    .blog { text-align: center; }
+
+                    .blog .section-title { margin-block: 10px 20px; }
+
+                    .blog .section-text {
+                      margin-block-end: 40px;
+                      max-width: 44ch;
+                      margin-inline: auto;
+                    }
+
+                    .blog-list {
+                      display: grid;
+                      gap: 30px;
+                    }
+
+                    .blog-card {
+                      background-color: var(--white);
+                      text-align: left;
+                      box-shadow: var(--shadow-2);
+                    }
+
+                    .blog-card .card-banner {
+                      position: relative;
+                      aspect-ratio: 1 / 0.65;
+                      background-color: var(--gainsboro);
+                    }
+
+                    .blog-card .badge {
+                      top: 20px;
+                      right: 20px;
+                      font-family: var(--ff-rubik);
+                      text-transform: uppercase;
+                      --bg-color: var(--tangerine);
+                      --padding-block: 5px;
+                    }
+
+                    .blog-card .card-content { padding: 30px; }
+
+                    .blog-card .card-meta-wrapper {
+                      display: flex;
+                      flex-wrap: wrap;
+                      justify-content: flex-start;
+                      align-items: center;
+                      gap: 12px 20px;
+                    }
+
+                    .blog-card .card-meta-link {
+                      display: flex;
+                      align-items: center;
+                      gap: 10px;
+                    }
+
+                    .blog-card .card-meta-link ion-icon {
+                      color: var(--tangerine);
+                      font-size: 1.5rem;
+                      --ionicon-stroke-width: 60px;
+                    }
+
+                    .blog-card :is(.meta-info, .btn-link) {
+                      color: var(--rich-black-fogra-29);
+                      font-family: var(--ff-rubik);
+                      font-size: var(--fs-5);
+                      font-weight: var(--fw-600);
+                      text-transform: uppercase;
+                      line-height: 1;
+                      transition: var(--transition-1);
+                    }
+
+                    .blog-card .card-meta-link:is(:hover, :focus) .meta-info {
+                      color: var(--deep-saffron);
+                    }
+
+                    .blog-card .card-title {
+                      font-size: var(--fs-3);
+                      margin-block: 20px 15px;
+                      transition: var(--transition-1);
+                    }
+
+                    .blog-card .card-title:is(:hover, :focus) {
+                      opacity: 0.8;
+                      text-decoration: underline;
+                    }
+
+                    .blog-card .card-text { margin-block-end: 20px; }
+
+                    .blog-card .btn-link {
+                      display: flex;
+                      align-items: center;
+                      gap: 5px;
+                    }
+
+                    .blog-card .btn-link ion-icon { font-size: 1.5rem; }
+
+                    .blog-card .btn-link:is(:hover, :focus) {
+                      color: var(--deep-saffron);
+                      gap: 10px;
+                    }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #FOOTER
+                    \*-----------------------------------*/
+
+                    .footer { overflow: hidden; background-color: var(--white); color: var(--sonic-silver); text-align: left;}
+
+                    .footer-top {
+                      position: relative;
+                      padding-block: 120px;
+                      background-repeat: no-repeat;
+                      background-size: contain;
+                      background-position: bottom;
+                      border-block-end: 2px solid var(--independence_30);
+                    }
+
+                    .footer-top::after {
+                      content: url(https://codewithsadee.github.io/foodie/assets/images/delivery-boy.svg);
+                      position: absolute;
+                      bottom: -11px;
+                      left: -160px;
+                      width: 160px;
+                      animation: running-cycle 20s linear infinite;
+                    }
+
+                    @keyframes running-cycle {
+                      0% { left: -160px; }
+                      100% { left: 100%; }
+                    }
+
+                    .footer-top .container {
+                      display: grid;
+                      gap: 30px;
+                    }
+
+                    .footer .logo {
+                      color: var(--rich-black-fogra-29);
+                      font-size: 3.2rem;
+                    }
+
+                    .footer-text { margin-block: 15px 25px; }
+
+                    .social-list {
+                      display: flex;
+                      gap: 5px;
+                    }
+
+                    .social-link {
+                      background-color: var(--dark-orange);
+                      color: var(--white);
+                      font-size: 1.5rem;
+                      padding: 10px;
+                      transition: var(--transition-1);
+                    }
+
+                    .social-link:is(:hover, :focus) { background-color: var(--rich-black-fogra-29); }
+
+                    .footer-list-title {
+                      position: relative;
+                      max-width: max-content;
+                      color: var(--rich-black-fogra-29);
+                      font-family: var(--ff-rubik);
+                      font-size: var(--fs-3);
+                      font-weight: var(--fw-600);
+                      letter-spacing: -1px;
+                      margin-block-end: 20px;
+                    }
+
+                    .footer-list-title::after {
+                      content: "";
+                      position: absolute;
+                      top: 50%;
+                      transform: translateY(-50%);
+                      left: calc(100% + 15px);
+                      background-color: var(--deep-saffron);
+                      width: 40px;
+                      height: 4px;
+                      border-inline-end: 5px solid var(--deep-saffron);
+                      box-shadow: inset -5px 0 0 var(--white);
+                    }
+
+                    .footer-list > li:not(:last-child) { margin-block-end: 15px; }
+
+                    .footer-list address { max-width: 20ch; }
+
+                    .footer-form {
+                      background-color: var(--white);
+                      padding: 30px;
+                      border: 1px solid var(--cultured);
+                      box-shadow: var(--shadow-2);
+                      display: none;
+                    }
+
+                    .footer-bottom {
+                      padding-block: 20px;
+                      text-align: center;
+                    }
+
+                    .copyright-link { display: inline-block; }
+
+                    .copyright-link:is(:hover, :focus) { text-decoration: underline; }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #BACK TO TOP
+                    \*-----------------------------------*/
+
+                    .back-top-btn {
+                      position: fixed;
+                      bottom: 10px;
+                      right: 20px;
+                      background-color: var(--deep-saffron);
+                      color: var(--white);
+                      padding: 15px;
+                      border-radius: 50%;
+                      box-shadow: var(--shadow-1);
+                      z-index: 2;
+                      opacity: 0;
+                      visibility: hidden;
+                      transition: var(--transition-1);
+                    }
+
+                    .back-top-btn.active {
+                      opacity: 1;
+                      visibility: visible;
+                      transform: translateY(-10px);
+                    }
+
+                    .back-top-btn:is(:hover, :focus) { background-color: var(--rich-black-fogra-29); }
+
+
+
+
+
+                    /*-----------------------------------*\
+                      #MEDIA QUERIES
+                    \*-----------------------------------*/
+
+                    /**
+                     * responsive for larger than 480px screen
+                     */
+
+                    @media (min-width: 480px) {
+
+                      /**
+                       * HEADER
+                       */
+
+                      .header-btn-group .btn {
+                        display: block;
+                        --bg-color: var(--dark-orange);
+                      }
+
+                    }
+
+
+
+
+
+                    /**
+                     * responsive for larger than 550px screen
+                     */
+
+                    @media (min-width: 550px) {
+
+                      /**
+                       * REUSED STYLE
+                       */
+
+                      .container {
+                        max-width: 550px;
+                        width: 100%;
+                        margin-inline: auto;
+                      }
+
+                      .has-scrollbar > li { min-width: calc(50% - 5px); }
+
+
+
+                      /**
+                       * HERO
+                       */
+
+                      .hero-title { --fs-1: 4.2rem; }
+
+
+
+                      /**
+                       * FOOTER
+                       */
+
+                      .footer-top .container { grid-template-columns: 1fr 1fr; }
+
+                    }
+
+
+
+
+
+                    /**
+                     * responsive for larger than 768px screen
+                     */
+
+                    @media (min-width: 768px) {
+
+                      /**
+                       * REUSED STYLE
+                       */
+
+                      .container { max-width: 720px; }
+
+
+
+                      /**
+                       * HERO
+                       */
+
+                      .hero {
+                        position: relative;
+                        text-align: left;
+                        overflow: hidden;
+                        z-index: 1;
+                      }
+
+                      .hero-content > :is(*, .btn) { margin-inline: 0; }
+
+                      .hero-banner {
+                        display: block;
+                        position: absolute;
+                        top: calc(50%);
+                        transform: translateY(-50%);
+                        right: 50px;
+                        max-width: 40%;
+                        aspect-ratio: 1 / 0.9;
+                      }
+
+                      .hero-img {
+                        position: absolute;
+                        bottom: 0;
+                      }
+
+                      .hero::after {
+                        content: "";
+                        position: absolute;
+                        right: 0;
+                        bottom: -2px;
+                        width: 100%;
+                        height: 100%;
+                        background-image: url("https://codewithsadee.github.io/foodie/assets/images/hero-bg-shape.png");
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                        background-position: right bottom;
+                        pointer-events: none;
+                        z-index: -1;
+                      }
+
+
+
+                      /**
+                       * ABOUT
+                       */
+
+                      .about .container {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 30px;
+                      }
+
+                      .about { text-align: left; }
+
+                      .about .section-title { margin-block-start: 0; }
+
+                      .about :is(.section-title, .btn) { margin-inline: 0; }
+
+                      .about-item { justify-content: flex-start; }
+
+
+
+                      /**
+                       * FOOD MENU
+                       */
+
+                      .food-menu-list { grid-template-columns: 1fr 1fr; }
+
+                      .food-menu-card :is(.wrapper, .price-wrapper) { justify-content: flex-start; }
+
+                      .food-menu-card .card-title { text-align: left; }
+
+
+
+                      /**
+                       * CTA
+                       */
+
+                      .cta .container {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        align-items: center;
+                        gap: 30px;
+                      }
+
+                      .cta { text-align: left; }
+
+                      .cta :is(.section-title, .btn) { margin-inline: 0; }
+
+                      .cta-img { transform: scale(1.3) translate(90px, 20px); }
+
+
+
+                      /**
+                       * DELIVERY
+                       */
+
+                      .delivery .container {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        align-items: center;
+                        gap: 50px;
+                      }
+
+
+
+                      /**
+                       * BANNER
+                       */
+
+                      .banner-list { grid-template-columns: repeat(4, 1fr); }
+
+                      .banner-lg {
+                        grid-column: 1 / 3;
+                        grid-row: 1 / 3;
+                      }
+
+                      .banner-md {
+                        grid-column: 3 / 5;
+                        grid-row: 2 / 3;
+                        height: 220px;
+                      }
+
+
+
+                      /**
+                       * BLOG
+                       */
+
+                      .blog-list { grid-template-columns: 1fr 1fr; }
+
+                      .blog-card { height: 100%; }
+
+
+
+                      /**
+                       * FOOTER
+                       */
+
+                      .input-wrapper { grid-template-columns: 1fr 1fr; }
+
+                    }
+
+
+
+
+
+                    /**
+                     * responsive for larger than 992px screen
+                     */
+
+                    @media (min-width: 992px) {
+
+                      /**
+                       * CUSTOM PROPERTY
+                       */
+
+                      :root {
+
+                        /**
+                         * spacing
+                         */
+
+                        --section-padding: 120px;
+
+                      }
+
+
+
+                      /**
+                       * REUSED STYLE
+                       */
+
+                      .container { max-width: 960px; }
+
+                      .has-scrollbar > li { min-width: calc(33.33% - 6.66px); }
+
+                      .h2 { --fs-1: 4.2rem; }
+
+
+
+                      /**
+                       * HEADER
+                       */
+
+                      .nav-toggle-btn { display: none; }
+
+                      .header .container { gap: 20px; }
+
+                      .navbar,
+                      .navbar.active {
+                        all: unset;
+                        margin-inline-start: auto;
+                      }
+
+                      .navbar-list {
+                        margin-block: 0;
+                        display: flex;
+                        gap: 5px;
+                      }
+
+                      .nav-item:not(:last-child) { border-block-end: none; }
+
+                      .navbar-link {
+                        --fs-4: 1.5rem;
+                        color: var(--btn-color);
+                        letter-spacing: -0.5px;
+                      }
+
+
+
+                      /**
+                       * HERO
+                       */
+
+                      .hero {
+                        min-height: 660px;
+                        display: grid;
+                        align-items: center;
+                      }
+
+                      .hero-subtitle { --fs-3: 3.2rem; }
+
+                      .hero-title {
+                        --fs-1: 7rem;
+                        letter-spacing: -2.5px;
+                      }
+
+                      .hero-text { font-size: var(--fs-3); }
+
+                      .hero-banner {
+                        max-width: 45%;
+                        top: auto;
+                        bottom: 0;
+                        transform: translateY(0);
+                      }
+
+                      .hero-img-bg { transform: scale(1.4) translate(20px, -20px); }
+
+
+
+                      /**
+                       * FOOD MENU
+                       */
+
+                      .food-menu-list { grid-template-columns: repeat(3, 1fr); }
+
+                      .food-menu-card { height: 100%; }
+
+
+
+                      /**
+                       * CTA
+                       */
+
+                      .cta-img { transform: scale(1.4) translate(20px, 40px); }
+
+                      .cta-banner .abs-img { left: -50px; }
+
+                      :is(.cta, .delivery) .section-title { line-height: 1.2; }
+
+
+
+                      /**
+                       * BANNER
+                       */
+
+                      .banner-lg .banner-title {
+                        --fs-1: 3.6rem;
+                        letter-spacing: -2px;
+                      }
+
+                      :is(.banner-md, .banner-sm) .banner-title,
+                      .banner-lg .banner-subtitle { --fs-2: 3.2rem; }
+
+
+
+                      /**
+                       * TESTIMONIALS
+                       */
+
+                      .testi-list { padding-block-end: 0; }
+
+
+
+                      /**
+                       * BLOG
+                       */
+
+                      .blog-list { grid-template-columns: repeat(3, 1fr); }
+
+                      .blog-card .card-title { --fs-3: 2.2rem; }
+
+
+
+                      /**
+                       * FOOTER
+                       */
+
+                      .footer-top .container { grid-template-columns: 1fr 1fr 1fr 1.6fr; }
+
+                      .footer-form { margin-block-start: -170px; }
+
+
+
+                      /**
+                       * BACK TO TOP
+                       */
+
+                      .back-top-btn {
+                        bottom: 20px;
+                        right: 30px;
+                      }
+
+                    }
+
+
+
+
+
+                    /**
+                     * responsive for larger than 1200px screen
+                     */
+
+                    @media (min-width: 1200px) {
+
+                      /**
+                       * REUSED STYLE
+                       */
+
+                      .container { max-width: 1200px; }
+
+
+
+                      /**
+                       * HERO
+                       */
+
+                      .hero { min-height: 770px; }
+
+
+
+                      /**
+                       * PROMO
+                       */
+
+                      .promo .promo-item { min-width: calc(25% - 7.5px); }
+
+
+
+                      /**
+                       * ABOUT
+                       */
+
+                      .about .container { gap: 60px; }
+
+
+
+                      /**
+                       * CTA
+                       */
+
+                      .cta { --section-padding: 60px; }
+
+                      .cta .section-title { max-width: 18ch; }
+
+
+
+                      /**
+                       * BANNER
+                       */
+
+                      .banner-md .banner-item-content { left: 55%; }
+
+
+
+                      /**
+                       * FOOTER
+                       */
+
+                      .footer-top .container { grid-template-columns: 1.4fr 1fr 1fr 1.6fr; }
+
+                    }
+
+                    /* Clickable Sections */
+                    [data-section] { cursor: pointer; transition: outline 0.2s; position: relative; }
+                    [data-section]:hover::before { content: "Click to Edit"; position: absolute; top: 0; right: 0; background: var(--deep-saffron); color: white; font-size: 10px; padding: 2px 5px; z-index: 10; }
+                    [data-section]:hover { outline: 2px dashed var(--deep-saffron); outline-offset: 2px; }
                     </style>
                 </head>
-                <body>
-                    <header class="header" data-section="header">
-                        <div class="container" style="display:flex; justify-content:space-between; align-items:center; width: 100%;">
-                            <a href="#" class="logo">${escapeHtml(webConfig.header.logo)}<span>.</span></a>
-                            ${orderButtonHtml}
+                <body id="top">
+                    <header class="header" data-header data-section="header">
+                        <div class="container">
+                            <h1>
+                                <a href="#" class="logo">${escapeHtml(webConfig.header.logo)}<span class="span">.</span></a>
+                            </h1>
+
+                            <nav class="navbar" data-navbar>
+                                <ul class="navbar-list">
+                                    <li class="nav-item"><a href="#home" class="navbar-link" data-nav-link>Home</a></li>
+                                    <li class="nav-item"><a href="#about" class="navbar-link" data-nav-link>About Us</a></li>
+                                    <li class="nav-item"><a href="#food-menu" class="navbar-link" data-nav-link>Shop</a></li>
+                                    <li class="nav-item"><a href="#blog" class="navbar-link" data-nav-link>Blog</a></li>
+                                    <li class="nav-item"><a href="#" class="navbar-link" data-nav-link>Contact Us</a></li>
+                                </ul>
+                            </nav>
+
+                            <div class="header-btn-group">
+                                <button class="search-btn" aria-label="Search"><ion-icon name="search-outline"></ion-icon></button>
+                                ${orderButtonHtml}
+                                <button class="nav-toggle-btn" aria-label="Toggle Menu" data-menu-toggle-btn>
+                                    <span class="line top"></span>
+                                    <span class="line middle"></span>
+                                    <span class="line bottom"></span>
+                                </button>
+                            </div>
                         </div>
                     </header>
+
                     <main>
+                        <article>
                         <section class="hero" id="home" data-section="hero" style="background-image: url('${sanitizeUrl(webConfig.hero.bgImg)}')">
                             <div class="container">
                                 <div class="hero-content">
                                     <p class="hero-subtitle">${escapeHtml(webConfig.hero.subtitle)}</p>
-                                    <h1 class="h1 hero-title">${escapeHtml(webConfig.hero.title)}</h1>
+                                    <h2 class="h1 hero-title">${escapeHtml(webConfig.hero.title)}</h2>
                                     <p class="hero-text">${escapeHtml(webConfig.hero.text)}</p>
-                                    ${orderButtonHtml}
+                                    <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
+                                        ${orderButtonHtml}
+                                        ${reservationButtonHtml}
+                                    </div>
                                 </div>
-                                <div class="hero-banner">
-                                    <img src="${sanitizeUrl(webConfig.hero.bannerImg)}" alt="Banner" style="width: 100%;" onerror="this.src='https://via.placeholder.com/700x600'">
-                                </div>
+                                <figure class="hero-banner">
+                                    <img src="https://codewithsadee.github.io/foodie/assets/images/hero-banner-bg.png" width="820" height="716" alt="" aria-hidden="true" class="w-100 hero-img-bg">
+                                    <img src="${sanitizeUrl(webConfig.hero.bannerImg)}" width="700" height="637" alt="Burger" class="w-100 hero-img" onerror="this.src='https://via.placeholder.com/700x600'">
+                                </figure>
                             </div>
                         </section>
-                        <section class="section promo" data-section="promos">
+                        <section class="section section-divider white promo" data-section="promos">
                             <div class="container">
-                                <ul class="promo-list">${promosHtml}</ul>
+                                <ul class="promo-list has-scrollbar">${promosHtml}</ul>
                             </div>
                         </section>
-                        <section class="section about" id="about" data-section="about">
+
+                        <section class="section section-divider gray about" id="about" data-section="about">
                             <div class="container">
                                 <div class="about-banner">
-                                    <img src="${sanitizeUrl(webConfig.about.img)}" alt="About" style="width: 100%;" onerror="this.src='https://via.placeholder.com/500x450'">
-                                    <img src="https://codewithsadee.github.io/foodie/assets/images/sale-shape-red.png" width="216" height="226" class="scale-up-anim" style="position:absolute; top:0; left:100px;">
+                                    <img src="${sanitizeUrl(webConfig.about.img)}" width="509" height="459" alt="Burger with Drinks" class="w-100 about-img" onerror="this.src='https://via.placeholder.com/500x450'">
+                                    <img src="https://codewithsadee.github.io/foodie/assets/images/sale-shape-red.png" width="216" height="226" alt="get up to 50% off now" class="abs-img scale-up-anim" style="top:0; left:100px;">
                                 </div>
                                 <div class="about-content">
-                                    <h2 class="h2">${escapeHtml(webConfig.about.title)}</h2>
-                                    <p>${escapeHtml(webConfig.about.text)}</p>
+                                    <h2 class="h2 section-title">${escapeHtml(webConfig.about.title)}</h2>
+                                    <p class="section-text">${escapeHtml(webConfig.about.text)}</p>
                                     <ul class="about-list">${aboutFeaturesHtml}</ul>
-                                    ${orderButtonHtml}
+                                    <div style="--jc: flex-start;">
+                                        <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
+                                            ${orderButtonHtml}
+                                            ${reservationButtonHtml}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </section>
                         <section class="section food-menu" id="food-menu" data-section="menu">
                             <div class="container">
                                 <p class="section-subtitle">${escapeHtml(webConfig.menu.subtitle)}</p>
-                                <h2 class="h2 section-title">${escapeHtml(webConfig.menu.title)}</h2>
+                                <h2 class="h2 section-title">Our Delicious <span class="span">Foods</span></h2>
                                 <p class="section-text">${escapeHtml(webConfig.menu.text)}</p>
                                 <ul class="food-menu-list">${menuHtml}</ul>
                             </div>
                         </section>
+
                         <section class="section section-divider white cta" data-section="cta" style="background-image: url('${sanitizeUrl(webConfig.cta.bgImg)}')">
                             <div class="container">
                                 <div class="cta-content">
                                     <h2 class="h2 section-title">${escapeHtml(webConfig.cta.title)}</h2>
                                     <p class="section-text">${escapeHtml(webConfig.cta.text)}</p>
-                                    ${orderButtonHtml}
+                                    <div style="--jc: flex-start;">
+                                        <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
+                                            ${orderButtonHtml}
+                                            ${reservationButtonHtml}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="cta-banner">
-                                    <img src="${sanitizeUrl(webConfig.cta.bannerImg)}" alt="CTA" style="width: 100%;" onerror="this.src='https://via.placeholder.com/700x600'">
-                                    <img src="${sanitizeUrl(webConfig.cta.saleImg)}" width="216" height="226" class="scale-up-anim" style="position:absolute; top:50px; left:10px;">
-                                </div>
+                                <figure class="cta-banner">
+                                    <img src="${sanitizeUrl(webConfig.cta.bannerImg)}" width="700" height="637" alt="Burger" class="w-100 cta-img" onerror="this.src='https://via.placeholder.com/700x637'">
+                                    <img src="${sanitizeUrl(webConfig.cta.saleImg)}" width="216" height="226" alt="get up to 50% off now" class="abs-img scale-up-anim" style="top:50px; left:10px;">
+                                </figure>
                             </div>
                         </section>
+
                         <section class="section section-divider gray delivery" data-section="delivery">
                             <div class="container">
                                 <div class="delivery-content">
                                     <h2 class="h2 section-title">${escapeHtml(webConfig.delivery.title)}</h2>
                                     <p class="section-text">${escapeHtml(webConfig.delivery.text)}</p>
-                                    ${orderButtonHtml}
+                                    <div style="--jc: flex-start;">
+                                        <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
+                                            ${orderButtonHtml}
+                                            ${reservationButtonHtml}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="delivery-banner">
-                                    <img src="${sanitizeUrl(webConfig.delivery.bannerImg)}" style="width: 100%;">
-                                    <img src="${sanitizeUrl(webConfig.delivery.boyImg)}" class="delivery-boy" style="position: absolute; bottom: 0; left: -100px; width: 250px;">
-                                </div>
+                                <figure class="delivery-banner">
+                                    <img src="${sanitizeUrl(webConfig.delivery.bannerImg)}" width="700" height="602" alt="clouds" class="w-100">
+                                    <img src="${sanitizeUrl(webConfig.delivery.boyImg)}" width="1000" height="880" alt="delivery boy" class="w-100 delivery-img delivery-boy">
+                                </figure>
                             </div>
                         </section>
                         <section class="section section-divider white testi" data-section="testimonials">
                             <div class="container">
                                 <p class="section-subtitle">${escapeHtml(webConfig.testimonials.subtitle)}</p>
-                                <h2 class="h2 section-title">${escapeHtml(webConfig.testimonials.title)}</h2>
+                                <h2 class="h2 section-title">Our Customers <span class="span">Reviews</span></h2>
                                 <p class="section-text">${escapeHtml(webConfig.testimonials.text)}</p>
-                                <ul class="testi-list">${testiHtml}</ul>
+                                <ul class="testi-list has-scrollbar">${testiHtml}</ul>
                             </div>
                         </section>
-                        <section class="section banner" data-section="banners">
+
+                        <section class="section section-divider gray banner" data-section="banners">
                             <div class="container">
                                 <ul class="banner-list">${bannersHtml}</ul>
                             </div>
                         </section>
+
                         <section class="section section-divider white blog" id="blog" data-section="blog">
                             <div class="container">
                                 <p class="section-subtitle">${escapeHtml(webConfig.blog.subtitle)}</p>
-                                <h2 class="h2 section-title">${escapeHtml(webConfig.blog.title)}</h2>
+                                <h2 class="h2 section-title">This Is All About <span class="span">Foods</span></h2>
                                 <p class="section-text">${escapeHtml(webConfig.blog.text)}</p>
                                 <ul class="blog-list">${blogHtml}</ul>
                             </div>
                         </section>
                     </main>
                     <footer class="footer" data-section="footer">
-                        <div class="container">
-                            <a href="#" class="logo" style="color:white;">${escapeHtml(webConfig.header.logo)}<span style="color:var(--deep-saffron)">.</span></a>
-                            <div style="margin-top:20px;">
-                                <p><i class="bi bi-envelope"></i> ${escapeHtml(webConfig.footer.email)}</p>
-                                <p><i class="bi bi-telephone"></i> ${escapeHtml(webConfig.footer.phone)}</p>
-                                <p><i class="bi bi-geo-alt"></i> ${escapeHtml(webConfig.footer.address)}</p>
+                        <div class="footer-top" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/footer-illustration.png')">
+                            <div class="container">
+                                <div class="footer-brand">
+                                    <a href="" class="logo">${escapeHtml(webConfig.header.logo)}<span class="span">.</span></a>
+                                    <p class="footer-text">${escapeHtml(webConfig.footer.text)}</p>
+                                    <ul class="social-list">
+                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.facebook || '#')}" class="social-link"><ion-icon name="logo-facebook"></ion-icon></a></li>
+                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.twitter || '#')}" class="social-link"><ion-icon name="logo-twitter"></ion-icon></a></li>
+                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.instagram || '#')}" class="social-link"><ion-icon name="logo-instagram"></ion-icon></a></li>
+                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.pinterest || '#')}" class="social-link"><ion-icon name="logo-pinterest"></ion-icon></a></li>
+                                    </ul>
+                                </div>
+                                <ul class="footer-list">
+                                    <li><p class="footer-list-title">Contact Info</p></li>
+                                    <li><p class="footer-list-item">${escapeHtml(webConfig.footer.phone)}</p></li>
+                                    <li><p class="footer-list-item">${escapeHtml(webConfig.footer.email)}</p></li>
+                                    <li><address class="footer-list-item">${escapeHtml(webConfig.footer.address)}</address></li>
+                                </ul>
+                                <ul class="footer-list">
+                                    <li><p class="footer-list-title">Opening Hours</p></li>
+                                    ${webConfig.footer.hours.map(h => `<li><p class="footer-list-item">${escapeHtml(h)}</p></li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="footer-bottom">
+                            <div class="container">
+                                <p class="copyright-text">
+                                    &copy; 2024 <a href="#" class="copyright-link">Tragalero</a> All Rights Reserved.
+                                </p>
                             </div>
                         </div>
                     </footer>
+
+                    <a href="#top" class="back-top-btn" aria-label="Back to top" data-back-top-btn>
+                        <ion-icon name="chevron-up"></ion-icon>
+                    </a>
+
                     <script>
                         document.addEventListener('click', (e) => {
                             const section = e.target.closest('[data-section]');
@@ -1360,7 +3170,47 @@
                             }
                         });
 
-                        // Delivery boy animation (Original Logic)
+                        // Original Foodie Scripts
+                        const header = document.querySelector("[data-header]");
+                        const backTopBtn = document.querySelector("[data-back-top-btn]");
+                        window.addEventListener("scroll", function () {
+                            if (window.scrollY >= 100) {
+                                header.classList.add("active");
+                                backTopBtn.classList.add("active");
+                            } else {
+                                header.classList.remove("active");
+                                backTopBtn.classList.remove("active");
+                            }
+                        });
+
+                        const navbar = document.querySelector("[data-navbar]");
+                        const navbarLinks = document.querySelectorAll("[data-nav-link]");
+                        const menuToggleBtn = document.querySelector("[data-menu-toggle-btn]");
+                        if(menuToggleBtn && navbar) {
+                            menuToggleBtn.addEventListener("click", function () {
+                                navbar.classList.toggle("active");
+                                this.classList.toggle("active");
+                            });
+
+                            for (let i = 0; i < navbarLinks.length; i++) {
+                                navbarLinks[i].addEventListener("click", function () {
+                                    navbar.classList.toggle("active");
+                                    menuToggleBtn.classList.toggle("active");
+                                });
+                            }
+                        }
+
+                        const searchBtn = document.querySelector("[data-search-btn]");
+                        const searchContainer = document.querySelector("[data-search-container]");
+                        const searchCloseBtn = document.querySelector("[data-search-close-btn]");
+                        if(searchBtn && searchContainer) {
+                            [searchBtn, searchCloseBtn].forEach(el => {
+                                el.addEventListener("click", () => {
+                                    searchContainer.classList.toggle("active");
+                                });
+                            });
+                        }
+
                         const deliveryBoy = document.querySelector(".delivery-boy");
                         let deliveryBoyMove = -100;
                         let lastScrollPos = 0;
@@ -1380,9 +3230,11 @@
                             });
                         }
 
-                        // Initialize Menutech if present
                         if(window.MenutechUI) {
                             setTimeout(() => { MenutechUI.init(); }, 100);
+                        }
+                        if(typeof window.glfBindButtons === 'function') {
+                            setTimeout(() => { window.glfBindButtons(); }, 200);
                         }
                     ${S_CLOSE}
                     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">${S_CLOSE}
