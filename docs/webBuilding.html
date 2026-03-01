@@ -494,6 +494,8 @@
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
+        console.log("Web Builder script starting...");
+        const S_CLOSE = '</' + 'script>';
         const urlParams = new URLSearchParams(window.location.search);
         const viewUserId = urlParams.get('user');
         const isViewOnly = !!viewUserId;
@@ -1187,9 +1189,9 @@
                                 }
                             });
                         }
-                    <\/script>
-                    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-                    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+                    ${S_CLOSE}
+                    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">${S_CLOSE}
+                    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js">${S_CLOSE}
                 </body>
                 </html>
             `;
@@ -1270,28 +1272,37 @@
         });
 
         window.onload = async () => {
-            const user = getLoggedInUser();
-            if (!isViewOnly && !user) {
-                window.location.href = './login.html';
-                return;
-            }
+            try {
+                const user = getLoggedInUser();
+                if (!isViewOnly && !user) {
+                    window.location.href = './login.html';
+                    return;
+                }
 
-            if (isViewOnly) {
-                document.querySelector('.designer-sidebar').style.display = 'none';
-                document.getElementById('previewControls').style.display = 'none';
-                document.querySelector('.preview-area').style.padding = '0';
-                document.getElementById('previewFrame').style.maxWidth = '100%';
-                document.getElementById('previewFrame').style.borderRadius = '0';
-                document.querySelector('nav').style.display = 'none';
-                document.body.style.backgroundColor = 'white';
-            } else {
-                renderUserMenu('authButtons');
-                renderDesigner();
-            }
+                if (isViewOnly) {
+                    const sidebar = document.querySelector('.designer-sidebar');
+                    if (sidebar) sidebar.style.display = 'none';
+                    const controls = document.getElementById('previewControls');
+                    if (controls) controls.style.display = 'none';
+                    document.querySelector('.preview-area').style.padding = '0';
+                    document.getElementById('previewFrame').style.maxWidth = '100%';
+                    document.getElementById('previewFrame').style.borderRadius = '0';
+                    const nav = document.querySelector('nav');
+                    if (nav) nav.style.display = 'none';
+                    document.body.style.backgroundColor = 'white';
+                } else {
+                    renderUserMenu('authButtons');
+                    renderDesigner();
+                }
 
-            await loadWebsite();
-            renderPreview();
-            document.getElementById('loadingOverlay').style.display = 'none';
+                await loadWebsite();
+                renderPreview();
+            } catch (err) {
+                console.error("Initialization error:", err);
+            } finally {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) overlay.style.display = 'none';
+            }
         }
     </script>
 </body>
