@@ -263,6 +263,117 @@
         const viewUserId = urlParams.get('user');
         const isViewOnly = !!viewUserId;
 
+        // Instrumentation Config for Clean Templates
+        const instrumentationMap = {
+            'plantilla1.html': {
+                baseAssetUrl: 'https://codewithsadee.github.io/foodie/',
+                sections: [
+                    { sel: '.header', id: 'header', label: 'Cabecera' },
+                    { sel: '.hero', id: 'hero', label: 'Hero' },
+                    { sel: '.promo', id: 'promo', label: 'Promociones' },
+                    { sel: '.about', id: 'about', label: 'Sobre Nosotros' },
+                    { sel: '.food-menu', id: 'menu', label: 'Menú de Comida' },
+                    { sel: '.cta', id: 'cta', label: 'Llamada a la Acción' },
+                    { sel: '.delivery', id: 'delivery', label: 'Delivery' },
+                    { sel: '.testi', id: 'testimonials', label: 'Testimonios' },
+                    { sel: '.banner', id: 'banners', label: 'Banners Publicitarios' },
+                    { sel: '.blog', id: 'blog', label: 'Blog' },
+                    { sel: '.footer', id: 'footer', label: 'Pie de Página' }
+                ],
+                editables: [
+                    // Header
+                    { sel: '.header .logo', section: 'header', id: 'logo', type: 'text', label: 'Logo' },
+                    { sel: '.header .btn', section: 'header', id: 'header_btn', type: 'text', label: 'Botón Cabecera' },
+                    // Hero
+                    { sel: '.hero', section: 'hero', id: 'hero_bg', type: 'image', label: 'Fondo Hero' },
+                    { sel: '.hero-subtitle', section: 'hero', id: 'hero_subtitle', type: 'text', label: 'Subtítulo Hero' },
+                    { sel: '.hero-title', section: 'hero', id: 'hero_title', type: 'text', label: 'Título Hero' },
+                    { sel: '.hero-text', section: 'hero', id: 'hero_text', type: 'textarea', label: 'Texto Hero' },
+                    { sel: '.hero .btn', section: 'hero', id: 'hero_btn', type: 'text', label: 'Botón Hero' },
+                    { sel: '.hero-img-bg', section: 'hero', id: 'hero_img_bg', type: 'image', label: 'Decoración Banner' },
+                    { sel: '.hero-img', section: 'hero', id: 'hero_img', type: 'image', label: 'Imagen Banner' },
+                    // About
+                    { sel: '.about-img', section: 'about', id: 'about_img', type: 'image', label: 'Imagen About' },
+                    { sel: '.about .section-title', section: 'about', id: 'about_title', type: 'text', label: 'Título About' },
+                    { sel: '.about .section-text', section: 'about', id: 'about_text', type: 'textarea', label: 'Texto About' },
+                    { sel: '.about .btn', section: 'about', id: 'about_btn', type: 'text', label: 'Botón About' },
+                    // Food Menu
+                    { sel: '.food-menu .section-subtitle', section: 'menu', id: 'menu_subtitle', type: 'text', label: 'Subtítulo Menú' },
+                    { sel: '.food-menu .section-title', section: 'menu', id: 'menu_title', type: 'text', label: 'Título Menú' },
+                    { sel: '.food-menu .section-text', section: 'menu', id: 'menu_text', type: 'textarea', label: 'Texto Menú' },
+                    // CTA
+                    { sel: '.cta', section: 'cta', id: 'cta_bg', type: 'image', label: 'Fondo CTA' },
+                    { sel: '.cta .section-title', section: 'cta', id: 'cta_title', type: 'text', label: 'Título CTA' },
+                    { sel: '.cta .section-text', section: 'cta', id: 'cta_text', type: 'textarea', label: 'Texto CTA' },
+                    { sel: '.cta .btn', section: 'cta', id: 'cta_btn', type: 'text', label: 'Botón CTA' },
+                    { sel: '.cta-img', section: 'cta', id: 'cta_img', type: 'image', label: 'Imagen CTA' },
+                    // Delivery
+                    { sel: '.delivery .section-title', section: 'delivery', id: 'delivery_title', type: 'text', label: 'Título Delivery' },
+                    { sel: '.delivery .section-text', section: 'delivery', id: 'delivery_text', type: 'textarea', label: 'Texto Delivery' },
+                    { sel: '.delivery .btn', section: 'delivery', id: 'delivery_btn', type: 'text', label: 'Botón Delivery' },
+                    { sel: '.delivery-img', section: 'delivery', id: 'delivery_img', type: 'image', label: 'Imagen Delivery' },
+                    // Testimonials
+                    { sel: '.testi .section-subtitle', section: 'testimonials', id: 'testi_subtitle', type: 'text', label: 'Subtítulo Testi' },
+                    { sel: '.testi .section-title', section: 'testimonials', id: 'testi_title', type: 'text', label: 'Título Testi' },
+                    { sel: '.testi .section-text', section: 'testimonials', id: 'testi_text', type: 'textarea', label: 'Texto Testi' },
+                    // Blog Header
+                    { sel: '.blog .section-subtitle', section: 'blog', id: 'blog_subtitle', type: 'text', label: 'Subtítulo Blog' },
+                    { sel: '.blog .section-title', section: 'blog', id: 'blog_title', type: 'text', label: 'Título Blog' },
+                    { sel: '.blog .section-text', section: 'blog', id: 'blog_text', type: 'textarea', label: 'Texto Blog' },
+                    // Footer
+                    { sel: '.footer .logo', section: 'footer', id: 'footer_logo', type: 'text', label: 'Logo Footer' },
+                    { sel: '.footer-text', section: 'footer', id: 'footer_text', type: 'textarea', label: 'Texto Footer' },
+                    { sel: '.copyright-text', section: 'footer', id: 'copyright', type: 'text', label: 'Copyright' },
+                    // Lists
+                    { sel: '.promo-list', section: 'promo', id: 'promos', type: 'list', label: 'Items Promo', blueprint: 'promo', itemSel: '.promo-item', fields: [
+                        { sel: '.card-icon svg', id: 'icon', type: 'svg', label: 'Icono' },
+                        { sel: '.card-title', id: 'title', type: 'text', label: 'Título' },
+                        { sel: '.card-text', id: 'text', type: 'text', label: 'Descripción' },
+                        { sel: '.card-banner', id: 'img', type: 'image', label: 'Imagen' }
+                    ]},
+                    { sel: '.about-list', section: 'about', id: 'features', type: 'list', label: 'Características', blueprint: 'feature', itemSel: '.about-item', fields: [
+                        { sel: '.span', id: 'text', type: 'text', label: 'Texto' }
+                    ]},
+                    { sel: '.food-menu-list', section: 'menu', id: 'menu_items', type: 'list', label: 'Platos', blueprint: 'menu-item', itemSel: 'li', fields: [
+                        { sel: '.card-banner img', id: 'img', type: 'image', label: 'Imagen' },
+                        { sel: '.badge', id: 'badge', type: 'text', label: 'Badge' },
+                        { sel: '.category', id: 'category', type: 'text', label: 'Categoría' },
+                        { sel: '.card-title', id: 'title', type: 'text', label: 'Nombre' },
+                        { sel: '.price', id: 'price', type: 'text', label: 'Precio' },
+                        { sel: '.del', id: 'old_price', type: 'text', label: 'Precio Ant.' },
+                        { sel: '.food-menu-btn', id: 'btn', type: 'text', label: 'Botón' }
+                    ]},
+                    { sel: '.testi-list', section: 'testimonials', id: 'testi_items', type: 'list', label: 'Testimonios', blueprint: 'testimonial', itemSel: '.testi-item', fields: [
+                        { sel: '.avatar img', id: 'avatar', type: 'image', label: 'Avatar' },
+                        { sel: '.testi-name', id: 'name', type: 'text', label: 'Nombre' },
+                        { sel: '.testi-title', id: 'title', type: 'text', label: 'Cargo' },
+                        { sel: '.testi-text', id: 'text', type: 'text', label: 'Testimonio' }
+                    ]},
+                    { sel: '.banner-list', section: 'banners', id: 'banner_items', type: 'list', label: 'Banners', blueprint: 'banner', itemSel: '.banner-item', fields: [
+                        { sel: '.banner-img', id: 'img', type: 'image', label: 'Imagen' },
+                        { sel: '.banner-subtitle', id: 'subtitle', type: 'text', label: 'Subtítulo' },
+                        { sel: '.banner-title', id: 'title', type: 'text', label: 'Título' },
+                        { sel: '.banner-text', id: 'text', type: 'text', label: 'Texto' },
+                        { sel: '.btn', id: 'btn', type: 'text', label: 'Botón' }
+                    ]},
+                    { sel: '.blog-list', section: 'blog', id: 'blog_items', type: 'list', label: 'Entradas Blog', blueprint: 'blog-post', itemSel: 'li', fields: [
+                        { sel: '.card-banner img', id: 'img', type: 'image', label: 'Imagen' },
+                        { sel: '.badge', id: 'category', type: 'text', label: 'Categoría' },
+                        { sel: 'time', id: 'date', type: 'text', label: 'Fecha' },
+                        { sel: '.meta-info:not(time)', id: 'author', type: 'text', label: 'Autor' },
+                        { sel: '.card-title', id: 'title', type: 'text', label: 'Título' },
+                        { sel: '.card-text', id: 'text', type: 'text', label: 'Resumen' }
+                    ]},
+                    { sel: '.footer-list:nth-of-type(1)', section: 'footer', id: 'contact_info', type: 'list', label: 'Info Contacto', blueprint: 'contact-item', itemSel: 'li:not(:first-child)', fields: [
+                        { sel: '.footer-list-item', id: 'text', type: 'text', label: 'Texto' }
+                    ]},
+                    { sel: '.footer-list:nth-of-type(2)', section: 'footer', id: 'opening_hours', type: 'list', label: 'Horarios', blueprint: 'hour-item', itemSel: 'li:not(:first-child)', fields: [
+                        { sel: '.footer-list-item', id: 'text', type: 'text', label: 'Horario' }
+                    ]}
+                ]
+            }
+        };
+
         // Current state
         let webConfig = {
             template: 'plantilla1.html',
@@ -296,6 +407,8 @@
                 iframe.src = webConfig.template;
 
                 iframe.addEventListener('load', () => {
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    dynamicallyInstrument(doc, webConfig.template);
                     scanTemplate();
                     if (!isViewOnly) buildSidebar();
                     injectData();
@@ -309,14 +422,122 @@
         }
 
         /**
+         * Applies data-attributes and fixes paths in clean templates.
+         */
+        function dynamicallyInstrument(doc, templateName) {
+            const config = instrumentationMap[templateName];
+            if (!config) return;
+
+            // Fix paths
+            if (config.baseAssetUrl) {
+                // Remove existing base if any
+                const existingBase = doc.querySelector('base');
+                if (existingBase) existingBase.remove();
+
+                const base = doc.createElement('base');
+                base.href = config.baseAssetUrl;
+                doc.head.prepend(base);
+
+                // Rewrite attributes to be relative to base
+                doc.querySelectorAll('link, img, script, source').forEach(el => {
+                    ['src', 'href', 'poster'].forEach(attr => {
+                        const val = el.getAttribute(attr);
+                        if (val && (val.startsWith('./') || val.startsWith('../'))) {
+                            el.setAttribute(attr, val.replace(/^\.\//, '').replace(/^\.\.\//, 'assets/'));
+                        }
+                    });
+                });
+
+                // Fix CSS in style tags and inline
+                doc.querySelectorAll('style').forEach(style => {
+                    style.textContent = style.textContent
+                        .replace(/url\(['"]?\.\//g, "url('")
+                        .replace(/url\(['"]?\.\.\//g, "url('assets/");
+                });
+                doc.querySelectorAll('[style*="url("]').forEach(el => {
+                    el.setAttribute('style', el.getAttribute('style')
+                        .replace(/url\(['"]?\.\//g, "url('")
+                        .replace(/url\(['"]?\.\.\//g, "url('assets/"));
+                });
+            }
+
+            // Apply sections
+            config.sections.forEach(s => {
+                const el = doc.querySelector(s.sel);
+                if (el) {
+                    el.dataset.section = s.id;
+                    el.dataset.label = s.label;
+                }
+            });
+
+            // Apply editables
+            config.editables.forEach(e => {
+                const el = doc.querySelector(e.sel);
+                if (el) {
+                    el.dataset.editable = e.type;
+                    el.dataset.label = e.label;
+                    if (e.id) el.id = e.id;
+                    if (e.blueprint) el.dataset.blueprint = e.blueprint;
+
+                    if (e.type === 'list' && e.itemSel && e.fields) {
+                        // Instrument existing items
+                        const items = el.querySelectorAll(e.itemSel);
+                        items.forEach(item => {
+                            e.fields.forEach(f => {
+                                const fEl = item.querySelector(f.sel);
+                                if (fEl) {
+                                    fEl.dataset.editable = f.type;
+                                    fEl.dataset.label = f.label;
+                                    if (f.id) fEl.id = f.id;
+                                }
+                            });
+                        });
+
+                        // Create internal blueprint from first item if not exists
+                        if (items.length > 0) {
+                            const clone = items[0].cloneNode(true);
+                            templateBlueprints[e.blueprint] = clone.outerHTML;
+                        }
+                    }
+                }
+            });
+
+            // Inject Click-to-Edit script
+            const script = doc.createElement('script');
+            script.textContent = `
+                document.addEventListener('click', (e) => {
+                    const editable = e.target.closest('[data-editable]');
+                    if (editable) {
+                        const section = editable.closest('[data-section]');
+                        window.parent.postMessage({
+                            type: 'selectField',
+                            section: section ? section.dataset.section : '',
+                            field: editable.id || editable.dataset.label
+                        }, '*');
+                        e.preventDefault();
+                        e.stopPropagation();
+                    } else {
+                        const section = e.target.closest('[data-section]');
+                        if (section) {
+                            window.parent.postMessage({
+                                type: 'selectSection',
+                                section: section.dataset.section
+                            }, '*');
+                        }
+                    }
+                });
+            `;
+            doc.body.appendChild(script);
+        }
+
+        /**
          * Scans the template for data-section, data-editable and templates.
          */
         function scanTemplate() {
             const iframe = document.getElementById('templateIframe');
             const doc = iframe.contentDocument || iframe.contentWindow.document;
 
-            // Extract blueprints
-            templateBlueprints = {};
+            // Extract explicitly defined blueprints
             doc.querySelectorAll('template[id^="blueprint-"]').forEach(t => {
                 const name = t.id.replace('blueprint-', '');
                 templateBlueprints[name] = t.innerHTML;
@@ -342,7 +563,11 @@
                             if (el.dataset.editable === 'svg') {
                                 webConfig.data[sectionId][key] = el.innerHTML.trim();
                             } else if (el.dataset.editable === 'image') {
-                                webConfig.data[sectionId][key] = el.src || el.dataset.bg || '';
+                                let val = el.src || el.dataset.bg || '';
+                                if (!val && el.style.backgroundImage) {
+                                    val = el.style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                                }
+                                webConfig.data[sectionId][key] = val;
                             } else {
                                 webConfig.data[sectionId][key] = el.textContent.trim();
                             }
@@ -374,7 +599,13 @@
 
                     if (target) {
                         found = true;
-                        if (fType === 'image') itemData[fId] = target.src || target.dataset.bg || '';
+                        if (fType === 'image') {
+                            let val = target.src || target.dataset.bg || '';
+                            if (!val && target.style.backgroundImage) {
+                                val = target.style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                            }
+                            itemData[fId] = val;
+                        }
                         else if (fType === 'svg') itemData[fId] = target.innerHTML.trim();
                         else itemData[fId] = target.textContent.trim();
                     }
@@ -449,7 +680,8 @@
 
         function buildFieldMarkup(sectionId, fieldId, type, label, value) {
             const div = document.createElement('div');
-            div.className = 'mb-3';
+            div.className = 'mb-3 designer-field';
+            div.dataset.field = fieldId;
             const uniqueId = `input-${sectionId}-${fieldId}`;
 
             if (type === 'text') {
@@ -491,6 +723,10 @@
             container.innerHTML = '';
 
             const items = webConfig.data[sectionId][fieldId] || [];
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-muted small text-center my-3">No hay items. Añade uno nuevo.</p>';
+                return;
+            }
             const blueprintHtml = templateBlueprints[blueprintName];
             if (!blueprintHtml) return;
 
@@ -595,8 +831,14 @@
                     if (type === 'list') {
                         renderListInTemplate(el, value, el.dataset.blueprint);
                     } else if (type === 'image') {
-                        if (el.tagName === 'IMG') el.src = value;
-                        else el.style.backgroundImage = `url('${value}')`;
+                        if (el.tagName === 'IMG') {
+                            el.src = value;
+                        } else {
+                            el.style.backgroundImage = `url('${value}')`;
+                            // Ensure background-size is cover for hero/cta
+                            el.style.backgroundSize = 'cover';
+                            el.style.backgroundPosition = 'center';
+                        }
                     } else if (type === 'svg') {
                         el.innerHTML = sanitizeSvg(value);
                     } else {
@@ -626,8 +868,13 @@
 
                     const type = target.dataset.editable;
                     if (type === 'image') {
-                        if (target.tagName === 'IMG') target.src = val;
-                        else target.style.backgroundImage = `url('${val}')`;
+                        if (target.tagName === 'IMG') {
+                            target.src = val;
+                        } else {
+                            target.style.backgroundImage = `url('${val}')`;
+                            target.style.backgroundSize = 'cover';
+                            target.style.backgroundPosition = 'center';
+                        }
                     }
                     else if (type === 'svg') target.innerHTML = sanitizeSvg(val);
                     else target.textContent = val;
@@ -710,15 +957,30 @@
         window.addEventListener('message', (event) => {
             if (event.data.type === 'selectSection' || event.data.type === 'selectField') {
                 const sectionId = event.data.section;
+                const fieldId = event.data.field;
                 const collapseEl = document.getElementById(`collapse-${sectionId}`);
+
                 if (collapseEl) {
                     bootstrap.Collapse.getOrCreateInstance(collapseEl).show();
                     collapseEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                    // Visual feedback
+                    // Visual feedback for section
                     const content = collapseEl.querySelector('.designer-section');
                     content.classList.add('highlight-edit');
                     setTimeout(() => content.classList.remove('highlight-edit'), 1000);
+
+                    // If it's a field, highlight the specific input
+                    if (fieldId) {
+                        setTimeout(() => {
+                            const fieldEl = collapseEl.querySelector(`[data-field="${fieldId}"]`) ||
+                                          collapseEl.querySelector(`#list-items-${sectionId}-${fieldId}`);
+                            if (fieldEl) {
+                                fieldEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                fieldEl.classList.add('highlight-edit');
+                                setTimeout(() => fieldEl.classList.remove('highlight-edit'), 1000);
+                            }
+                        }, 300);
+                    }
                 }
             }
         });
