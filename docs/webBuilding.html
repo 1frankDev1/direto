@@ -154,6 +154,19 @@
             gap: 5px;
         }
 
+        /* Template Selection */
+        .template-card {
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .template-card:hover { border-color: var(--bs-primary); }
+        .template-card.active { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.05); }
+        .template-card img { width: 100%; border-radius: 8px; margin-bottom: 8px; }
+
         /* Responsive Previews */
         .preview-mobile { width: 375px; }
         .preview-tablet { width: 768px; }
@@ -204,10 +217,38 @@
         <div class="designer-sidebar">
             <div class="designer-header">
                 <h6 class="fw-bold mb-1">Editor de Sitio Web</h6>
-                <p class="text-muted small mb-0">Template: <strong>Foodie</strong></p>
+                <p class="text-muted small mb-0">Configura tu presencia online</p>
             </div>
 
             <div class="accordion accordion-flush" id="builderAccordion">
+
+                <!-- TEMPLATE SELECTOR -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTemplate">
+                            <i class="bi bi-grid-1x2 me-2"></i> Seleccionar Plantilla
+                        </button>
+                    </h2>
+                    <div id="collapseTemplate" class="accordion-collapse collapse show" data-bs-parent="#builderAccordion">
+                        <div class="designer-section">
+                            <div class="row g-2" id="selectTemplate">
+                                <div class="col-6">
+                                    <div class="template-card" id="tpl-foodie" onclick="setTemplate('foodie')">
+                                        <img src="https://codewithsadee.github.io/foodie/assets/images/hero-banner.png" alt="Foodie">
+                                        <span class="small fw-bold">Foodie (Restaurante)</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="template-card" id="tpl-pro-card" onclick="setTemplate('pro-card')">
+                                        <img src="https://tragalero.com/assets/img/tragalero.png" alt="Pro Card">
+                                        <span class="small fw-bold">Professional Card</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- General Settings -->
                 <div class="accordion-item">
                     <h2 class="accordion-header">
@@ -246,21 +287,21 @@
                 <!-- Header -->
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeader">
                             <i class="bi bi-layout-text-window me-2"></i> Cabecera & Logo
                         </button>
                     </h2>
-                    <div id="collapseHeader" class="accordion-collapse collapse show" data-bs-parent="#builderAccordion">
+                    <div id="collapseHeader" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
                         <div class="designer-section">
                             <div class="mb-3">
                                 <label class="form-label">Nombre/Logo</label>
                                 <input type="text" class="form-control" id="inputHeaderLogo" oninput="updateConfig('header.logo', this.value)">
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 foodie-only">
                                 <label class="form-label">Texto Botón Pedido</label>
                                 <input type="text" class="form-control" id="inputHeaderBtn" oninput="updateConfig('header.btnText', this.value)">
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 foodie-only">
                                 <label class="form-label">Texto Botón Reserva</label>
                                 <input type="text" class="form-control" id="inputHeaderResBtn" oninput="updateConfig('header.resBtnText', this.value)">
                             </div>
@@ -277,7 +318,7 @@
                     </h2>
                     <div id="collapseHero" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
                         <div class="designer-section">
-                            <div class="mb-3">
+                            <div class="mb-3 foodie-only">
                                 <label class="form-label">Subtítulo</label>
                                 <input type="text" class="form-control" id="inputHeroSubtitle" oninput="updateConfig('hero.subtitle', this.value)">
                             </div>
@@ -286,10 +327,15 @@
                                 <input type="text" class="form-control" id="inputHeroTitle" oninput="updateConfig('hero.title', this.value)">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Descripción</label>
+                                <label class="form-label">Descripción / Bio</label>
                                 <textarea class="form-control" id="inputHeroText" rows="2" oninput="updateConfig('hero.text', this.value)"></textarea>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 pro-only">
+                                <label class="form-label">Redes Sociales (JSON)</label>
+                                <textarea class="form-control" id="inputHeroSocials" rows="3" oninput="tryUpdateSocials(this.value)"></textarea>
+                                <small class="text-muted">Formato: [{"icon":"logo-whatsapp","url":"#"}, ...]</small>
+                            </div>
+                            <div class="mb-3 foodie-only">
                                 <label class="form-label">Imagen de Fondo</label>
                                 <div class="upload-drop-zone" onclick="triggerUpload('hero.bgImg')">
                                     <i class="bi bi-image"></i>
@@ -297,18 +343,79 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Imagen Principal (PNG)</label>
+                                <label class="form-label" id="labelHeroBanner">Imagen Principal (PNG)</label>
                                 <div class="upload-drop-zone" onclick="triggerUpload('hero.bannerImg')">
                                     <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar banner</span>
+                                    <span class="small">Cambiar banner/foto</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Promo -->
-                <div class="accordion-item">
+                <!-- Video (Pro Only) -->
+                <div class="accordion-item pro-only">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVideo">
+                            <i class="bi bi-play-circle me-2"></i> Video Presentación
+                        </button>
+                    </h2>
+                    <div id="collapseVideo" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
+                        <div class="designer-section">
+                            <div class="mb-3">
+                                <label class="form-label">URL del Video (MP4)</label>
+                                <input type="text" class="form-control" id="inputVideoUrl" oninput="updateConfig('video.url', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio (Pro Only) -->
+                <div class="accordion-item pro-only">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePortfolio">
+                            <i class="bi bi-images me-2"></i> Portafolio
+                        </button>
+                    </h2>
+                    <div id="collapsePortfolio" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
+                        <div class="designer-section">
+                            <div id="portfolioContainer"></div>
+                            <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('portfolio')">
+                                <i class="bi bi-plus-lg me-1"></i> Añadir Imagen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Before/After (Pro Only) -->
+                <div class="accordion-item pro-only">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeforeAfter">
+                            <i class="bi bi-layers me-2"></i> Antes y Después
+                        </button>
+                    </h2>
+                    <div id="collapseBeforeAfter" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
+                        <div class="designer-section">
+                            <div class="mb-3">
+                                <label class="form-label">Imagen Antes</label>
+                                <div class="upload-drop-zone" onclick="triggerUpload('beforeAfter.before')">
+                                    <i class="bi bi-image"></i>
+                                    <span class="small">Subir "Antes"</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Imagen Después</label>
+                                <div class="upload-drop-zone" onclick="triggerUpload('beforeAfter.after')">
+                                    <i class="bi bi-image"></i>
+                                    <span class="small">Subir "Después"</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Promo (Foodie Only) -->
+                <div class="accordion-item foodie-only">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePromo">
                             <i class="bi bi-tag me-2"></i> Promociones
@@ -324,8 +431,8 @@
                     </div>
                 </div>
 
-                <!-- About -->
-                <div class="accordion-item">
+                <!-- About (Foodie Only) -->
+                <div class="accordion-item foodie-only">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbout">
                             <i class="bi bi-info-circle me-2"></i> Sobre Nosotros
@@ -359,8 +466,8 @@
                     </div>
                 </div>
 
-                <!-- Menu -->
-                <div class="accordion-item">
+                <!-- Menu (Foodie Only) -->
+                <div class="accordion-item foodie-only">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMenu">
                             <i class="bi bi-journal-richtext me-2"></i> Menú de Comida
@@ -383,158 +490,6 @@
                             <div id="menuListContainer"></div>
                             <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('menu')">
                                 <i class="bi bi-plus-lg me-1"></i> Añadir Plato
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CTA -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCTA">
-                            <i class="bi bi-megaphone me-2"></i> Call to Action
-                        </button>
-                    </h2>
-                    <div id="collapseCTA" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Título</label>
-                                <input type="text" class="form-control" id="inputCTATitle" oninput="updateConfig('cta.title', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Texto</label>
-                                <textarea class="form-control" id="inputCTAText" rows="2" oninput="updateConfig('cta.text', this.value)"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Imagen de Fondo</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('cta.bgImg')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar fondo</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Imagen Principal</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('cta.bannerImg')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar banner</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Insignia Oferta (badge)</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('cta.saleImg')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar badge</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Delivery -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDelivery">
-                            <i class="bi bi-truck me-2"></i> Delivery
-                        </button>
-                    </h2>
-                    <div id="collapseDelivery" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Título</label>
-                                <input type="text" class="form-control" id="inputDeliveryTitle" oninput="updateConfig('delivery.title', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Texto</label>
-                                <textarea class="form-control" id="inputDeliveryText" rows="2" oninput="updateConfig('delivery.text', this.value)"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Imagen Nubes (fondo)</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('delivery.bannerImg')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar fondo</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Repartidor (SVG/PNG)</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('delivery.boyImg')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar repartidor</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonials -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTestimonials">
-                            <i class="bi bi-chat-quote me-2"></i> Testimonios
-                        </button>
-                    </h2>
-                    <div id="collapseTestimonials" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Subtítulo</label>
-                                <input type="text" class="form-control" id="inputTestiSubtitle" oninput="updateConfig('testimonials.subtitle', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Título</label>
-                                <input type="text" class="form-control" id="inputTestiTitle" oninput="updateConfig('testimonials.title', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Texto Sección</label>
-                                <textarea class="form-control" id="inputTestiText" rows="2" oninput="updateConfig('testimonials.text', this.value)"></textarea>
-                            </div>
-                            <div id="testiListContainer"></div>
-                            <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('testimonials')">
-                                <i class="bi bi-plus-lg me-1"></i> Añadir Testimonio
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Banners -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBanners">
-                            <i class="bi bi-images me-2"></i> Banners
-                        </button>
-                    </h2>
-                    <div id="collapseBanners" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div id="bannerListContainer"></div>
-                            <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('banners')">
-                                <i class="bi bi-plus-lg me-1"></i> Añadir Banner
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Blog -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBlog">
-                            <i class="bi bi-newspaper me-2"></i> Blog
-                        </button>
-                    </h2>
-                    <div id="collapseBlog" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Subtítulo</label>
-                                <input type="text" class="form-control" id="inputBlogSubtitle" oninput="updateConfig('blog.subtitle', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Título</label>
-                                <input type="text" class="form-control" id="inputBlogTitle" oninput="updateConfig('blog.title', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Texto Sección</label>
-                                <textarea class="form-control" id="inputBlogText" rows="2" oninput="updateConfig('blog.text', this.value)"></textarea>
-                            </div>
-                            <div id="blogListContainer"></div>
-                            <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('blog')">
-                                <i class="bi bi-plus-lg me-1"></i> Añadir Post
                             </button>
                         </div>
                     </div>
@@ -564,32 +519,6 @@
                             <div class="mb-3">
                                 <label class="form-label">Dirección</label>
                                 <input type="text" class="form-control" id="inputFooterAddress" oninput="updateConfig('footer.address', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Redes Sociales</label>
-                                <div class="input-group input-group-sm mb-2">
-                                    <span class="input-group-text"><i class="bi bi-facebook"></i></span>
-                                    <input type="text" class="form-control" id="inputFooterFb" oninput="updateConfig('footer.social.facebook', this.value)">
-                                </div>
-                                <div class="input-group input-group-sm mb-2">
-                                    <span class="input-group-text"><i class="bi bi-twitter"></i></span>
-                                    <input type="text" class="form-control" id="inputFooterTw" oninput="updateConfig('footer.social.twitter', this.value)">
-                                </div>
-                                <div class="input-group input-group-sm mb-2">
-                                    <span class="input-group-text"><i class="bi bi-instagram"></i></span>
-                                    <input type="text" class="form-control" id="inputFooterIg" oninput="updateConfig('footer.social.instagram', this.value)">
-                                </div>
-                                <div class="input-group input-group-sm mb-2">
-                                    <span class="input-group-text"><i class="bi bi-pinterest"></i></span>
-                                    <input type="text" class="form-control" id="inputFooterPi" oninput="updateConfig('footer.social.pinterest', this.value)">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Horarios</label>
-                                <div id="footerHoursContainer"></div>
-                                <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('footerHours')">
-                                    <i class="bi bi-plus-lg me-1"></i> Añadir Horario
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -627,7 +556,6 @@
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
-        console.log("Web Builder script starting...");
         const S_CLOSE = '</' + 'script>';
         const urlParams = new URLSearchParams(window.location.search);
         const viewUserId = urlParams.get('user');
@@ -639,40 +567,44 @@
             general: {
                 cuid: '',
                 ruid: '',
+                hasReservation: false,
                 orderBgColor: '#ff9d2d',
                 orderTextColor: '#ffffff'
             },
-            header: { logo: 'Foodie', btnText: 'Order Now', resBtnText: 'Book A Table' },
+            header: { logo: 'Tragalero Pro', btnText: 'Order Now', resBtnText: 'Book A Table' },
             hero: {
                 subtitle: 'Eat Sleep And',
                 title: 'Supper delicious Burger in town!',
                 text: 'Food is any substance consumed to provide nutritional support for an organism.',
                 bgImg: 'https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg',
-                bannerImg: 'https://codewithsadee.github.io/foodie/assets/images/hero-banner.png'
+                bannerImg: 'https://codewithsadee.github.io/foodie/assets/images/hero-banner.png',
+                socials: [
+                    { icon: 'logo-whatsapp', url: '#' },
+                    { icon: 'logo-facebook', url: '#' },
+                    { icon: 'logo-instagram', url: '#' }
+                ]
+            },
+            video: { url: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            portfolio: [
+                'https://picsum.photos/id/1/600/600',
+                'https://picsum.photos/id/2/600/600',
+                'https://picsum.photos/id/3/600/600',
+                'https://picsum.photos/id/4/600/600'
+            ],
+            beforeAfter: {
+                before: 'https://picsum.photos/id/10/800/600',
+                after: 'https://picsum.photos/id/11/800/600'
             },
             promos: [
-                {
-                    title: 'Mexican Pizza',
-                    text: 'Food is any substance consumed to provide nutritional support for an organism.',
-                    img: 'https://codewithsadee.github.io/foodie/assets/images/promo-1.png',
-                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M43.033.002L42.563 0c-7.896 0-15.555 1.546-22.767 4.597-6.965 2.946-13.22 7.163-18.592 12.535l-.043.044c-1.548 1.551-1.546 4.075.004 5.625l2.256 2.257c.754.754 1.76 1.17 2.832 1.17h.001a3.98 3.98 0 0 0 2.834-1.171l.04-.04a1.7 1.7 0 0 1 1.21-.499h.021a1.73 1.73 0 0 1 1.238.537l4.596 4.807c.466.488 1.095.761 1.768.768h.028c.663 0 1.285-.258 1.756-.729.975-.975.993-2.58.04-3.577l-3.308-3.46c-.295-.309-.311-.797-.035-1.087a.76.76 0 0 1 .554-.239h.001a.76.76 0 0 1 .553.236l1.041 1.09c.95.994 2.49 1.079 3.507.195a2.5 2.5 0 0 0 .865-1.787 2.53 2.53 0 0 0-.696-1.858l-.755-.79a1.72 1.72 0 0 1-.454-1.511c.099-.549.444-1.003.944-1.245a46.86 46.86 0 0 1 20.561-4.69l.419.002c1.07.011 2.07-.399 2.827-1.149a3.96 3.96 0 0 0 1.179-2.828V3.984A4 4 0 0 0 43.033.002h0zm2.2 7.199a2.21 2.21 0 0 1-.659 1.581 2.18 2.18 0 0 1-1.575.641l-.435-.002a48.6 48.6 0 0 0-21.325 4.865A3.44 3.44 0 0 0 19.33 16.8a3.46 3.46 0 0 0 .912 3.037l.756.79a.76.76 0 0 1-.052 1.106c-.303.263-.789.226-1.085-.083l-1.041-1.089a2.53 2.53 0 0 0-1.822-.779 2.5 2.5 0 0 0-1.827.784c-.929.976-.912 2.518.037 3.512l3.308 3.46a.82.82 0 0 1-.012 1.121.74.74 0 0 1-.523.215c-.197-.002-.381-.083-.519-.226l-4.596-4.808a3.47 3.47 0 0 0-2.487-1.08h-.042a3.44 3.44 0 0 0-2.449 1.011l-.014.014-.009.009-.022.022c-.423.423-.988.656-1.591.656s-1.168-.232-1.591-.655L2.404 21.56a2.23 2.23 0 0 1 0-3.145l.042-.042A56.54 56.54 0 0 1 20.48 6.214c6.994-2.958 14.423-4.458 22.083-4.458l.454.002h0a2.24 2.24 0 0 1 2.215 2.226v3.218zm-.908 6.202a.88.88 0 0 0-.878.878v43.292c0 .412-.314.574-.411.614s-.433.147-.724-.144L11.436 27.166a.88.88 0 0 0-1.242 0 .88.88 0 0 0 0 1.242l30.877 30.877c.469.469 1.073.715 1.696.715.314 0 .633-.063.942-.19a2.38 2.38 0 0 0 1.494-2.237V14.281a.88.88 0 0 0-.878-.878h0zm-6.657-1.125c-2.112 0-3.83 1.718-3.83 3.83s1.718 3.83 3.83 3.83 3.83-1.718 3.83-3.83-1.718-3.83-3.83-3.83zm0 5.903c-1.143 0-2.074-.93-2.074-2.074s.93-2.073 2.074-2.073 2.073.93 2.073 2.073-.93 2.074-2.073 2.074zM22.575 34.938a3.55 3.55 0 0 0 3.547 3.547 3.55 3.55 0 0 0 3.547-3.547 3.55 3.55 0 0 0-3.547-3.547 3.55 3.55 0 0 0-3.547 3.547h0zm3.547-1.791c.987 0 1.791.803 1.791 1.791s-.803 1.791-1.791 1.791-1.791-.803-1.791-1.791.804-1.791 1.791-1.791zm12.81-2.283a3.68 3.68 0 0 0-3.672 3.672 3.68 3.68 0 0 0 3.672 3.672 3.68 3.68 0 0 0 3.672-3.672 3.68 3.68 0 0 0-3.672-3.672zm0 5.588a1.92 1.92 0 0 1-1.916-1.915 1.92 1.92 0 0 1 1.916-1.916 1.92 1.92 0 0 1 1.915 1.916 1.92 1.92 0 0 1-1.915 1.915zm2.97 8.702a3.92 3.92 0 0 0-3.913-3.912h-.645a3.92 3.92 0 0 0-3.913 3.912 1.7 1.7 0 0 0 1.697 1.697h.23l-.037.687a1.57 1.57 0 0 0 .427 1.16c.294.31.709.488 1.136.488h1.562a1.57 1.57 0 0 0 1.136-.488c.294-.31.45-.733.428-1.16l-.037-.687h.23a1.7 1.7 0 0 0 1.697-1.697h0zm-2.515-.059a1.2 1.2 0 0 0-.87.374c-.225.238-.345.562-.327.889l.057 1.073h-1.16l.057-1.073a1.2 1.2 0 0 0-1.198-1.263h-.758a2.16 2.16 0 0 1 2.156-2.097h.645a2.16 2.16 0 0 1 2.155 2.097h-.758zm-9.689-26.32a4.46 4.46 0 0 0-4.454 4.455v.76a4.46 4.46 0 0 0 4.454 4.455c1.017 0 1.844-.827 1.844-1.843v-.437l.975.052a1.69 1.69 0 0 0 1.251-.46c.335-.318.526-.764.526-1.225v-1.841c0-.461-.192-.908-.526-1.225s-.792-.485-1.251-.46l-.975.052v-.437c0-1.017-.827-1.844-1.844-1.844zm2.84 3.986v1.697l-1.43-.076c-.344-.017-.682.107-.931.343s-.392.569-.392.912v.963c0 .049-.039.087-.087.087A2.7 2.7 0 0 1 27 23.99v-.761a2.7 2.7 0 0 1 2.698-2.698c.048 0 .087.039.087.087v.964c0 .343.143.676.392.912a1.26 1.26 0 0 0 .931.343l1.43-.076z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`
-                },
-                {
-                    title: 'Soft Drinks',
-                    text: 'Food is any substance consumed to provide nutritional support for an organism.',
-                    img: 'https://codewithsadee.github.io/foodie/assets/images/promo-2.png',
-                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M14.837 40.062c0 3.106 2.528 5.634 5.634 5.634s5.634-2.528 5.634-5.634a5.64 5.64 0 0 0-5.634-5.634c-3.106 0-5.634 2.527-5.634 5.634zm5.634-3.876a3.88 3.88 0 0 1 3.876 3.876 3.88 3.88 0 0 1-3.876 3.876 3.88 3.88 0 0 1-3.876-3.876 3.88 3.88 0 0 1 3.876-3.876zm4.22-20.523l-.2-9.292a1.6 1.6 0 0 0 1.089-1.514V1.599A1.6 1.6 0 0 0 23.981 0H16.96a1.6 1.6 0 0 0-1.599 1.599v3.259a1.6 1.6 0 0 0 1.09 1.514l-.201 9.292a10.3 10.3 0 0 1-2.194 6.117c-1.659 2.107-2.573 4.744-2.573 7.426v27.741A3.06 3.06 0 0 0 14.538 60h11.866a3.06 3.06 0 0 0 3.053-3.053v-27.74a12.06 12.06 0 0 0-2.573-7.426 10.3 10.3 0 0 1-2.194-6.117zM17.119 1.758h6.703v2.941h-6.703V1.758zm5.695 8.398h-4.687l.08-3.7h4.527l.08 3.7zM27.7 56.947a1.3 1.3 0 0 1-1.296 1.295H14.538c-.715 0-1.295-.581-1.295-1.295v-7.978H27.7v7.978zm0-25.703h-8.55a.88.88 0 0 0-.879.878.88.88 0 0 0 .879.879h8.55v14.21H13.242v-14.21h1.819a.88.88 0 0 0 .878-.879.88.88 0 0 0-.878-.878h-1.819v-2.037a10.29 10.29 0 0 1 2.196-6.338c1.602-2.034 2.514-4.579 2.57-7.167l.082-3.787h4.762l.081 3.787a12.08 12.08 0 0 0 2.57 7.167 10.29 10.29 0 0 1 2.196 6.338v2.037zm20.876-12.638c0-1.069-.567-2.026-1.438-2.519-.186-1.394-1.338-2.471-2.727-2.471a2.66 2.66 0 0 0-1.289.334 2.61 2.61 0 0 0-.274-.089c-.193-1.385-1.341-2.453-2.724-2.453-.896 0-1.721.456-2.23 1.188l-.226-.01c-1.262 0-2.34.894-2.658 2.119a2.8 2.8 0 0 0-1.113 1.131c-1.179.329-2.037 1.45-2.037 2.78.001.218.047.432.132.631l-.003.052v1.757a64.33 64.33 0 0 0 1.632 14.388l.141.613c1.294 5.63 1.871 9.946 1.871 13.995v4.586a.54.54 0 0 1-.038.201c-.004.008-.01.016-.013.024a.54.54 0 0 1-.196.23l-1.491.966c-.515.334-.822.899-.822 1.512v.625a1.71 1.71 0 0 0 .007.15c.002.026.005.051.008.077.001.007.001.014.002.022.002.015.005.028.008.043l.016.092a1.66 1.66 0 0 0 .034.133c.014.045.028.083.043.122.006.016.011.032.018.048a1.57 1.57 0 0 0 .055.119c.006.012.012.025.018.038a1.67 1.67 0 0 0 .07.119c.006.01.012.021.018.03.025.038.052.073.079.109.009.01.016.022.025.032.025.031.051.059.078.088.013.015.026.029.039.043a1.42 1.42 0 0 0 .07.065c.024.021.04.038.06.055s.037.028.055.042a1.37 1.37 0 0 0 .086.064c.015.01.031.019.046.028.03.019.059.039.091.056a2.17 2.17 0 0 0 .105.054c.023.011.045.022.066.031a1.83 1.83 0 0 0 .08.031 1.92 1.92 0 0 0 .088.031 1.73 1.73 0 0 0 .086.023c.029.008.059.016.085.021a1.58 1.58 0 0 0 .103.017 1.43 1.43 0 0 0 .076.011 1.94 1.94 0 0 0 .101.006 1.18 1.18 0 0 0 .08.003L45.561 60c.031-.001.058-.001.087-.003s.059-.003.088-.006a1.07 1.07 0 0 0 .087-.011c.034-.005.068-.01.098-.016h0c.035-.008.058-.013.078-.019.032-.008.065-.016.098-.027.02-.006.039-.013.059-.021a1.38 1.38 0 0 0 .103-.039c.015-.006.031-.013.045-.02s.026-.014.04-.021a2.01 2.01 0 0 0 .105-.054c.023-.013.046-.027.069-.042a1.93 1.93 0 0 0 .081-.054 1.46 1.46 0 0 0 .075-.056 2.01 2.01 0 0 0 .064-.053 1.78 1.78 0 0 0 .076-.069c.018-.017.035-.036.052-.054.024-.026.049-.052.071-.079.016-.019.031-.039.047-.059.021-.028.043-.054.062-.083s.033-.052.049-.079.031-.049.045-.074a1.77 1.77 0 0 0 .144-.342 1.62 1.62 0 0 0 .036-.14c.006-.029.011-.059.016-.089.002-.016.006-.031.008-.047l.003-.022.008-.075a1.68 1.68 0 0 0 .008-.15v-.624c0-.613-.307-1.178-.821-1.511l-.553-.358-.94-.609c-.035-.027-.083-.076-.132-.151a1.28 1.28 0 0 1-.047-.084c-.041-.081-.069-.163-.069-.22v-4.585c0-4.048.577-8.364 1.871-13.995l.141-.613a64.33 64.33 0 0 0 1.632-14.388V19.3c0-.018-.002-.035-.003-.052a1.63 1.63 0 0 0 .132-.626v-.016zm-14.012-1.108a.88.88 0 0 0 .792-.617c.108-.352.366-.618.688-.712a.88.88 0 0 0 .63-.79c.035-.58.471-1.033.993-1.033a.9.9 0 0 1 .35.071.88.88 0 0 0 .114.88.88 0 0 0 .65.93c.219.058.408.198.544.386h-12.76c.173-.239.432-.398.728-.414h0zm10.634 39.787l.388.251c.006.004.011.01.015.016l.005.021v.619l-.001.013c-.003.011-.006.016-.009.02l-.052.017H34.892l-.02-.001-.022-.006c-.011-.008-.016-.017-.019-.031l-.001-.63c0-.015.007-.029.02-.037l1.491-.967a2.52 2.52 0 0 0 .135-.095l.023-.018a2.11 2.11 0 0 0 .111-.092c.097-.087.176-.168.248-.254h6.737a3.35 3.35 0 0 0 .102.118l.034.037c.026.026.051.052.078.077.013.013.027.025.041.038a1.97 1.97 0 0 0 .081.07l.039.032a1.81 1.81 0 0 0 .114.081l1.113.722zm1.491-36.227l-.018 1.463h-7.669a.88.88 0 0 0-.879.879.88.88 0 0 0 .879.879h7.603a62.7 62.7 0 0 1-1.502 10.774l-.141.613c-1.325 5.765-1.915 10.202-1.915 14.388v4.299H37.39v-4.299c0-4.187-.591-8.624-1.915-14.388l-.141-.613a62.6 62.6 0 0 1-1.503-10.774h1.08a.88.88 0 0 0 .879-.879.88.88 0 0 0-.879-.879h-1.146l-.019-1.463v-1.387h12.942v1.387z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`
-                },
-                {
-                    title: 'French Fry',
-                    text: 'Food is any substance consumed to provide nutritional support for an organism.',
-                    img: 'https://codewithsadee.github.io/foodie/assets/images/promo-3.png',
-                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M30.057 32.375c-5.536 0-10.04 4.504-10.04 10.04s4.504 10.04 10.04 10.04 10.04-4.504 10.04-10.04-4.504-10.04-10.04-10.04h0zm0 18.322c-4.567 0-8.282-3.715-8.282-8.282s3.715-8.282 8.282-8.282 8.282 3.715 8.282 8.282-3.715 8.282-8.282 8.282zM51.089 19.66h-.069l2.006-9.708c.148-.715.001-1.451-.402-2.018a2.29 2.29 0 0 0-1.582-.957l-3.385-.448a2.37 2.37 0 0 0-.754.022l.03-.252c.086-.732-.125-1.462-.578-2.002-.425-.506-1.018-.806-1.671-.843l-2.506-.143c.082-.712-.109-1.428-.532-1.975a2.39 2.39 0 0 0-1.633-.929L36.522.015a2.42 2.42 0 0 0-1.806.541 2.77 2.77 0 0 0-.993 1.879l-.318 3.293a2.49 2.49 0 0 0-.285-.351 2.4 2.4 0 0 0-1.728-.736h-3.467a2.37 2.37 0 0 0-1.285.379l-.249-2.586a2.77 2.77 0 0 0-.993-1.879 2.42 2.42 0 0 0-1.806-.541L20.1.407a2.39 2.39 0 0 0-1.633.929c-.423.547-.614 1.263-.532 1.975l-2.506.143c-.652.037-1.246.336-1.671.843-.454.54-.664 1.27-.578 2.002l.03.253a2.37 2.37 0 0 0-.754-.023l-3.385.448a2.29 2.29 0 0 0-1.582.957c-.403.567-.55 1.303-.402 2.018l2.006 9.708h-.069a1.99 1.99 0 0 0-1.965 2.332l6.267 36.353A1.99 1.99 0 0 0 15.292 60h29.53a1.99 1.99 0 0 0 1.965-1.655l6.267-36.353a1.99 1.99 0 0 0-1.965-2.332h0zM46.648 8.735c.167-.311.481-.504.78-.463l3.385.448c.196.026.314.141.379.233.121.171.163.406.114.644l-2.08 10.063h-1.285l.855-6.758a2.44 2.44 0 0 0-.535-1.872 2.28 2.28 0 0 0-1.652-.821l-.136-.007.173-1.467zm-1.199 3.175l1.072.055c.2.011.325.111.394.194.115.137.164.323.139.523l-.884 6.979h-4.106l.475-2.775a2.35 2.35 0 0 0-.32-1.641l.209-2.71a.83.83 0 0 1 .366-.627c.12-.079.261-.122.407-.114l2.248.115h.001zm-4.364-6.898h.035 0l3.465.197a.59.59 0 0 1 .425.218c.143.171.208.414.178.667l-.27 2.295-.203 1.723-1.426-.073c-1.337-.069-2.509.99-2.615 2.36l-.134 1.741-.822-.129.564-8.13c.033-.482.399-.872.803-.869h0zm-.28 11.577l-.541 3.161a1.99 1.99 0 0 0-1.268 1.197 9.56 9.56 0 0 1-3.458 4.419l-.516.335 1.413-9.801c.023-.163.109-.307.242-.405s.295-.138.458-.112l1.499.236 1.663.262a.61.61 0 0 1 .402.248c.096.134.134.297.106.46h0zm-7.294 6.349l1.962-20.334c.027-.275.154-.523.351-.683.106-.086.281-.184.503-.159l3.493.391a.64.64 0 0 1 .437.257c.15.194.213.46.174.73l-.031.211-.043.015-.055.019-.163.062-.041.018a2.48 2.48 0 0 0-.301.159l-.026.016-.176.123-.105.083-.019.016-.146.135-.035.036-.071.076-.074.087-.066.083-.048.065-.06.087-.064.103-.037.065-.063.12-.027.059-.055.126-.021.052-.056.162-.012.041-.041.152-.008.033-.034.181-.006.042-.021.192-.553 7.977-.566-.089a2.35 2.35 0 0 0-2.714 2.002l-1.209 8.388.025-1.099zM27.458 6.605c.006-.251.082-.489.243-.654zm1.42 8.562c.248-.011.429.123.514.206.164.158.261.377.273.616l.579 11.097-.188.003a9.52 9.52 0 0 1-4.229-.982L24.83 16.2c-.024-.239.043-.47.183-.634.08-.093.22-.207.432-.218l3.433-.181zM19.859 2.41a.64.64 0 0 1 .438-.257l3.492-.391c.223-.025.396.073.503.159a1 1 0 0 1 .35.683l.946 9.805.03 1.171-.265.014c-.651.035-1.245.329-1.674.829a2.61 2.61 0 0 0-.598 1.954l.483 4.796-1.09-2.613-.888-12.8-.021-.191-.006-.042-.034-.181-.007-.031-.041-.157-.011-.037-.058-.166-.017-.044-.061-.141-.012-.027-.078-.149-.027-.048-.087-.139-.026-.037-.078-.107-.033-.043-.103-.121-.037-.039-.095-.095-.029-.029-.123-.107-.039-.031-.134-.1-.017-.011-.136-.086-.029-.017-.156-.083-.018-.009-.168-.073-.182-.062-.037-.216c-.039-.27.024-.536.174-.73zm-4.754 3.017a.59.59 0 0 1 .425-.217l3.467-.198h.002c.425-.012.801.379.834.869l.528 7.616-.436-1.046a2.67 2.67 0 0 0-1.362-1.412 2.59 2.59 0 0 0-.231-.091l-.24-.069c-.007-.001-.015-.004-.022-.005a2.42 2.42 0 0 0-.223-.039l-.028-.004-.22-.016c-.011 0-.021-.001-.031-.001s-.025-.001-.037-.001l-.116.005-.099.005-.148.02-.093.014-.16.039-.076.019-.232.083-1.052.44-.159-1.349-.47-3.995c-.029-.253.036-.496.179-.667zm-.991 8.519l.52-.218.523-.218h.001l2.128-.89a.7.7 0 0 1 .553.02.92.92 0 0 1 .465.488l4.377 10.488a9.55 9.55 0 0 1-1.561-2.67c-.3-.781-1.031-1.286-1.864-1.286h-3.199l-2.236-4.705c-.103-.217-.118-.457-.041-.659a.65.65 0 0 1 .073-.14c.055-.08.138-.159.26-.211zM8.81 9.596c-.049-.239-.008-.473.113-.644.065-.092.184-.206.38-.232l3.385-.448c.297-.039.612.152.780.463l.186 1.578.215 1.83-.433.181a2.35 2.35 0 0 0-1.297 1.344c-.248.649-.214 1.393.095 2.041l1.877 3.951h-3.222L8.81 9.596zm42.512 12.098l-2.776 16.102h-5.748a.88.88 0 0 0-.879.879.88.88 0 0 0 .879.879h5.445l-.914 5.302h-4.415a.88.88 0 0 0-.879.879.88.88 0 0 0 .879.879h4.112l-1.971 11.433c-.02.113-.118.196-.233.196h-29.53c-.115 0-.213-.082-.233-.196l-1.971-11.433H17.2a.88.88 0 0 0 .879-.879.88.88 0 0 0-.879-.879h-4.415l-.914-5.302h5.472a.88.88 0 0 0 .879-.879.88.88 0 0 0-.879-.879h-5.775L8.793 21.694c-.016-.09.02-.154.052-.192a.23.23 0 0 1 .181-.084h10.23a.24.24 0 0 1 .223.158 11.31 11.31 0 0 0 4.091 5.229c1.908 1.336 4.152 2.042 6.488 2.042l.364-.007.173-.007.152-.009a11.41 11.41 0 0 0 1.582-.206 11.25 11.25 0 0 0 4.218-1.813 11.31 11.31 0 0 0 4.091-5.229.24.24 0 0 1 .222-.158h10.23a.23.23 0 0 1 .232.277h0z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`
-                }
+                { title: 'Mexican Pizza', text: 'Delicious pizza with authentic flavors.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-1.png' },
+                { title: 'Soft Drinks', text: 'Refreshing beverages for everyone.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-2.png' },
+                { title: 'French Fries', text: 'Crispy and golden potato fries.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-3.png' },
+                { title: 'Burger King', text: 'The ultimate burger experience.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-4.png' },
+                { title: 'Maxican Pizza', text: 'Spicy and tasty pizza.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-5.png' }
             ],
             about: {
-                title: 'Caferio, Burgers, and Best Pizzas in Town!',
-                text: 'The restaurants in Hangzhou also catered to many northern Chinese who had fled south from Kaifeng during the Jurchen invasion of the 1120s, while it is also known that many restaurants were run by families.',
+                title: 'The Best Burgers in Town!',
+                text: 'We use only the freshest ingredients to create our signature dishes. Our passion for quality shows in every bite.',
                 img: 'https://codewithsadee.github.io/foodie/assets/images/about-banner.png',
                 features: ['Delicious & Healthy Foods', 'Spacific Family And Kids Zone', 'Music & Other Facilities', 'Fastest Food Home Delivery']
             },
@@ -681,58 +613,45 @@
                 title: 'Our Delicious Foods',
                 text: 'Food is any substance consumed to provide nutritional support for an organism.',
                 items: [
-                    { title: 'Fried Chicken Unlimited', category: 'Chicken', price: '49.00', oldPrice: '69.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-1.png', badge: '-15%' },
-                    { title: 'Burger King Whopper', category: 'Noddles', price: '29.00', oldPrice: '39.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-2.png', badge: '-10%' }
+                    { title: 'Fried Chicken', category: 'Chicken', price: '49.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-1.png' },
+                    { title: 'Burger King', category: 'Burger', price: '29.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-2.png' },
+                    { title: 'French Fries', category: 'Sides', price: '15.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-3.png' }
                 ]
             },
             cta: {
-                title: 'The Foodie Have Excellent Of Quality Burgers!',
-                text: 'The restaurants in Hangzhou also catered to many northern Chinese who had fled south from Kaifeng during the Jurchen invasion of the 1120s.',
-                bgImg: 'https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg',
+                title: 'The Foodie Have Excellent Of Quality Food!',
+                text: 'The mouth-watering aroma of sizzling steaks fills the air, while the gentle hum of conversation creates a warm atmosphere.',
+                bgImg: 'https://codewithsadee.github.io/foodie/assets/images/cta-bg.jpg',
                 bannerImg: 'https://codewithsadee.github.io/foodie/assets/images/cta-banner.png',
-                saleImg: 'https://codewithsadee.github.io/foodie/assets/images/sale-shape.png'
+                saleImg: 'https://codewithsadee.github.io/foodie/assets/images/sale-shape-red.png'
             },
             delivery: {
                 title: 'A Moments Of Delivered On Right Time & Place',
-                text: 'The restaurants in Hangzhou also catered to many northern Chinese who had fled south from Kaifeng during the Jurchen invasion of the 1120s.',
+                text: 'The mouth-watering aroma of sizzling steaks fills the air, while the gentle hum of conversation creates a warm atmosphere.',
                 bannerImg: 'https://codewithsadee.github.io/foodie/assets/images/delivery-banner-bg.png',
                 boyImg: 'https://codewithsadee.github.io/foodie/assets/images/delivery-boy.svg'
             },
             testimonials: {
                 subtitle: 'Testimonials',
-                title: 'Our Customers Reviews',
-                text: 'Food is any substance consumed to provide nutritional support for an organism.',
+                text: 'Our customers love us! Here is what they have to say about our delicious food.',
                 items: [
-                    { name: 'Robert William', title: 'CEO Kingfisher', text: 'I would be lost without restaurant. I would like to personally thank you for your outstanding product.', img: 'https://codewithsadee.github.io/foodie/assets/images/avatar-1.jpg' }
+                    { name: 'John Doe', title: 'Food Critic', text: 'Best burger I have ever had! The service was also top-notch.', avatar: 'https://codewithsadee.github.io/foodie/assets/images/testi-avatar.jpg' }
                 ]
             },
-            banners: [
-                { subtitle: '50% Off Now!', title: 'Discount For Delicious Tasty Burgers!', text: 'Sale off 50% only this week', img: 'https://codewithsadee.github.io/foodie/assets/images/banner-1.jpg', size: 'lg' }
-            ],
             blog: {
                 subtitle: 'Latest Blog Posts',
-                title: 'This Is All About Foods',
-                text: 'Food is any substance consumed to provide nutritional support for an organism.',
+                text: 'Stay updated with the latest food trends and recipes from our kitchen.',
                 items: [
-                    { title: 'What Do You Think About Cheese Pizza Recipes?', text: 'Financial experts support or help you to find out which way you can raise your funds more...', date: 'Jan 01 2022', author: 'Jonathan Smith', category: 'Pizza', img: 'https://codewithsadee.github.io/foodie/assets/images/blog-1.jpg' }
+                    { title: 'The Secret to Perfect Fries', category: 'Cooking', date: '2024-01-01', img: 'https://codewithsadee.github.io/foodie/assets/images/blog-1.jpg' }
                 ]
             },
             footer: {
-                text: 'Financial experts support or help you to to find out which way you can raise your funds more.',
-                email: 'Info@YourGmail24.com',
-                phone: '+1 (062) 109-9222',
-                address: '153 Williamson Plaza, Maggieberg, MT 09514',
-                social: {
-                    facebook: '#',
-                    twitter: '#',
-                    instagram: '#',
-                    pinterest: '#'
-                },
-                hours: [
-                    'Monday-Friday: 08:00-22:00',
-                    'Tuesday 4PM: Till Mid Night',
-                    'Saturday: 10:00-16:00'
-                ]
+                text: 'Visit us and enjoy the best food experience in town. We are committed to excellence.',
+                email: 'info@tragalero.com',
+                phone: '+1 234 567 890',
+                address: '123 Foodie Street, Flavor Town',
+                hours: ['Monday - Friday: 8am - 11pm', 'Saturday - Sunday: 9am - 12pm'],
+                social: { facebook: '#', twitter: '#', instagram: '#', pinterest: '#' }
             }
         };
 
@@ -747,45 +666,7 @@
 
         function sanitizeUrl(url) {
             if (!url) return '';
-            const trimmed = url.trim();
-            if (trimmed.startsWith('javascript:') || trimmed.startsWith('data:text/html')) {
-                return '';
-            }
-            return trimmed.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        }
-
-        function sanitizeSvg(svgString) {
-            if (!svgString) return '';
-            try {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(svgString, 'image/svg+xml');
-                const errorNode = doc.querySelector('parsererror');
-                if (errorNode) return '';
-
-                const svg = doc.querySelector('svg');
-                if (!svg) return '';
-
-                // Basic sanitation: remove scripts and event handlers
-                const scripts = svg.querySelectorAll('script');
-                scripts.forEach(s => s.remove());
-
-                const allElements = [svg, ...svg.querySelectorAll('*')];
-                allElements.forEach(el => {
-                    const attrs = el.attributes;
-                    for (let i = attrs.length - 1; i >= 0; i--) {
-                        const attrName = attrs[i].name.toLowerCase();
-                        const attrValue = attrs[i].value.toLowerCase();
-                        if (attrName.startsWith('on') ||
-                            (attrName.includes('href') && attrValue.includes('javascript:'))) {
-                            el.removeAttribute(attrs[i].name);
-                        }
-                    }
-                });
-                return svg.outerHTML;
-            } catch (e) {
-                console.error("SVG Sanitize error:", e);
-                return '';
-            }
+            return url.replace(/[^-A-Za-z0-9+&@#/%?=~_|!:,.;]/g, '');
         }
 
         function setPreviewSize(size, btn) {
@@ -799,14 +680,30 @@
             const keys = path.split('.');
             let current = webConfig;
             for(let i = 0; i < keys.length - 1; i++) {
+                if (!current[keys[i]]) current[keys[i]] = {};
                 current = current[keys[i]];
             }
             current[keys[keys.length - 1]] = value;
             renderPreview();
         }
 
+        function tryUpdateSocials(val) {
+            try {
+                const arr = JSON.parse(val);
+                if(Array.isArray(arr)) {
+                    webConfig.hero.socials = arr;
+                    renderPreview();
+                }
+            } catch(e) {}
+        }
+
+        function setTemplate(tpl) {
+            webConfig.template = tpl;
+            renderDesigner();
+            renderPreview();
+        }
+
         function triggerUpload(path) {
-            if(isViewOnly) return;
             uploadTarget = path;
             document.getElementById('globalUpload').click();
         }
@@ -820,2538 +717,565 @@
                 updateConfig(uploadTarget, url);
                 renderDesigner();
             } catch (err) {
-                alert("Error al subir imagen: " + err.message);
+                alert("Error: " + err.message);
             } finally {
                 document.getElementById('loadingOverlay').style.display = 'none';
             }
-            input.value = '';
         }
 
         async function uploadToCloudinary(file) {
-            const user = getLoggedInUser();
             const CLOUD_NAME = "dbbjxhvz5";
             const UPLOAD_PRESET = "Tragalero";
             const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', UPLOAD_PRESET);
-            formData.append('folder', `websites/${user?.id || 'anonymous'}`);
             const response = await fetch(url, { method: 'POST', body: formData });
-            if (!response.ok) throw new Error("Cloudinary error");
             const data = await response.json();
             return data.secure_url;
         }
 
         function addItem(type) {
-            if (type === 'promos') {
-                webConfig.promos.push({
-                    title: 'Nueva Promo',
-                    text: 'Descripción...',
-                    img: 'https://via.placeholder.com/300',
-                    iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M43.033.002L42.563 0c-7.896 0-15.555 1.546-22.767 4.597-6.965 2.946-13.22 7.163-18.592 12.535l-.043.044c-1.548 1.551-1.546 4.075.004 5.625l2.256 2.257c.754.754 1.76 1.17 2.832 1.17h.001a3.98 3.98 0 0 0 2.834-1.171l.04-.04a1.7 1.7 0 0 1 1.21-.499h.021a1.73 1.73 0 0 1 1.238.537l4.596 4.807c.466.488 1.095.761 1.768.768h.028c.663 0 1.285-.258 1.756-.729.975-.975.993-2.58.04-3.577l-3.308-3.46c-.295-.309-.311-.797-.035-1.087a.76.76 0 0 1 .554-.239h.001a.76.76 0 0 1 .553.236l1.041 1.09c.95.994 2.49 1.079 3.507.195a2.5 2.5 0 0 0 .865-1.787 2.53 2.53 0 0 0-.696-1.858l-.755-.79a1.72 1.72 0 0 1-.454-1.511c.099-.549.444-1.003.944-1.245a46.86 46.86 0 0 1 20.561-4.69l.419.002c1.07.011 2.07-.399 2.827-1.149a3.96 3.96 0 0 0 1.179-2.828V3.984A4 4 0 0 0 43.033.002h0zm2.2 7.199a2.21 2.21 0 0 1-.659 1.581 2.18 2.18 0 0 1-1.575.641l-.435-.002a48.6 48.6 0 0 0-21.325 4.865A3.44 3.44 0 0 0 19.33 16.8a3.46 3.46 0 0 0 .912 3.037l.756.79a.76.76 0 0 1-.052 1.106c-.303.263-.789.226-1.085-.083l-1.041-1.089a2.53 2.53 0 0 0-1.822-.779 2.5 2.5 0 0 0-1.827.784c-.929.976-.912 2.518.037 3.512l3.308 3.46a.82.82 0 0 1-.012 1.121.74.74 0 0 1-.523.215c-.197-.002-.381-.083-.519-.226l-4.596-4.808a3.47 3.47 0 0 0-2.487-1.08h-.042a3.44 3.44 0 0 0-2.449 1.011l-.014.014-.009.009-.022.022c-.423.423-.988.656-1.591.656s-1.168-.232-1.591-.655L2.404 21.56a2.23 2.23 0 0 1 0-3.145l.042-.042A56.54 56.54 0 0 1 20.48 6.214c6.994-2.958 14.423-4.458 22.083-4.458l.454.002h0a2.24 2.24 0 0 1 2.215 2.226v3.218zm-.908 6.202a.88.88 0 0 0-.878.878v43.292c0 .412-.314.574-.411.614s-.433.147-.724-.144L11.436 27.166a.88.88 0 0 0-1.242 0 .88.88 0 0 0 0 1.242l30.877 30.877c.469.469 1.073.715 1.696.715.314 0 .633-.063.942-.19a2.38 2.38 0 0 0 1.494-2.237V14.281a.88.88 0 0 0-.878-.878h0zm-6.657-1.125c-2.112 0-3.83 1.718-3.83 3.83s1.718 3.83 3.83 3.83 3.83-1.718 3.83-3.83-1.718-3.83-3.83-3.83zm0 5.903c-1.143 0-2.074-.93-2.074-2.074s.93-2.073 2.074-2.073 2.073.93 2.073 2.073-.93 2.074-2.073 2.074zM22.575 34.938a3.55 3.55 0 0 0 3.547 3.547 3.55 3.55 0 0 0 3.547-3.547 3.55 3.55 0 0 0-3.547-3.547 3.55 3.55 0 0 0-3.547 3.547h0zm3.547-1.791c.987 0 1.791.803 1.791 1.791s-.803 1.791-1.791 1.791-1.791-.803-1.791-1.791.804-1.791 1.791-1.791zm12.81-2.283a3.68 3.68 0 0 0-3.672 3.672 3.68 3.68 0 0 0 3.672 3.672 3.68 3.68 0 0 0 3.672-3.672 3.68 3.68 0 0 0-3.672-3.672zm0 5.588a1.92 1.92 0 0 1-1.916-1.915 1.92 1.92 0 0 1 1.916-1.916 1.92 1.92 0 0 1 1.915 1.916 1.92 1.92 0 0 1-1.915 1.915zm2.97 8.702a3.92 3.92 0 0 0-3.913-3.912h-.645a3.92 3.92 0 0 0-3.913 3.912 1.7 1.7 0 0 0 1.697 1.697h.23l-.037.687a1.57 1.57 0 0 0 .427 1.16c.294.31.709.488 1.136.488h1.562a1.57 1.57 0 0 0 1.136-.488c.294-.31.45-.733.428-1.16l-.037-.687h.23a1.7 1.7 0 0 0 1.697-1.697h0zm-2.515-.059a1.2 1.2 0 0 0-.87.374c-.225.238-.345.562-.327.889l.057 1.073h-1.16l.057-1.073a1.2 1.2 0 0 0-1.198-1.263h-.758a2.16 2.16 0 0 1 2.156-2.097h.645a2.16 2.16 0 0 1 2.155 2.097h-.758zm-9.689-26.32a4.46 4.46 0 0 0-4.454 4.455v.76a4.46 4.46 0 0 0 4.454 4.455c1.017 0 1.844-.827 1.844-1.843v-.437l.975.052a1.69 1.69 0 0 0 1.251-.46c.335-.318.526-.764.526-1.225v-1.841c0-.461-.192-.908-.526-1.225s-.792-.485-1.251-.46l-.975.052v-.437c0-1.017-.827-1.844-1.844-1.844zm2.84 3.986v1.697l-1.43-.076c-.344-.017-.682.107-.931.343s-.392.569-.392.912v.963c0 .049-.039.087-.087.087A2.7 2.7 0 0 1 27 23.99v-.761a2.7 2.7 0 0 1 2.698-2.698c.048 0 .087.039.087.087v.964c0 .343.143.676.392.912a1.26 1.26 0 0 0 .931.343l1.43-.076z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`
-                });
+            if(type === 'portfolio') {
+                webConfig.portfolio.push('https://via.placeholder.com/600');
+            } else if (type === 'promos') {
+                webConfig.promos.push({ title: 'Nueva Promo', text: 'Descripción...', img: 'https://via.placeholder.com/300' });
             } else if (type === 'menu') {
-                webConfig.menu.items.push({ title: 'Nuevo Plato', category: 'Varios', price: '10.00', oldPrice: '15.00', img: 'https://via.placeholder.com/300', badge: '' });
-            } else if (type === 'testimonials') {
-                webConfig.testimonials.items.push({ name: 'Nombre', title: 'Cargo', text: 'Opinión...', img: 'https://via.placeholder.com/100' });
+                webConfig.menu.items.push({ title: 'Nuevo Plato', category: 'General', price: '0.00', img: 'https://via.placeholder.com/300' });
             } else if (type === 'aboutFeatures') {
                 webConfig.about.features.push('Nueva Característica');
-            } else if (type === 'banners') {
-                webConfig.banners.push({ subtitle: 'Subtitle', title: 'New Banner', text: 'Desc...', img: 'https://via.placeholder.com/550x450', size: 'sm' });
-            } else if (type === 'blog') {
-                webConfig.blog.items.push({ title: 'New Post', text: 'Desc...', date: 'Today', author: 'Admin', category: 'General', img: 'https://via.placeholder.com/600x390' });
-            } else if (type === 'footerHours') {
-                webConfig.footer.hours.push('Lunes-Viernes: 08:00-22:00');
             }
             renderDesigner();
             renderPreview();
         }
 
         function removeItem(type, index) {
-            if(type === 'aboutFeatures') {
-                webConfig.about.features.splice(index, 1);
-            } else if (type === 'footerHours') {
-                webConfig.footer.hours.splice(index, 1);
-            } else if (['menu', 'testimonials', 'blog'].includes(type)) {
-                webConfig[type].items.splice(index, 1);
-            } else {
-                webConfig[type].splice(index, 1);
-            }
+            if(type === 'portfolio') webConfig.portfolio.splice(index, 1);
+            else if(type === 'promos') webConfig.promos.splice(index, 1);
+            else if(type === 'menu') webConfig.menu.items.splice(index, 1);
+            else if(type === 'aboutFeatures') webConfig.about.features.splice(index, 1);
             renderDesigner();
             renderPreview();
         }
 
         function renderDesigner() {
-            if(isViewOnly) return;
+            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('tpl-' + webConfig.template)?.classList.add('active');
+
+            const isFoodie = webConfig.template === 'foodie';
+
+            // Toggle sidebar sections visibility
+            document.querySelectorAll('.foodie-only').forEach(el => {
+                const accordionItem = el.closest('.accordion-item');
+                if (accordionItem) {
+                    accordionItem.style.display = isFoodie ? 'block' : 'none';
+                } else {
+                    el.style.display = isFoodie ? 'block' : 'none';
+                }
+            });
+            document.querySelectorAll('.pro-only').forEach(el => {
+                const accordionItem = el.closest('.accordion-item');
+                if (accordionItem) {
+                    accordionItem.style.display = !isFoodie ? 'block' : 'none';
+                } else {
+                    el.style.display = !isFoodie ? 'block' : 'none';
+                }
+            });
+
+            // Sync inputs with webConfig
             document.getElementById('inputGeneralCUID').value = webConfig.general.cuid || '';
             document.getElementById('inputGeneralRUID').value = webConfig.general.ruid || '';
             document.getElementById('inputGeneralHasRes').checked = !!webConfig.general.hasReservation;
-            document.getElementById('inputOrderBgColor').value = webConfig.general.orderBgColor || '#ff9d2d';
-            document.getElementById('inputOrderTextColor').value = webConfig.general.orderTextColor || '#ffffff';
-            document.getElementById('inputHeaderLogo').value = webConfig.header.logo;
-            document.getElementById('inputHeaderBtn').value = webConfig.header.btnText;
-            document.getElementById('inputHeaderResBtn').value = webConfig.header.resBtnText || 'Book A Table';
-            document.getElementById('inputHeroSubtitle').value = webConfig.hero.subtitle;
-            document.getElementById('inputHeroTitle').value = webConfig.hero.title;
-            document.getElementById('inputHeroText').value = webConfig.hero.text;
-            document.getElementById('inputAboutTitle').value = webConfig.about.title;
-            document.getElementById('inputAboutText').value = webConfig.about.text;
-            document.getElementById('inputMenuSubtitle').value = webConfig.menu.subtitle || '';
-            document.getElementById('inputMenuTitle').value = webConfig.menu.title || '';
-            document.getElementById('inputMenuText').value = webConfig.menu.text || '';
-            document.getElementById('inputCTATitle').value = webConfig.cta.title;
-            document.getElementById('inputCTAText').value = webConfig.cta.text;
-            document.getElementById('inputDeliveryTitle').value = webConfig.delivery.title;
-            document.getElementById('inputDeliveryText').value = webConfig.delivery.text;
-            document.getElementById('inputTestiSubtitle').value = webConfig.testimonials.subtitle || '';
-            document.getElementById('inputTestiTitle').value = webConfig.testimonials.title || '';
-            document.getElementById('inputTestiText').value = webConfig.testimonials.text || '';
-            document.getElementById('inputBlogSubtitle').value = webConfig.blog.subtitle || '';
-            document.getElementById('inputBlogTitle').value = webConfig.blog.title || '';
-            document.getElementById('inputBlogText').value = webConfig.blog.text || '';
-            document.getElementById('inputFooterText').value = webConfig.footer.text || '';
-            document.getElementById('inputFooterEmail').value = webConfig.footer.email;
-            document.getElementById('inputFooterPhone').value = webConfig.footer.phone;
-            document.getElementById('inputFooterAddress').value = webConfig.footer.address;
-            document.getElementById('inputFooterFb').value = webConfig.footer.social?.facebook || '';
-            document.getElementById('inputFooterTw').value = webConfig.footer.social?.twitter || '';
-            document.getElementById('inputFooterIg').value = webConfig.footer.social?.instagram || '';
-            document.getElementById('inputFooterPi').value = webConfig.footer.social?.pinterest || '';
+            document.getElementById('inputHeaderLogo').value = webConfig.header.logo || '';
+            document.getElementById('inputHeroTitle').value = webConfig.hero.title || '';
+            document.getElementById('inputHeroText').value = webConfig.hero.text || '';
+            document.getElementById('inputFooterEmail').value = webConfig.footer.email || '';
+            document.getElementById('inputFooterPhone').value = webConfig.footer.phone || '';
+            document.getElementById('inputFooterAddress').value = webConfig.footer.address || '';
 
-            // Render Footer Hours
-            const hoursContainer = document.getElementById('footerHoursContainer');
-            if (hoursContainer) {
-                hoursContainer.innerHTML = '';
-                webConfig.footer.hours.forEach((h, i) => {
-                    hoursContainer.innerHTML += `
-                        <div class="d-flex mb-2 align-items-center">
-                            <i class="bi bi-grip-vertical drag-handle me-2"></i>
-                            <input type="text" class="form-control form-control-sm" value="${h}" oninput="webConfig.footer.hours[${i}] = this.value; renderPreview()">
-                            <button class="btn btn-sm text-danger ms-2" onclick="removeItem('footerHours', ${i})"><i class="bi bi-x-lg"></i></button>
+            if (isFoodie) {
+                document.getElementById('inputHeaderBtn').value = webConfig.header.btnText || '';
+                document.getElementById('inputHeaderResBtn').value = webConfig.header.resBtnText || '';
+                document.getElementById('inputHeroSubtitle').value = webConfig.hero.subtitle || '';
+                document.getElementById('inputAboutTitle').value = webConfig.about.title || '';
+                document.getElementById('inputAboutText').value = webConfig.about.text || '';
+                document.getElementById('inputMenuSubtitle').value = webConfig.menu.subtitle || '';
+                document.getElementById('inputMenuTitle').value = webConfig.menu.title || '';
+                document.getElementById('inputMenuText').value = webConfig.menu.text || '';
+                document.getElementById('labelHeroBanner').textContent = 'Imagen Principal (PNG)';
+            } else {
+                document.getElementById('inputHeroSocials').value = JSON.stringify(webConfig.hero.socials);
+                document.getElementById('inputVideoUrl').value = webConfig.video.url || '';
+                document.getElementById('labelHeroBanner').textContent = 'Foto de Perfil / Logo';
+
+                const pContainer = document.getElementById('portfolioContainer');
+                pContainer.innerHTML = '';
+                (webConfig.portfolio || []).forEach((img, i) => {
+                    pContainer.innerHTML += `
+                        <div class="list-item-editor" data-index="${i}">
+                            <div class="list-item-header">
+                                <span class="fw-bold small"><i class="bi bi-grip-vertical me-1 drag-handle"></i> Item ${i+1}</span>
+                                <button class="btn btn-sm text-danger" onclick="removeItem('portfolio', ${i})"><i class="bi bi-trash"></i></button>
+                            </div>
+                            <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('portfolio.${i}')">
+                                <img src="${img}" style="height: 60px; width:60px; object-fit:cover; border-radius: 4px;" class="me-2">
+                                <span class="small">Cambiar imagen</span>
+                            </div>
                         </div>
                     `;
                 });
             }
 
-            // Render Promos
-            const promoContainer = document.getElementById('promoListContainer');
-            promoContainer.innerHTML = '';
-            webConfig.promos.forEach((promo, i) => {
-                promoContainer.innerHTML += `
-                    <div class="list-item-editor" data-index="${i}">
-                        <div class="list-item-header">
-                            <span class="fw-bold small"><i class="bi bi-grip-vertical me-1 drag-handle"></i> Promo ${i+1}</span>
-                            <div class="item-actions">
-                                <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('promos', ${i})"><i class="bi bi-trash"></i></button>
-                            </div>
-                        </div>
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Título" value="${promo.title}" oninput="webConfig.promos[${i}].title = this.value; renderPreview()">
-                        <textarea class="form-control form-control-sm mb-2" placeholder="Descripción" rows="2" oninput="webConfig.promos[${i}].text = this.value; renderPreview()">${promo.text || ''}</textarea>
-                        <textarea class="form-control form-control-sm mb-2" placeholder="Icono SVG (opcional)" rows="2" oninput="webConfig.promos[${i}].iconSvg = this.value; renderPreview()">${promo.iconSvg || ''}</textarea>
-                        <div class="upload-drop-zone p-2 mb-2" onclick="triggerUpload('promos.${i}.img')">
-                            <img src="${promo.img}" style="height: 40px; border-radius: 4px;" class="me-2">
+            if(isFoodie) {
+                const promoContainer = document.getElementById('promoListContainer');
+                promoContainer.innerHTML = '';
+                (webConfig.promos || []).forEach((p, i) => {
+                    promoContainer.innerHTML += `<div class="list-item-editor">
+                        <input type="text" class="form-control mb-1" value="${p.title}" oninput="webConfig.promos[${i}].title=this.value;renderPreview()">
+                        <div class="upload-drop-zone p-2 mb-1" onclick="triggerUpload('promos.${i}.img')">
+                            <img src="${p.img}" style="height: 40px; border-radius: 4px;" class="me-2">
                             <span class="small">Cambiar imagen</span>
                         </div>
-                    </div>
-                `;
-            });
+                        <button class="btn btn-sm text-danger" onclick="removeItem('promos', ${i})">Borrar</button>
+                    </div>`;
+                });
 
-            // Render About Features
-            const featuresContainer = document.getElementById('aboutFeaturesContainer');
-            featuresContainer.innerHTML = '';
-            webConfig.about.features.forEach((feature, i) => {
-                featuresContainer.innerHTML += `
-                    <div class="d-flex mb-2 align-items-center">
-                        <i class="bi bi-grip-vertical drag-handle me-2"></i>
-                        <input type="text" class="form-control form-control-sm" value="${feature}" oninput="webConfig.about.features[${i}] = this.value; renderPreview()">
-                        <button class="btn btn-sm text-danger ms-2" onclick="removeItem('aboutFeatures', ${i})"><i class="bi bi-x-lg"></i></button>
-                    </div>
-                `;
-            });
+                const menuContainer = document.getElementById('menuListContainer');
+                menuContainer.innerHTML = '';
+                (webConfig.menu.items || []).forEach((item, i) => {
+                    menuContainer.innerHTML += `<div class="list-item-editor">
+                        <input type="text" class="form-control mb-1" value="${item.title}" oninput="webConfig.menu.items[${i}].title=this.value;renderPreview()">
+                        <input type="text" class="form-control mb-1" value="${item.price}" oninput="webConfig.menu.items[${i}].price=this.value;renderPreview()">
+                        <button class="btn btn-sm text-danger" onclick="removeItem('menu', ${i})">Borrar</button>
+                    </div>`;
+                });
 
-            // Render Menu
-            const menuContainer = document.getElementById('menuListContainer');
-            menuContainer.innerHTML = '';
-            webConfig.menu.items.forEach((item, i) => {
-                menuContainer.innerHTML += `
-                    <div class="list-item-editor" data-index="${i}">
-                        <div class="list-item-header">
-                            <span class="fw-bold small"><i class="bi bi-grip-vertical me-1 drag-handle"></i> Plato ${i+1}</span>
-                            <div class="item-actions">
-                                <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('menu', ${i})"><i class="bi bi-trash"></i></button>
-                            </div>
-                        </div>
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Nombre" value="${item.title}" oninput="webConfig.menu.items[${i}].title = this.value; renderPreview()">
-                        <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Precio" value="${item.price}" oninput="webConfig.menu.items[${i}].price = this.value; renderPreview()"></div>
-                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Precio Anterior" value="${item.oldPrice || ''}" oninput="webConfig.menu.items[${i}].oldPrice = this.value; renderPreview()"></div>
-                        </div>
-                        <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Categoría" value="${item.category}" oninput="webConfig.menu.items[${i}].category = this.value; renderPreview()"></div>
-                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Insignia (ej: -15%)" value="${item.badge || ''}" oninput="webConfig.menu.items[${i}].badge = this.value; renderPreview()"></div>
-                        </div>
-                        <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('menu.items.${i}.img')">
-                            <img src="${item.img}" style="height: 40px; border-radius: 4px;" class="me-2">
-                            <span class="small">Cambiar imagen</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Render Testimonials
-            const testiContainer = document.getElementById('testiListContainer');
-            testiContainer.innerHTML = '';
-            webConfig.testimonials.items.forEach((testi, i) => {
-                testiContainer.innerHTML += `
-                    <div class="list-item-editor" data-index="${i}">
-                        <div class="list-item-header">
-                            <span class="fw-bold small"><i class="bi bi-grip-vertical me-1 drag-handle"></i> Testimonio ${i+1}</span>
-                            <div class="item-actions">
-                                <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('testimonials', ${i})"><i class="bi bi-trash"></i></button>
-                            </div>
-                        </div>
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Nombre" value="${testi.name}" oninput="webConfig.testimonials.items[${i}].name = this.value; renderPreview()">
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Cargo/Empresa" value="${testi.title || ''}" oninput="webConfig.testimonials.items[${i}].title = this.value; renderPreview()">
-                        <textarea class="form-control form-control-sm mb-2" placeholder="Opinión" rows="2" oninput="webConfig.testimonials.items[${i}].text = this.value; renderPreview()">${testi.text}</textarea>
-                        <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('testimonials.items.${i}.img')">
-                            <img src="${testi.img}" style="height: 40px; border-radius: 4px;" class="me-2">
-                            <span class="small">Cambiar avatar</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Render Banners
-            const bannerContainer = document.getElementById('bannerListContainer');
-            bannerContainer.innerHTML = '';
-            webConfig.banners.forEach((banner, i) => {
-                bannerContainer.innerHTML += `
-                    <div class="list-item-editor" data-index="${i}">
-                        <div class="list-item-header">
-                            <span class="fw-bold small"><i class="bi bi-grip-vertical me-1 drag-handle"></i> Banner ${i+1}</span>
-                            <div class="item-actions">
-                                <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('banners', ${i})"><i class="bi bi-trash"></i></button>
-                            </div>
-                        </div>
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Subtítulo" value="${banner.subtitle || ''}" oninput="webConfig.banners[${i}].subtitle = this.value; renderPreview()">
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Título" value="${banner.title}" oninput="webConfig.banners[${i}].title = this.value; renderPreview()">
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Texto descriptivo" value="${banner.text || ''}" oninput="webConfig.banners[${i}].text = this.value; renderPreview()">
-                        <select class="form-select form-select-sm mb-2" onchange="webConfig.banners[${i}].size = this.value; renderPreview()">
-                            <option value="lg" ${banner.size === 'lg' ? 'selected' : ''}>Grande (2x2)</option>
-                            <option value="md" ${banner.size === 'md' ? 'selected' : ''}>Mediano (Abajo)</option>
-                            <option value="sm" ${banner.size === 'sm' ? 'selected' : ''}>Pequeño (Derecha)</option>
-                        </select>
-                        <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('banners.${i}.img')">
-                            <img src="${banner.img}" style="height: 40px; border-radius: 4px;" class="me-2">
-                            <span class="small">Cambiar imagen</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Render Blog
-            const blogContainer = document.getElementById('blogListContainer');
-            blogContainer.innerHTML = '';
-            webConfig.blog.items.forEach((post, i) => {
-                blogContainer.innerHTML += `
-                    <div class="list-item-editor" data-index="${i}">
-                        <div class="list-item-header">
-                            <span class="fw-bold small"><i class="bi bi-grip-vertical me-1 drag-handle"></i> Post ${i+1}</span>
-                            <div class="item-actions">
-                                <button class="btn btn-sm btn-outline-danger border-0" onclick="removeItem('blog', ${i})"><i class="bi bi-trash"></i></button>
-                            </div>
-                        </div>
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Título" value="${post.title}" oninput="webConfig.blog.items[${i}].title = this.value; renderPreview()">
-                        <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Fecha" value="${post.date || ''}" oninput="webConfig.blog.items[${i}].date = this.value; renderPreview()"></div>
-                            <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="Autor" value="${post.author || ''}" oninput="webConfig.blog.items[${i}].author = this.value; renderPreview()"></div>
-                        </div>
-                        <input type="text" class="form-control form-control-sm mb-2" placeholder="Categoría" value="${post.category || ''}" oninput="webConfig.blog.items[${i}].category = this.value; renderPreview()">
-                        <textarea class="form-control form-control-sm mb-2" placeholder="Resumen" rows="2" oninput="webConfig.blog.items[${i}].text = this.value; renderPreview()">${post.text || ''}</textarea>
-                        <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('blog.items.${i}.img')">
-                            <img src="${post.img}" style="height: 40px; border-radius: 4px;" class="me-2">
-                            <span class="small">Cambiar imagen</span>
-                        </div>
-                    </div>
-                `;
-            });
+                const featuresContainer = document.getElementById('aboutFeaturesContainer');
+                featuresContainer.innerHTML = '';
+                (webConfig.about.features || []).forEach((f, i) => {
+                    featuresContainer.innerHTML += `<div class="d-flex mb-1">
+                        <input type="text" class="form-control form-control-sm me-1" value="${f}" oninput="webConfig.about.features[${i}]=this.value;renderPreview()">
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeItem('aboutFeatures', ${i})">&times;</button>
+                    </div>`;
+                });
+            }
 
             initSortable();
         }
 
         function initSortable() {
-            ['promoListContainer', 'menuListContainer', 'testiListContainer', 'aboutFeaturesContainer', 'bannerListContainer', 'blogListContainer', 'footerHoursContainer'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) {
-                    new Sortable(el, {
-                        handle: '.drag-handle',
-                        animation: 150,
-                        onEnd: (evt) => {
-                            let type = id.replace('ListContainer', '').replace('FeaturesContainer', 'Features');
-                            if(type === 'promo') type = 'promos';
-                            if(type === 'banner') type = 'banners';
-
-                            if(type === 'aboutFeatures') {
-                                const item = webConfig.about.features.splice(evt.oldIndex, 1)[0];
-                                webConfig.about.features.splice(evt.newIndex, 0, item);
-                            } else if (type === 'footerHours') {
-                                const item = webConfig.footer.hours.splice(evt.oldIndex, 1)[0];
-                                webConfig.footer.hours.splice(evt.newIndex, 0, item);
-                            } else if (['menu', 'testimonials', 'blog'].includes(type)) {
-                                const item = webConfig[type].items.splice(evt.oldIndex, 1)[0];
-                                webConfig[type].items.splice(evt.newIndex, 0, item);
-                            } else {
-                                const item = webConfig[type].splice(evt.oldIndex, 1)[0];
-                                webConfig[type].splice(evt.newIndex, 0, item);
-                            }
-                            renderDesigner();
-                            renderPreview();
-                        }
-                    });
-                }
-            });
+            const pContainer = document.getElementById('portfolioContainer');
+            if(pContainer) {
+                new Sortable(pContainer, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    onEnd: (evt) => {
+                        const item = webConfig.portfolio.splice(evt.oldIndex, 1)[0];
+                        webConfig.portfolio.splice(evt.newIndex, 0, item);
+                        renderPreview();
+                    }
+                });
+            }
         }
 
         function renderPreview() {
             const iframe = document.getElementById('templateIframe');
             const doc = iframe.contentDocument || iframe.contentWindow.document;
+            const html = webConfig.template === 'foodie' ? getFoodieHtml() : getProCardHtml();
+            doc.open();
+            doc.write(html);
+            doc.close();
+        }
 
-            const isMenutechEnabled = webConfig.general.cuid && webConfig.general.ruid;
-            const orderButtonHtml = isMenutechEnabled
-                ? `<menutech-orders
-                    cuid="${webConfig.general.cuid}"
-                    ruid="${webConfig.general.ruid}"
-                    background="${webConfig.general.orderBgColor || '#ff9d2d'}"
-                    color="${webConfig.general.orderTextColor || '#ffffff'}"
-                    textColor="${webConfig.general.orderTextColor || '#ffffff'}"
-                    data-glf-cuid="${webConfig.general.cuid}"
-                    data-glf-ruid="${webConfig.general.ruid}"
-                   ></menutech-orders>`
+        function getFoodieHtml() {
+            const isMenutech = webConfig.general.cuid && webConfig.general.ruid;
+            const orderButtonHtml = isMenutech
+                ? `<menutech-orders cuid="${webConfig.general.cuid}" ruid="${webConfig.general.ruid}" background="${webConfig.general.orderBgColor}" color="${webConfig.general.orderTextColor}"></menutech-orders>`
                 : `<button class="btn btn-hover">${escapeHtml(webConfig.header.btnText)}</button>`;
 
-            const reservationButtonHtml = (isMenutechEnabled && webConfig.general.hasReservation)
-                ? `<button class="btn btn-hover"
-                    style="--bg-color: #333;"
-                    data-glf-cuid="${webConfig.general.cuid}"
-                    data-glf-ruid="${webConfig.general.ruid}"
-                    data-glf-reservation="true">${escapeHtml(webConfig.header.resBtnText || 'Book A Table')}</button>`
-                : `<button class="btn btn-hover" style="--bg-color: #333;">${escapeHtml(webConfig.header.resBtnText || 'Book A Table')}</button>`;
+            const reservationButtonHtml = (webConfig.general.hasReservation)
+                ? `<button class="btn btn-hover" style="--bg-color: #333">${escapeHtml(webConfig.header.resBtnText)}</button>`
+                : '';
 
-            const promosHtml = webConfig.promos.map((p, i) => `
+            const promosHtml = (webConfig.promos || []).map(p => `
                 <li class="promo-item">
-                  <div class="promo-card">
-                    <div class="card-icon">
-                      ${sanitizeSvg(p.iconSvg) || `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" xmlns:v="https://vecta.io/nano"><g clip-path="url(#A)" fill="#ff9d2d"><path d="M43.033.002L42.563 0c-7.896 0-15.555 1.546-22.767 4.597-6.965 2.946-13.22 7.163-18.592 12.535l-.043.044c-1.548 1.551-1.546 4.075.004 5.625l2.256 2.257c.754.754 1.76 1.17 2.832 1.17h.001a3.98 3.98 0 0 0 2.834-1.171l.04-.04a1.7 1.7 0 0 1 1.21-.499h.021a1.73 1.73 0 0 1 1.238.537l4.596 4.807c.466.488 1.095.761 1.768.768h.028c.663 0 1.285-.258 1.756-.729.975-.975.993-2.58.04-3.577l-3.308-3.46c-.295-.309-.311-.797-.035-1.087a.76.76 0 0 1 .554-.239h.001a.76.76 0 0 1 .553.236l1.041 1.09c.95.994 2.49 1.079 3.507.195a2.5 2.5 0 0 0 .865-1.787 2.53 2.53 0 0 0-.696-1.858l-.755-.79a1.72 1.72 0 0 1-.454-1.511c.099-.549.444-1.003.944-1.245a46.86 46.86 0 0 1 20.561-4.69l.419.002c1.07.011 2.07-.399 2.827-1.149a3.96 3.96 0 0 0 1.179-2.828V3.984A4 4 0 0 0 43.033.002h0zm2.2 7.199a2.21 2.21 0 0 1-.659 1.581 2.18 2.18 0 0 1-1.575.641l-.435-.002a48.6 48.6 0 0 0-21.325 4.865A3.44 3.44 0 0 0 19.33 16.8a3.46 3.46 0 0 0 .912 3.037l.756.79a.76.76 0 0 1-.052 1.106c-.303.263-.789.226-1.085-.083l-1.041-1.089a2.53 2.53 0 0 0-1.822-.779 2.5 2.5 0 0 0-1.827.784c-.929.976-.912 2.518.037 3.512l3.308 3.46a.82.82 0 0 1-.012 1.121.74.74 0 0 1-.523.215c-.197-.002-.381-.083-.519-.226l-4.596-4.808a3.47 3.47 0 0 0-2.487-1.08h-.042a3.44 3.44 0 0 0-2.449 1.011l-.014.014-.009.009-.022.022c-.423.423-.988.656-1.591.656s-1.168-.232-1.591-.655L2.404 21.56a2.23 2.23 0 0 1 0-3.145l.042-.042A56.54 56.54 0 0 1 20.48 6.214c6.994-2.958 14.423-4.458 22.083-4.458l.454.002h0a2.24 2.24 0 0 1 2.215 2.226v3.218zm-.908 6.202a.88.88 0 0 0-.878.878v43.292c0 .412-.314.574-.411.614s-.433.147-.724-.144L11.436 27.166a.88.88 0 0 0-1.242 0 .88.88 0 0 0 0 1.242l30.877 30.877c.469.469 1.073.715 1.696.715.314 0 .633-.063.942-.19a2.38 2.38 0 0 0 1.494-2.237V14.281a.88.88 0 0 0-.878-.878h0zm-6.657-1.125c-2.112 0-3.83 1.718-3.83 3.83s1.718 3.83 3.83 3.83 3.83-1.718 3.83-3.83-1.718-3.83-3.83-3.83zm0 5.903c-1.143 0-2.074-.93-2.074-2.074s.93-2.073 2.074-2.073 2.073.93 2.073 2.073-.93 2.074-2.073 2.074zM22.575 34.938a3.55 3.55 0 0 0 3.547 3.547 3.55 3.55 0 0 0 3.547-3.547 3.55 3.55 0 0 0-3.547-3.547 3.55 3.55 0 0 0-3.547 3.547h0zm3.547-1.791c.987 0 1.791.803 1.791 1.791s-.803 1.791-1.791 1.791-1.791-.803-1.791-1.791.804-1.791 1.791-1.791zm12.81-2.283a3.68 3.68 0 0 0-3.672 3.672 3.68 3.68 0 0 0 3.672 3.672 3.68 3.68 0 0 0 3.672-3.672 3.68 3.68 0 0 0-3.672-3.672zm0 5.588a1.92 1.92 0 0 1-1.916-1.915 1.92 1.92 0 0 1 1.916-1.916 1.92 1.92 0 0 1 1.915 1.916 1.92 1.92 0 0 1-1.915 1.915zm2.97 8.702a3.92 3.92 0 0 0-3.913-3.912h-.645a3.92 3.92 0 0 0-3.913 3.912 1.7 1.7 0 0 0 1.697 1.697h.23l-.037.687a1.57 1.57 0 0 0 .427 1.16c.294.31.709.488 1.136.488h1.562a1.57 1.57 0 0 0 1.136-.488c.294-.31.45-.733.428-1.16l-.037-.687h.23a1.7 1.7 0 0 0 1.697-1.697h0zm-2.515-.059a1.2 1.2 0 0 0-.87.374c-.225.238-.345.562-.327.889l.057 1.073h-1.16l.057-1.073a1.2 1.2 0 0 0-1.198-1.263h-.758a2.16 2.16 0 0 1 2.156-2.097h.645a2.16 2.16 0 0 1 2.155 2.097h-.758zm-9.689-26.32a4.46 4.46 0 0 0-4.454 4.455v.76a4.46 4.46 0 0 0 4.454 4.455c1.017 0 1.844-.827 1.844-1.843v-.437l.975.052a1.69 1.69 0 0 0 1.251-.46c.335-.318.526-.764.526-1.225v-1.841c0-.461-.192-.908-.526-1.225s-.792-.485-1.251-.46l-.975.052v-.437c0-1.017-.827-1.844-1.844-1.844zm2.84 3.986v1.697l-1.43-.076c-.344-.017-.682.107-.931.343s-.392.569-.392.912v.963c0 .049-.039.087-.087.087A2.7 2.7 0 0 1 27 23.99v-.761a2.7 2.7 0 0 1 2.698-2.698c.048 0 .087.039.087.087v.964c0 .343.143.676.392.912a1.26 1.26 0 0 0 .931.343l1.43-.076z" /></g><defs><clipPath id="A"><path fill="#fff" d="M0 0h60v60H0z"/></clipPath></defs></svg>`}
+                    <div class="promo-card">
+                        <div class="card-icon"><img src="${sanitizeUrl(p.img)}" width="100" height="100"></div>
+                        <h3 class="h3 card-title">${escapeHtml(p.title)}</h3>
+                        <p class="card-text">${escapeHtml(p.text)}</p>
                     </div>
-                    <h3 class="h3 card-title">${escapeHtml(p.title)}</h3>
-                    <p class="card-text">${escapeHtml(p.text)}</p>
-                    <img src="${sanitizeUrl(p.img)}" width="300" height="300" class="w-100 card-banner" onerror="this.src='https://via.placeholder.com/300'">
-                  </div>
                 </li>
             `).join('');
 
-            const aboutFeaturesHtml = webConfig.about.features.map(f => `
+            const aboutFeaturesHtml = (webConfig.about.features || []).map(f => `
                 <li class="about-item">
-                    <ion-icon name="checkmark-outline" style="background-color: var(--deep-saffron); color: white; border-radius: 50%; padding: 4px; font-size: 1.2rem;"></ion-icon>
+                    <ion-icon name="checkmark-outline"></ion-icon>
                     <span class="span">${escapeHtml(f)}</span>
                 </li>
             `).join('');
 
-            const menuHtml = webConfig.menu.items.map(m => `
+            const menuHtml = (webConfig.menu.items || []).map(item => `
                 <li>
-                  <div class="food-menu-card">
-                    <div class="card-banner">
-                      <img src="${sanitizeUrl(m.img)}" width="300" height="300" loading="lazy" class="w-100" onerror="this.src='https://via.placeholder.com/300'">
-                      ${m.badge ? `<div class="badge">${escapeHtml(m.badge)}</div>` : ''}
-                      ${isMenutechEnabled
-                        ? `<menutech-orders
-                            cuid="${webConfig.general.cuid}"
-                            ruid="${webConfig.general.ruid}"
-                            background="${webConfig.general.orderBgColor || '#ff9d2d'}"
-                            color="${webConfig.general.orderTextColor || '#ffffff'}"
-                            textColor="${webConfig.general.orderTextColor || '#ffffff'}"
-                            data-glf-cuid="${webConfig.general.cuid}"
-                            data-glf-ruid="${webConfig.general.ruid}"
-                            class="food-menu-btn"
-                           ></menutech-orders>`
-                        : `<button class="btn food-menu-btn">${escapeHtml(webConfig.header.btnText)}</button>`}
+                    <div class="food-menu-card">
+                        <div class="card-banner">
+                            <img src="${sanitizeUrl(item.img)}" width="300" height="300" class="w-100">
+                            <div class="badge">-15%</div>
+                            <button class="btn food-menu-btn">Order Now</button>
+                        </div>
+                        <div class="wrapper">
+                            <p class="category">${escapeHtml(item.category)}</p>
+                            <div class="rating-wrapper"><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon></div>
+                        </div>
+                        <h3 class="h3 card-title">${escapeHtml(item.title)}</h3>
+                        <div class="price-wrapper"><p class="price">$${escapeHtml(item.price)}</p></div>
                     </div>
-                    <div class="wrapper">
-                      <p class="category">${escapeHtml(m.category)}</p>
-                      <div class="rating-wrapper">
-                        <ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon>
-                      </div>
-                    </div>
-                    <h3 class="h3 card-title">${escapeHtml(m.title)}</h3>
-                    <div class="price-wrapper">
-                      <p class="price-text">Price:</p>
-                      <data class="price">$${escapeHtml(m.price)}</data>
-                      ${m.oldPrice ? `<del class="del">$${escapeHtml(m.oldPrice)}</del>` : ''}
-                    </div>
-                  </div>
                 </li>
             `).join('');
 
-            const testiHtml = webConfig.testimonials.items.map(t => `
+            const testiHtml = (webConfig.testimonials.items || []).map(t => `
                 <li class="testi-item">
-                  <div class="testi-card">
-                    <div class="profile-wrapper">
-                      <figure class="avatar">
-                        <img src="${sanitizeUrl(t.img)}" width="80" height="80" loading="lazy" onerror="this.src='https://via.placeholder.com/80'">
-                      </figure>
-                      <div>
-                        <h3 class="h4 testi-name">${escapeHtml(t.name)}</h3>
-                        <p class="testi-title">${escapeHtml(t.title)}</p>
-                      </div>
+                    <div class="testi-card">
+                        <div class="profile-wrapper">
+                            <figure class="avatar"><img src="${sanitizeUrl(t.avatar)}" width="80" height="80"></figure>
+                            <div><h3 class="h3 testi-name">${escapeHtml(t.name)}</h3><p class="testi-title">${escapeHtml(t.title)}</p></div>
+                        </div>
+                        <p class="testi-text">${escapeHtml(t.text)}</p>
                     </div>
-                    <blockquote class="testi-text">"${escapeHtml(t.text)}"</blockquote>
-                    <div class="rating-wrapper">
-                      <ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon>
-                    </div>
-                  </div>
                 </li>
             `).join('');
 
-            const bannersHtml = webConfig.banners.map(b => `
-                <li class="banner-item banner-${b.size}">
-                  <div class="banner-card">
-                    <img src="${sanitizeUrl(b.img)}" width="550" height="450" loading="lazy" class="banner-img" onerror="this.src='https://via.placeholder.com/550x450'">
-                    <div class="banner-item-content">
-                      <p class="banner-subtitle">${escapeHtml(b.subtitle)}</p>
-                      <h3 class="banner-title">${escapeHtml(b.title)}</h3>
-                      <p class="banner-text">${escapeHtml(b.text)}</p>
-                      ${orderButtonHtml}
-                    </div>
-                  </div>
-                </li>
-            `).join('');
-
-            const blogHtml = webConfig.blog.items.map(post => `
+            const blogHtml = (webConfig.blog.items || []).map(b => `
                 <li>
-                  <div class="blog-card">
-                    <div class="card-banner">
-                      <img src="${sanitizeUrl(post.img)}" width="600" height="390" loading="lazy" class="w-100" onerror="this.src='https://via.placeholder.com/600x390'">
-                      <div class="badge">${escapeHtml(post.category)}</div>
+                    <div class="blog-card">
+                        <figure class="card-banner"><img src="${sanitizeUrl(b.img)}" class="w-100"><div class="badge">${escapeHtml(b.category)}</div></figure>
+                        <div class="card-content">
+                            <div class="card-meta-wrapper"><div class="card-meta-link"><ion-icon name="calendar-outline"></ion-icon><time class="meta-info">${escapeHtml(b.date)}</time></div></div>
+                            <h3 class="h3 card-title">${escapeHtml(b.title)}</h3>
+                            <a href="#" class="btn-link">Read More</a>
+                        </div>
                     </div>
-                    <div class="card-content">
-                      <div class="card-meta-wrapper">
-                        <a href="#" class="card-meta-link">
-                          <ion-icon name="calendar-outline"></ion-icon>
-                          <time class="meta-info">${escapeHtml(post.date)}</time>
-                        </a>
-                        <a href="#" class="card-meta-link">
-                          <ion-icon name="person-outline"></ion-icon>
-                          <p class="meta-info">${escapeHtml(post.author)}</p>
-                        </a>
-                      </div>
-                      <h3 class="h3"><a href="#" class="card-title">${escapeHtml(post.title)}</a></h3>
-                      <p class="card-text">${escapeHtml(post.text)}</p>
-                      <a href="#" class="btn-link">
-                        <span>Read More</span>
-                        <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-                      </a>
-                    </div>
-                  </div>
                 </li>
             `).join('');
 
-            const fullHtml = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Rubik:wght@400;500;600;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
-                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-                    <script src="https://menutech.xyz/menutechUI.min.js">${S_CLOSE}
-                    <script src="https://www.fbgcdn.com/embedder/js/ewm2.js">${S_CLOSE}
-                    <style>
-                        :root {
-                      --rich-black-fogra-29: hsl(210, 26%, 7%);
-                      --champagne-pink_20: hsla(23, 61%, 86%, 0.2);
-                      --independence_30: hsla(245, 17%, 29%, 0.3);
-                      --gray-x-11-gray: hsl(0, 0%, 73%);
-                      --champagne-pink: hsl(23, 61%, 86%);
-                      --spanish-gray: hsl(0, 0%, 60%);
-                      --sonic-silver: hsl(0, 0%, 47%);
-                      --deep-saffron: hsl(32, 100%, 59%);
-                      --dark-orange: hsl(28, 100%, 58%);
-                      --desert-sand: hsl(23, 49%, 82%);
-                      --isabelline: hsl(38, 44%, 96%);
-                      --gainsboro: hsl(0, 0%, 87%);
-                      --tangerine: hsl(31, 84%, 50%);
-                      --cinnabar: hsl(3, 90%, 55%);
-                      --black_95: hsla(0, 0%, 0%, 0.95);
-                      --cultured: hsl(0, 0%, 93%);
-                      --white: hsl(0, 0%, 100%);
-                      --black: hsl(0, 0%, 0%);
-                      --onyx: hsl(0, 0%, 27%);
-
-                      --ff-shadows-into-light: 'Shadows Into Light', cursive;
-                      --ff-roboto: 'Roboto', sans-serif;
-                      --ff-rubik: 'Rubik', sans-serif;
-
-                      --fs-1: 3.2rem;
-                      --fs-2: 2.2rem;
-                      --fs-3: 1.8rem;
-                      --fs-4: 1.4rem;
-                      --fs-5: 1.2rem;
-
-                      --fw-500: 500;
-                      --fw-600: 600;
-                      --fw-700: 700;
-
-                      --section-padding: 60px;
-
-                      /**
-                       * shadow
-                       */
-
-                      --shadow-1: 0 1px 4px hsla(0, 0%, 0%, 0.2);
-                      --shadow-2: 0 1px 2px hsla(0, 0%, 0%, 0.2);
-
-                      /**
-                       * transition
-                       */
-
-                      --transition-1: 0.25s ease;
-                      --transition-2: 0.5s ease;
-
-                      /**
-                       * clip path
-                       */
-
-                      --clip-path-1: polygon(0 40%, 100% 0%, 100% 100%, 0 100%);
-                      --clip-path-2: polygon(0 0%, 100% 0%, 100% 100%, 0 100%);
-
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #RESET
-                    \*-----------------------------------*/
-
-                    *,
-                    *::before,
-                    *::after {
-                      margin: 0;
-                      padding: 0;
-                      box-sizing: border-box;
-                    }
-
-                    li { list-style: none; }
-
-                    a {
-                      text-decoration: none;
-                      color: inherit;
-                    }
-
-                    a,
-                    img,
-                    svg,
-                    span,
-                    input,
-                    select,
-                    button,
-                    textarea,
-                    ion-icon { display: block; }
-
-                    img { height: auto; }
-
-                    input,
-                    select,
-                    button,
-                    textarea {
-                      background: none;
-                      border: none;
-                      font: inherit;
-                    }
-
-                    input,
-                    select,
-                    textarea { width: 100%; }
-
-                    button { cursor: pointer; }
-
-                    ion-icon { pointer-events: none; }
-
-                    address { font-style: normal; }
-
-                    html {
-                      font-family: var(--ff-roboto);
-                      font-size: 10px;
-                      scroll-behavior: smooth;
-                    }
-
-                    body {
-                      background-color: var(--white);
-                      color: var(--sonic-silver);
-                      font-size: 1.6rem;
-                      line-height: 1.6;
-                      overflow-x: hidden;
-                    }
-
-                    body.active { overflow: hidden; }
-
-                    :focus-visible { outline-offset: 4px; }
-
-                    ::selection {
-                      background-color: var(--deep-saffron);
-                      color: var(--white);
-                    }
-
-                    ::-webkit-scrollbar { width: 8px; }
-
-                    ::-webkit-scrollbar-track { background-color: var(--cultured); }
-
-                    ::-webkit-scrollbar-thumb { background-color: var(--deep-saffron); }
-
-                    ::-webkit-scrollbar-thumb:hover { background-color: var(--tangerine); }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #REUSED STYLE
-                    \*-----------------------------------*/
-
-                    .container { padding-inline: 15px; }
-
-                    .h1,
-                    .h2,
-                    .h3,
-                    .h4 {
-                      font-family: var(--ff-rubik);
-                      color: var(--rich-black-fogra-29);
-                      line-height: 1.2;
-                      letter-spacing: -1px;
-                    }
-
-                    .h1,
-                    .h2 { font-size: var(--fs-1); }
-
-                    .h2,
-                    .h3,
-                    .h4 { font-weight: var(--fw-600); }
-
-                    .h3 { font-size: var(--fs-2); }
-
-                    .h4 { font-size: var(--fs-3); }
-
-                    .btn {
-                      background-color: var(--bg-color, var(--deep-saffron));
-                      color: var(--white);
-                      font-family: var(--ff-rubik);
-                      font-size: var(--fs-4);
-                      font-weight: var(--fw-500);
-                      height: var(--height, 45px);
-                      padding-inline: var(--padding-inline, 35px);
-                      transition: var(--transition-1);
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      text-align: center;
-                    }
-
-                    .btn-hover {
-                      position: relative;
-                      overflow: hidden;
-                      z-index: 1;
-                    }
-
-                    .btn-hover::after {
-                      content: "";
-                      position: absolute;
-                      bottom: -1px;
-                      left: 20px;
-                      width: 1px;
-                      height: 1px;
-                      transform: translate(-50%, 51%) scale(var(--scale, 1));
-                      border-radius: 50%;
-                      background-color: var(--rich-black-fogra-29);
-                      z-index: -1;
-                      transition: var(--transition-2);
-                    }
-
-                    .btn-hover:is(:hover, :focus)::after { --scale: 500; }
-
-                    .section { padding-block: var(--section-padding); }
-
-                    .section.white { background-color: var(--isabelline); }
-
-                    .section-divider { position: relative; }
-
-                    .section-divider::before,
-                    .section-divider::after {
-                      content: "";
-                      position: absolute;
-                      bottom: 0;
-                      left: 0;
-                      width: 100%;
-                      height: 15px;
-                      background-repeat: repeat no-repeat;
-                      background-position: bottom;
-                    }
-
-                    .section-divider.white::after { background-image: url("https://codewithsadee.github.io/foodie/assets/images/shape-white.png"); }
-
-                    .section-divider.gray::after { background-image: url("https://codewithsadee.github.io/foodie/assets/images/shape-grey.png"); }
-
-                    .w-100 { width: 100%; }
-
-                    .has-scrollbar {
-                      display: flex;
-                      gap: 10px;
-                      overflow-x: auto;
-                      scroll-snap-type: inline mandatory;
-                      padding-block-end: 40px;
-                    }
-
-                    .has-scrollbar::-webkit-scrollbar { height: 12px; }
-
-                    .has-scrollbar::-webkit-scrollbar-button { width: calc(25% - 40px); }
-
-                    .has-scrollbar::-webkit-scrollbar-track {
-                      outline: 2px solid var(--deep-saffron);
-                      border-radius: 50px;
-                    }
-
-                    .has-scrollbar::-webkit-scrollbar-thumb {
-                      border: 3px solid var(--cultured);
-                      border-radius: 50px;
-                    }
-
-                    .section-title > .span {
-                      display: inline-block;
-                      color: var(--deep-saffron);
-                    }
-
-                    .abs-img {
-                      position: absolute;
-                      transform: scale(1);
-                    }
-
-                    .scale-up-anim { animation: scaleUp 1s linear infinite alternate; }
-
-                    @keyframes scaleUp {
-                      0% { transform: scale(1);}
-                      100% { transform: scale(1.05); }
-                    }
-
-                    .section-subtitle {
-                      color: var(--cinnabar);
-                      font-family: var(--ff-rubik);
-                      text-align: center;
-                      font-weight: var(--fw-500);
-                    }
-
-                    .badge {
-                      position: absolute;
-                      background: var(--bg-color, var(--cinnabar));
-                      color: var(--white);
-                      font-size: var(--fs-5);
-                      font-weight: var(--fw-600);
-                      padding: var(--padding-block, 2px) 15px;
-                    }
-
-                    .rating-wrapper {
-                      display: flex;
-                      gap: 5px;
-                      color: var(--deep-saffron);
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #HEADER
-                    \*-----------------------------------*/
-
-                    /* .navbar, */
-                    .header-btn-group .btn { display: none; }
-
-                    .header {
-                      --color: var(--white);
-                      --btn-color: var(--champagne-pink);
-
-                      position: absolute;
-                      top: 0;
-                      left: 0;
-                      width: 100%;
-                      padding-block: 20px;
-                      border-block-end: 1px solid var(--champagne-pink_20);
-                      z-index: 4;
-                    }
-
-                    .header.active {
-                      --color: var(--rich-black-fogra-29);
-                      --btn-color: var(--rich-black-fogra-29);
-
-                      position: fixed;
-                      top: -86px;
-                      background-color: var(--white);
-                      box-shadow: var(--shadow-1);
-                      animation: slideIn 0.5s ease-out forwards;
-                    }
-
-                    @keyframes slideIn {
-                      0% { transform: translateY(0); }
-                      100% { transform: translateY(100%); }
-                    }
-
-                    .header .container {
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                    }
-
-                    .logo {
-                      color: var(--rich-black-fogra-29);
-                      font-family: var(--ff-rubik);
-                      font-size: 2.8rem;
-                      font-weight: var(--fw-700);
-                      letter-spacing: -2px;
-                    }
-
-                    .logo .span {
-                      display: inline-block;
-                      color: var(--deep-saffron);
-                    }
-
-                    .header-btn-group {
-                      display: flex;
-                      align-items: center;
-                      gap: 20px;
-                    }
-
-                    .search-btn {
-                      color: var(--btn-color);
-                      font-size: 20px;
-                      display: none;
-                    }
-
-                    .search-btn ion-icon { --ionicon-stroke-width: 50px; }
-
-                    .nav-toggle-btn {
-                      display: grid;
-                      gap: 4px;
-                      display: none;
-                    }
-
-                    .line {
-                      width: 10px;
-                      height: 3px;
-                      background-color: var(--btn-color);
-                      border-radius: 5px;
-                      transition: var(--transition-1);
-                    }
-
-                    .line.middle { width: 20px; }
-
-                    .line.bottom { margin-left: auto; }
-
-                    .navbar {
-                      position: absolute;
-                      top: 100%;
-                      left: 50%;
-                      transform: translateX(-50%);
-                      width: calc(100% - 30px);
-                      background-color: var(--white);
-                      padding-inline: 20px;
-                      box-shadow: var(--shadow-1);
-                      height: 0;
-                      overflow: hidden;
-                      visibility: hidden;
-                      transition: var(--transition-1);
-                    }
-
-                    .navbar.active {
-                      height: 236px;
-                      visibility: visible;
-                    }
-
-                    .navbar-list { margin-block: 10px; }
-
-                    .nav-item:not(:last-child) { border-block-end: 1px solid hsla(0, 0%, 0%, 0.04); }
-
-                    .navbar-link {
-                      color: var(--rich-black-fogra-29);
-                      font-size: var(--fs-4);
-                      font-family: var(--ff-rubik);
-                      font-weight: var(--fw-500);
-                      padding: 10px 15px;
-                      transition: var(--transition-1);
-                    }
-
-                    .navbar-link:is(:hover, :focus) { color: var(--dark-orange); }
-
-
-
-                    /*-----------------------------------*\
-                      #SEARCH BOX
-                    \*-----------------------------------*/
-
-                    .search-container {
-                      position: fixed;
-                      top: -60%;
-                      left: 0;
-                      width: 100%;
-                      height: 110%;
-                      background-color: var(--black_95);
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      padding-inline: 15px;
-                      z-index: 5;
-                      visibility: hidden;
-                      opacity: 0;
-                      transition: var(--transition-2);
-                    }
-
-                    .search-container.active {
-                      visibility: visible;
-                      opacity: 1;
-                      transform: translateY(50%);
-                    }
-
-                    .search-box {
-                      position: relative;
-                      width: 100%;
-                      max-width: 500px;
-                    }
-
-                    .search-input {
-                      color: var(--gainsboro);
-                      font-size: 3rem;
-                      padding: 20px 15px;
-                      padding-inline-end: 70px;
-                    }
-
-                    .search-input::placeholder { color: var(--spanish-gray); }
-
-                    .search-input::-webkit-search-cancel-button { display: none; }
-
-                    .search-submit {
-                      position: absolute;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      right: 15px;
-                      color: var(--onyx);
-                      font-size: 4rem;
-                      transition: var(--transition-1);
-                    }
-
-                    .search-submit:is(:hover, :focus) { color: var(--gainsboro); }
-
-                    .search-close-btn {
-                      position: absolute;
-                      inset: 0;
-                      z-index: -1;
-                      cursor: pointer;
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #HERO
-                    \*-----------------------------------*/
-
-                    .hero-banner { display: none; }
-
-                    .hero {
-                      background-repeat: no-repeat;
-                      background-size: cover;
-                      background-position: center;
-                      padding-block: 145px 60px;
-                      text-align: center;
-                    }
-
-                    .hero-subtitle {
-                      color: var(--dark-orange);
-                      font-family: var(--ff-shadows-into-light);
-                      font-size: var(--fs-3);
-                      letter-spacing: 1px;
-                      margin-block-end: 25px;
-                    }
-
-                    .hero-title {
-                      color: var(--champagne-pink);
-                      max-width: 12ch;
-                      margin-inline: auto;
-                    }
-
-                    .hero-text {
-                      color: var(--desert-sand);
-                      margin-block: 15px 30px;
-                      max-width: 44ch;
-                      margin-inline: auto;
-                    }
-
-                    .hero .btn { margin-inline: auto; }
-
-                    .hero .btn:is(:hover, :focus) {
-                      background-color: var(--white);
-                      color: var(--black);
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #PROMO
-                    \*-----------------------------------*/
-
-                    .promo-card {
-                      position: relative;
-                      background-color: var(--white);
-                      text-align: center;
-                      padding: 40px 30px;
-                      box-shadow: var(--shadow-2);
-                      z-index: 1;
-                    }
-
-                    .promo-card::after {
-                      content: "";
-                      position: absolute;
-                      inset: 0;
-                      background-color: var(--deep-saffron);
-                      clip-path: var(--clip-path-1);
-                      transform: scaleY(0.3);
-                      transform-origin: bottom;
-                      z-index: -1;
-                      transition: var(--transition-1);
-                    }
-
-                    .promo-card:hover::after {
-                      clip-path: var(--clip-path-2);
-                      transform: scaleY(1);
-                    }
-
-                    .promo-card .card-icon svg { margin-inline: auto; }
-
-                    .promo-card:hover .card-icon path { fill: var(--white); }
-
-                    .promo-card:hover :is(.card-title, .card-text) { color: var(--white); }
-
-                    .promo-card .card-title {
-                      margin-block: 15px;
-                      transition: var(--transition-1);
-                    }
-
-                    .promo-card .card-text {
-                      margin-block-end: 15px;
-                      transition: var(--transition-1);
-                    }
-
-                    .promo-card .card-banner {
-                      max-width: max-content;
-                      margin-inline: auto;
-                      aspect-ratio: 1 / 1;
-                    }
-
-                    .promo-item {
-                      min-width: 100%;
-                      scroll-snap-align: start;
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #ABOUT
-                    \*-----------------------------------*/
-
-                    .about { text-align: center; }
-
-                    .about-banner {
-                      position: relative;
-                      aspect-ratio: 1 / 0.9;
-                    }
-
-                    .about-img {
-                      max-width: max-content;
-                      margin-inline: auto;
-                    }
-
-                    .about-banner .abs-img {
-                      top: 0;
-                      left: 100px;
-                    }
-
-                    .about .section-title {
-                      max-width: 15ch;
-                      margin-block: 40px 10px;
-                      margin-inline: auto;
-                    }
-
-                    .about-list { margin-block: 20px 30px; }
-
-                    .about-item {
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      gap: 10px;
-                    }
-
-                    .about-item:not(:last-child) { margin-block-end: 10px; }
-
-                    .about-item ion-icon {
-                      background-color: var(--deep-saffron);
-                      color: var(--white);
-                      font-size: 1.2rem;
-                      padding: 4px;
-                      border-radius: 50%;
-                      --ionicon-stroke-width: 110px;
-                    }
-
-                    .about-item .span {
-                      color: var(--rich-black-fogra-29);
-                      font-family: var(--ff-rubik);
-                      font-weight: var(--fw-500);
-                    }
-
-                    .about .btn { margin-inline: auto; }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #FOOD MENU
-                    \*-----------------------------------*/
-
-                    .food-menu {
-                      background-color: var(--isabelline);
-                      text-align: center;
-                    }
-
-                    .food-menu .section-title { margin-block: 10px 20px; }
-
-                    .food-menu .section-text {
-                      max-width: 44ch;
-                      margin-inline: auto;
-                      margin-block-end: 30px;
-                    }
-
-                    .fiter-list {
-                      display: flex;
-                      flex-wrap: wrap;
-                      justify-content: center;
-                      gap: 10px;
-                      margin-block-end: 40px;
-                      display: none;
-                    }
-
-                    .filter-btn {
-                      background-color: var(--white);
-                      color: var(--color, var(--rich-black-fogra-29));
-                      font-family: var(--ff-rubik);
-                      font-weight: var(--fw-500);
-                      padding: 5px 20px;
-                      border: 1px solid var(--border-color, var(--cultured));
-                    }
-
-                    .filter-btn.active {
-                      background-color: var(--deep-saffron);
-                      --color: var(--white);
-                      --border-color: var(--deep-saffron);
-                    }
-
-                    .food-menu-list {
-                      display: grid;
-                      gap: 30px;
-                    }
-
-                    .food-menu-card {
-                      background-color: var(--white);
-                      padding: 40px;
-                      box-shadow: var(--shadow-2);
-                    }
-
-                    .food-menu-card:focus-within { outline: 1px auto -webkit-focus-ring-color; }
-
-                    .food-menu-card .card-banner {
-                      position: relative;
-                      padding-block-start: 30px;
-                      max-width: max-content;
-                      aspect-ratio: 1 / 1;
-                      margin-inline: auto;
-                    }
-
-                    .food-menu-card .badge {
-                      top: 0;
-                      left: 0;
-                    }
-
-                    .food-menu-btn {
-                      position: absolute;
-                      top: calc(50% + 15px);
-                      left: 50%;
-                      transform: translate(-50%, 0);
-                      min-width: max-content;
-                      --bg-color: var(--cinnabar);
-                      width: 60%;
-                      --height: 40px;
-                      --padding-inline: 20px;
-                      opacity: 0;
-                      transition: var(--transition-2);
-                    }
-
-                    .food-menu-btn:is(:hover, :focus) { --bg-color: var(--deep-saffron); }
-
-                    .food-menu-card:is(:hover, :focus-within) .food-menu-btn {
-                      transform: translate(-50%, -50%);
-                      opacity: 1;
-                    }
-
-                    .food-menu-card .wrapper {
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      gap: 15px;
-                      margin-block: 20px 10px;
-                    }
-
-                    .food-menu-card .category {
-                      font-family: var(--ff-rubik);
-                      font-weight: var(--fw-500);
-                    }
-
-                    .food-menu-card .rating-wrapper { font-size: 1.4rem; }
-
-                    .food-menu-card .card-title { margin-block-end: 10px; }
-
-                    .food-menu-card .price-wrapper {
-                      display: flex;
-                      justify-content: center;
-                      gap: 5px;
-                      font-family: var(--ff-rubik);
-                      font-weight: var(--fw-600);
-                    }
-
-                    .food-menu-card .price-text {
-                      color: var(--cinnabar);
-                      text-transform: uppercase;
-                      padding-inline-end: 5px;
-                    }
-
-                    .food-menu-card .price { color: var(--deep-saffron); }
-
-                    .food-menu-card .del { color: var(--gray-x-11-gray); text-decoration: line-through;}
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #CTA
-                    \*-----------------------------------*/
-
-                    .cta {
-                      background-repeat: no-repeat;
-                      background-size: cover;
-                      background-position: center;
-                      text-align: center;
-                      overflow: hidden;
-                    }
-
-                    .cta::before {
-                      bottom: auto;
-                      top: 0;
-                      background-image: url("https://codewithsadee.github.io/foodie/assets/images/shape-grey.png");
-                      transform: scaleY(-1);
-                    }
-
-                    .cta .section-title {
-                      color: var(--white);
-                      line-height: 1.5;
-                      letter-spacing: -2px;
-                      max-width: 17ch;
-                      margin-inline: auto;
-                    }
-
-                    .cta .section-text {
-                      color: var(--gainsboro);
-                      margin-block: 25px 20px;
-                    }
-
-                    .cta .btn { margin-inline: auto; }
-
-                    .cta-banner {
-                      position: relative;
-                      aspect-ratio: 1 / 0.9;
-                    }
-
-                    .cta-img { transform: scale(1.3) translateY(60px); }
-
-                    .cta-banner .abs-img {
-                      top: 50px;
-                      left: 10px;
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #DELIVERY
-                    \*-----------------------------------*/
-
-                    .delivery-content { margin-block-end: 40px; }
-
-                    .delivery .section-title {
-                      max-width: 17ch;
-                      line-height: 1.6;
-                      letter-spacing: -2px;
-                    }
-
-                    .delivery .section-text { margin-block: 15px 25px; }
-
-                    .delivery-banner {
-                      position: relative;
-                      aspect-ratio: 1 / 0.86;
-                    }
-
-                    .delivery-img {
-                      position: absolute;
-                      top: 0;
-                      left: 0;
-                      transform: translateX(-80px);
-                      transition: var(--transition-2);
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #TESTIMONIALS
-                    \*-----------------------------------*/
-
-                    .testi { text-align: center; }
-
-                    .testi .section-title { margin-block: 10px 20px; }
-
-                    .testi .section-text {
-                      max-width: 44ch;
-                      margin-inline: auto;
-                      margin-block-end: 30px;
-                    }
-
-                    .testi-card {
-                      background-color: var(--white);
-                      padding: 40px;
-                      text-align: left;
-                      box-shadow: var(--shadow-2);
-                    }
-
-                    .testi-card .profile-wrapper {
-                      display: flex;
-                      align-items: center;
-                      gap: 15px;
-                    }
-
-                    .testi-card .avatar {
-                      min-width: max-content;
-                      border-radius: 50%;
-                      overflow: hidden;
-                    }
-
-                    .testi-card .testi-name { margin-block-end: 2px; }
-
-                    .testi-card .testi-title {
-                      font-family: var(--ff-rubik);
-                      font-size: var(--fs-4);
-                    }
-
-                    .testi-card .testi-text { margin-block: 20px 15px; }
-
-                    .testi-item {
-                      min-width: 100%;
-                      scroll-snap-align: start;
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #BANNER
-                    \*-----------------------------------*/
-
-                    .banner { color: var(--white); }
-
-                    .banner-list {
-                      display: grid;
-                      gap: 10px;
-                    }
-
-                    .banner-lg { height: 430px; }
-
-                    .banner-sm { height: 200px; }
-
-                    .banner-md { height: 240px; }
-
-                    .banner-card {
-                      position: relative;
-                      height: 100%;
-                      box-shadow: var(--shadow-2);
-                      overflow: hidden;
-                    }
-
-                    .banner-card .banner-img {
-                      background-color: var(--gainsboro);
-                      width: 100%;
-                      height: 100%;
-                      object-fit: cover;
-                      transform: scale(1);
-                      transition: var(--transition-2);
-                    }
-
-                    .banner-card:is(:hover, :focus-within) .banner-img { transform: scale(1.05); }
-
-                    .banner-item-content {
-                      position: absolute;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      left: 20px;
-                      right: 20px;
-                      max-height: calc(100% - 30px);
-                    }
-
-                    .banner-md .banner-item-content { left: 50%; }
-
-                    .banner-subtitle,
-                    .banner-title {
-                      font-family: var(--ff-rubik);
-                      font-weight: var(--fw-600);
-                      line-height: 1.2;
-                      letter-spacing: -0.5px;
-                    }
-
-                    .banner-lg .banner-subtitle {
-                      font-size: var(--fs-2);
-                      margin-block-end: 10px;
-                    }
-
-                    .banner-lg .banner-title {
-                      font-size: var(--fs-1);
-                      max-width: 16ch;
-                    }
-
-                    :is(.banner-md, .banner-sm) .banner-title {
-                      font-size: var(--fs-2);
-                      max-width: 10ch;
-                    }
-
-                    .banner-card .banner-text { margin-block: 10px 15px; }
-
-                    .banner-card .btn {
-                      --bg-color: var(--dark-orange);
-                      --height: 40px;
-                      --padding-inline: 25px;
-                    }
-
-                    .banner-card .btn:is(:hover, :focus) { background-color: var(--rich-black-fogra-29); }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #BLOG
-                    \*-----------------------------------*/
-
-                    .blog { text-align: center; }
-
-                    .blog .section-title { margin-block: 10px 20px; }
-
-                    .blog .section-text {
-                      margin-block-end: 40px;
-                      max-width: 44ch;
-                      margin-inline: auto;
-                    }
-
-                    .blog-list {
-                      display: grid;
-                      gap: 30px;
-                    }
-
-                    .blog-card {
-                      background-color: var(--white);
-                      text-align: left;
-                      box-shadow: var(--shadow-2);
-                    }
-
-                    .blog-card .card-banner {
-                      position: relative;
-                      aspect-ratio: 1 / 0.65;
-                      background-color: var(--gainsboro);
-                    }
-
-                    .blog-card .badge {
-                      top: 20px;
-                      right: 20px;
-                      font-family: var(--ff-rubik);
-                      text-transform: uppercase;
-                      --bg-color: var(--tangerine);
-                      --padding-block: 5px;
-                    }
-
-                    .blog-card .card-content { padding: 30px; }
-
-                    .blog-card .card-meta-wrapper {
-                      display: flex;
-                      flex-wrap: wrap;
-                      justify-content: flex-start;
-                      align-items: center;
-                      gap: 12px 20px;
-                    }
-
-                    .blog-card .card-meta-link {
-                      display: flex;
-                      align-items: center;
-                      gap: 10px;
-                    }
-
-                    .blog-card .card-meta-link ion-icon {
-                      color: var(--tangerine);
-                      font-size: 1.5rem;
-                      --ionicon-stroke-width: 60px;
-                    }
-
-                    .blog-card :is(.meta-info, .btn-link) {
-                      color: var(--rich-black-fogra-29);
-                      font-family: var(--ff-rubik);
-                      font-size: var(--fs-5);
-                      font-weight: var(--fw-600);
-                      text-transform: uppercase;
-                      line-height: 1;
-                      transition: var(--transition-1);
-                    }
-
-                    .blog-card .card-meta-link:is(:hover, :focus) .meta-info {
-                      color: var(--deep-saffron);
-                    }
-
-                    .blog-card .card-title {
-                      font-size: var(--fs-3);
-                      margin-block: 20px 15px;
-                      transition: var(--transition-1);
-                    }
-
-                    .blog-card .card-title:is(:hover, :focus) {
-                      opacity: 0.8;
-                      text-decoration: underline;
-                    }
-
-                    .blog-card .card-text { margin-block-end: 20px; }
-
-                    .blog-card .btn-link {
-                      display: flex;
-                      align-items: center;
-                      gap: 5px;
-                    }
-
-                    .blog-card .btn-link ion-icon { font-size: 1.5rem; }
-
-                    .blog-card .btn-link:is(:hover, :focus) {
-                      color: var(--deep-saffron);
-                      gap: 10px;
-                    }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #FOOTER
-                    \*-----------------------------------*/
-
-                    .footer { overflow: hidden; background-color: var(--white); color: var(--sonic-silver); text-align: left;}
-
-                    .footer-top {
-                      position: relative;
-                      padding-block: 120px;
-                      background-repeat: no-repeat;
-                      background-size: contain;
-                      background-position: bottom;
-                      border-block-end: 2px solid var(--independence_30);
-                    }
-
-                    .footer-top::after {
-                      content: url(https://codewithsadee.github.io/foodie/assets/images/delivery-boy.svg);
-                      position: absolute;
-                      bottom: -11px;
-                      left: -160px;
-                      width: 160px;
-                      animation: running-cycle 20s linear infinite;
-                    }
-
-                    @keyframes running-cycle {
-                      0% { left: -160px; }
-                      100% { left: 100%; }
-                    }
-
-                    .footer-top .container {
-                      display: grid;
-                      gap: 30px;
-                    }
-
-                    .footer .logo {
-                      color: var(--rich-black-fogra-29);
-                      font-size: 3.2rem;
-                    }
-
-                    .footer-text { margin-block: 15px 25px; }
-
-                    .social-list {
-                      display: flex;
-                      gap: 5px;
-                    }
-
-                    .social-link {
-                      background-color: var(--dark-orange);
-                      color: var(--white);
-                      font-size: 1.5rem;
-                      padding: 10px;
-                      transition: var(--transition-1);
-                    }
-
-                    .social-link:is(:hover, :focus) { background-color: var(--rich-black-fogra-29); }
-
-                    .footer-list-title {
-                      position: relative;
-                      max-width: max-content;
-                      color: var(--rich-black-fogra-29);
-                      font-family: var(--ff-rubik);
-                      font-size: var(--fs-3);
-                      font-weight: var(--fw-600);
-                      letter-spacing: -1px;
-                      margin-block-end: 20px;
-                    }
-
-                    .footer-list-title::after {
-                      content: "";
-                      position: absolute;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      left: calc(100% + 15px);
-                      background-color: var(--deep-saffron);
-                      width: 40px;
-                      height: 4px;
-                      border-inline-end: 5px solid var(--deep-saffron);
-                      box-shadow: inset -5px 0 0 var(--white);
-                    }
-
-                    .footer-list > li:not(:last-child) { margin-block-end: 15px; }
-
-                    .footer-list address { max-width: 20ch; }
-
-                    .footer-form {
-                      background-color: var(--white);
-                      padding: 30px;
-                      border: 1px solid var(--cultured);
-                      box-shadow: var(--shadow-2);
-                      display: none;
-                    }
-
-                    .footer-bottom {
-                      padding-block: 20px;
-                      text-align: center;
-                    }
-
-                    .copyright-link { display: inline-block; }
-
-                    .copyright-link:is(:hover, :focus) { text-decoration: underline; }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #BACK TO TOP
-                    \*-----------------------------------*/
-
-                    .back-top-btn {
-                      position: fixed;
-                      bottom: 10px;
-                      right: 20px;
-                      background-color: var(--deep-saffron);
-                      color: var(--white);
-                      padding: 15px;
-                      border-radius: 50%;
-                      box-shadow: var(--shadow-1);
-                      z-index: 2;
-                      opacity: 0;
-                      visibility: hidden;
-                      transition: var(--transition-1);
-                    }
-
-                    .back-top-btn.active {
-                      opacity: 1;
-                      visibility: visible;
-                      transform: translateY(-10px);
-                    }
-
-                    .back-top-btn:is(:hover, :focus) { background-color: var(--rich-black-fogra-29); }
-
-
-
-
-
-                    /*-----------------------------------*\
-                      #MEDIA QUERIES
-                    \*-----------------------------------*/
-
-                    /**
-                     * responsive for larger than 480px screen
-                     */
-
-                    @media (min-width: 480px) {
-
-                      /**
-                       * HEADER
-                       */
-
-                      .header-btn-group .btn {
-                        display: block;
-                        --bg-color: var(--dark-orange);
-                      }
-
-                    }
-
-
-
-
-
-                    /**
-                     * responsive for larger than 550px screen
-                     */
-
-                    @media (min-width: 550px) {
-
-                      /**
-                       * REUSED STYLE
-                       */
-
-                      .container {
-                        max-width: 550px;
-                        width: 100%;
-                        margin-inline: auto;
-                      }
-
-                      .has-scrollbar > li { min-width: calc(50% - 5px); }
-
-
-
-                      /**
-                       * HERO
-                       */
-
-                      .hero-title { --fs-1: 4.2rem; }
-
-
-
-                      /**
-                       * FOOTER
-                       */
-
-                      .footer-top .container { grid-template-columns: 1fr 1fr; }
-
-                    }
-
-
-
-
-
-                    /**
-                     * responsive for larger than 768px screen
-                     */
-
-                    @media (min-width: 768px) {
-
-                      /**
-                       * REUSED STYLE
-                       */
-
-                      .container { max-width: 720px; }
-
-
-
-                      /**
-                       * HERO
-                       */
-
-                      .hero {
-                        position: relative;
-                        text-align: left;
-                        overflow: hidden;
-                        z-index: 1;
-                      }
-
-                      .hero-content > :is(*, .btn) { margin-inline: 0; }
-
-                      .hero-banner {
-                        display: block;
-                        position: absolute;
-                        top: calc(50%);
-                        transform: translateY(-50%);
-                        right: 50px;
-                        max-width: 40%;
-                        aspect-ratio: 1 / 0.9;
-                      }
-
-                      .hero-img {
-                        position: absolute;
-                        bottom: 0;
-                      }
-
-                      .hero::after {
-                        content: "";
-                        position: absolute;
-                        right: 0;
-                        bottom: -2px;
-                        width: 100%;
-                        height: 100%;
-                        background-image: url("https://codewithsadee.github.io/foodie/assets/images/hero-bg-shape.png");
-                        background-repeat: no-repeat;
-                        background-size: contain;
-                        background-position: right bottom;
-                        pointer-events: none;
-                        z-index: -1;
-                      }
-
-
-
-                      /**
-                       * ABOUT
-                       */
-
-                      .about .container {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        gap: 30px;
-                      }
-
-                      .about { text-align: left; }
-
-                      .about .section-title { margin-block-start: 0; }
-
-                      .about :is(.section-title, .btn) { margin-inline: 0; }
-
-                      .about-item { justify-content: flex-start; }
-
-
-
-                      /**
-                       * FOOD MENU
-                       */
-
-                      .food-menu-list { grid-template-columns: 1fr 1fr; }
-
-                      .food-menu-card :is(.wrapper, .price-wrapper) { justify-content: flex-start; }
-
-                      .food-menu-card .card-title { text-align: left; }
-
-
-
-                      /**
-                       * CTA
-                       */
-
-                      .cta .container {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        align-items: center;
-                        gap: 30px;
-                      }
-
-                      .cta { text-align: left; }
-
-                      .cta :is(.section-title, .btn) { margin-inline: 0; }
-
-                      .cta-img { transform: scale(1.3) translate(90px, 20px); }
-
-
-
-                      /**
-                       * DELIVERY
-                       */
-
-                      .delivery .container {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        align-items: center;
-                        gap: 50px;
-                      }
-
-
-
-                      /**
-                       * BANNER
-                       */
-
-                      .banner-list { grid-template-columns: repeat(4, 1fr); }
-
-                      .banner-lg {
-                        grid-column: 1 / 3;
-                        grid-row: 1 / 3;
-                      }
-
-                      .banner-md {
-                        grid-column: 3 / 5;
-                        grid-row: 2 / 3;
-                        height: 220px;
-                      }
-
-
-
-                      /**
-                       * BLOG
-                       */
-
-                      .blog-list { grid-template-columns: 1fr 1fr; }
-
-                      .blog-card { height: 100%; }
-
-
-
-                      /**
-                       * FOOTER
-                       */
-
-                      .input-wrapper { grid-template-columns: 1fr 1fr; }
-
-                    }
-
-
-
-
-
-                    /**
-                     * responsive for larger than 992px screen
-                     */
-
-                    @media (min-width: 992px) {
-
-                      /**
-                       * CUSTOM PROPERTY
-                       */
-
-                      :root {
-
-                        /**
-                         * spacing
-                         */
-
-                        --section-padding: 120px;
-
-                      }
-
-
-
-                      /**
-                       * REUSED STYLE
-                       */
-
-                      .container { max-width: 960px; }
-
-                      .has-scrollbar > li { min-width: calc(33.33% - 6.66px); }
-
-                      .h2 { --fs-1: 4.2rem; }
-
-
-
-                      /**
-                       * HEADER
-                       */
-
-                      .nav-toggle-btn { display: none; }
-
-                      .header .container { gap: 20px; }
-
-                      .navbar,
-                      .navbar.active {
-                        all: unset;
-                        margin-inline-start: auto;
-                      }
-
-                      .navbar-list {
-                        margin-block: 0;
-                        display: flex;
-                        gap: 5px;
-                      }
-
-                      .nav-item:not(:last-child) { border-block-end: none; }
-
-                      .navbar-link {
-                        --fs-4: 1.5rem;
-                        color: var(--btn-color);
-                        letter-spacing: -0.5px;
-                      }
-
-
-
-                      /**
-                       * HERO
-                       */
-
-                      .hero {
-                        min-height: 660px;
-                        display: grid;
-                        align-items: center;
-                      }
-
-                      .hero-subtitle { --fs-3: 3.2rem; }
-
-                      .hero-title {
-                        --fs-1: 7rem;
-                        letter-spacing: -2.5px;
-                      }
-
-                      .hero-text { font-size: var(--fs-3); }
-
-                      .hero-banner {
-                        max-width: 45%;
-                        top: auto;
-                        bottom: 0;
-                        transform: translateY(0);
-                      }
-
-                      .hero-img-bg { transform: scale(1.4) translate(20px, -20px); }
-
-
-
-                      /**
-                       * FOOD MENU
-                       */
-
-                      .food-menu-list { grid-template-columns: repeat(3, 1fr); }
-
-                      .food-menu-card { height: 100%; }
-
-
-
-                      /**
-                       * CTA
-                       */
-
-                      .cta-img { transform: scale(1.4) translate(20px, 40px); }
-
-                      .cta-banner .abs-img { left: -50px; }
-
-                      :is(.cta, .delivery) .section-title { line-height: 1.2; }
-
-
-
-                      /**
-                       * BANNER
-                       */
-
-                      .banner-lg .banner-title {
-                        --fs-1: 3.6rem;
-                        letter-spacing: -2px;
-                      }
-
-                      :is(.banner-md, .banner-sm) .banner-title,
-                      .banner-lg .banner-subtitle { --fs-2: 3.2rem; }
-
-
-
-                      /**
-                       * TESTIMONIALS
-                       */
-
-                      .testi-list { padding-block-end: 0; }
-
-
-
-                      /**
-                       * BLOG
-                       */
-
-                      .blog-list { grid-template-columns: repeat(3, 1fr); }
-
-                      .blog-card .card-title { --fs-3: 2.2rem; }
-
-
-
-                      /**
-                       * FOOTER
-                       */
-
-                      .footer-top .container { grid-template-columns: 1fr 1fr 1fr 1.6fr; }
-
-                      .footer-form { margin-block-start: -170px; }
-
-
-
-                      /**
-                       * BACK TO TOP
-                       */
-
-                      .back-top-btn {
-                        bottom: 20px;
-                        right: 30px;
-                      }
-
-                    }
-
-
-
-
-
-                    /**
-                     * responsive for larger than 1200px screen
-                     */
-
-                    @media (min-width: 1200px) {
-
-                      /**
-                       * REUSED STYLE
-                       */
-
-                      .container { max-width: 1200px; }
-
-
-
-                      /**
-                       * HERO
-                       */
-
-                      .hero { min-height: 770px; }
-
-
-
-                      /**
-                       * PROMO
-                       */
-
-                      .promo .promo-item { min-width: calc(25% - 7.5px); }
-
-
-
-                      /**
-                       * ABOUT
-                       */
-
-                      .about .container { gap: 60px; }
-
-
-
-                      /**
-                       * CTA
-                       */
-
-                      .cta { --section-padding: 60px; }
-
-                      .cta .section-title { max-width: 18ch; }
-
-
-
-                      /**
-                       * BANNER
-                       */
-
-                      .banner-md .banner-item-content { left: 55%; }
-
-
-
-                      /**
-                       * FOOTER
-                       */
-
-                      .footer-top .container { grid-template-columns: 1.4fr 1fr 1fr 1.6fr; }
-
-                    }
-
-                    /* Clickable Sections */
-                    [data-section] { cursor: pointer; transition: outline 0.2s; position: relative; }
-                    [data-section]:hover::before { content: "Click to Edit"; position: absolute; top: 0; right: 0; background: var(--deep-saffron); color: white; font-size: 10px; padding: 2px 5px; z-index: 10; }
-                    [data-section]:hover { outline: 2px dashed var(--deep-saffron); outline-offset: 2px; }
-                    </style>
-                </head>
-                <body id="top">
-                    <header class="header" data-header data-section="header">
-                        <div class="container">
-                            <h1>
-                                <a href="#" class="logo">${escapeHtml(webConfig.header.logo)}<span class="span">.</span></a>
-                            </h1>
-
-                            <nav class="navbar" data-navbar>
-                                <ul class="navbar-list">
-                                    <li class="nav-item"><a href="#home" class="navbar-link" data-nav-link>Home</a></li>
-                                    <li class="nav-item"><a href="#about" class="navbar-link" data-nav-link>About Us</a></li>
-                                    <li class="nav-item"><a href="#food-menu" class="navbar-link" data-nav-link>Shop</a></li>
-                                    <li class="nav-item"><a href="#blog" class="navbar-link" data-nav-link>Blog</a></li>
-                                    <li class="nav-item"><a href="#" class="navbar-link" data-nav-link>Contact Us</a></li>
-                                </ul>
-                            </nav>
-
-                            <div class="header-btn-group">
-                                <button class="search-btn" aria-label="Search"><ion-icon name="search-outline"></ion-icon></button>
-                                ${orderButtonHtml}
-                                <button class="nav-toggle-btn" aria-label="Toggle Menu" data-menu-toggle-btn>
-                                    <span class="line top"></span>
-                                    <span class="line middle"></span>
-                                    <span class="line bottom"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </header>
-
-                    <main>
-                        <article>
-                        <section class="hero" id="home" data-section="hero" style="background-image: url('${sanitizeUrl(webConfig.hero.bgImg)}')">
-                            <div class="container">
-                                <div class="hero-content">
-                                    <p class="hero-subtitle">${escapeHtml(webConfig.hero.subtitle)}</p>
-                                    <h2 class="h1 hero-title">${escapeHtml(webConfig.hero.title)}</h2>
-                                    <p class="hero-text">${escapeHtml(webConfig.hero.text)}</p>
-                                    <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
-                                        ${orderButtonHtml}
-                                        ${reservationButtonHtml}
-                                    </div>
-                                </div>
-                                <figure class="hero-banner">
-                                    <img src="https://codewithsadee.github.io/foodie/assets/images/hero-banner-bg.png" width="820" height="716" alt="" aria-hidden="true" class="w-100 hero-img-bg">
-                                    <img src="${sanitizeUrl(webConfig.hero.bannerImg)}" width="700" height="637" alt="Burger" class="w-100 hero-img" onerror="this.src='https://via.placeholder.com/700x600'">
-                                </figure>
-                            </div>
-                        </section>
-                        <section class="section section-divider white promo" data-section="promos">
-                            <div class="container">
-                                <ul class="promo-list has-scrollbar">${promosHtml}</ul>
-                            </div>
-                        </section>
-
-                        <section class="section section-divider gray about" id="about" data-section="about">
-                            <div class="container">
-                                <div class="about-banner">
-                                    <img src="${sanitizeUrl(webConfig.about.img)}" width="509" height="459" alt="Burger with Drinks" class="w-100 about-img" onerror="this.src='https://via.placeholder.com/500x450'">
-                                    <img src="https://codewithsadee.github.io/foodie/assets/images/sale-shape-red.png" width="216" height="226" alt="get up to 50% off now" class="abs-img scale-up-anim" style="top:0; left:100px;">
-                                </div>
-                                <div class="about-content">
-                                    <h2 class="h2 section-title">${escapeHtml(webConfig.about.title)}</h2>
-                                    <p class="section-text">${escapeHtml(webConfig.about.text)}</p>
-                                    <ul class="about-list">${aboutFeaturesHtml}</ul>
-                                    <div style="--jc: flex-start;">
-                                        <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
-                                            ${orderButtonHtml}
-                                            ${reservationButtonHtml}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                        <section class="section food-menu" id="food-menu" data-section="menu">
-                            <div class="container">
-                                <p class="section-subtitle">${escapeHtml(webConfig.menu.subtitle)}</p>
-                                <h2 class="h2 section-title">Our Delicious <span class="span">Foods</span></h2>
-                                <p class="section-text">${escapeHtml(webConfig.menu.text)}</p>
-                                <ul class="food-menu-list">${menuHtml}</ul>
-                            </div>
-                        </section>
-
-                        <section class="section section-divider white cta" data-section="cta" style="background-image: url('${sanitizeUrl(webConfig.cta.bgImg)}')">
-                            <div class="container">
-                                <div class="cta-content">
-                                    <h2 class="h2 section-title">${escapeHtml(webConfig.cta.title)}</h2>
-                                    <p class="section-text">${escapeHtml(webConfig.cta.text)}</p>
-                                    <div style="--jc: flex-start;">
-                                        <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
-                                            ${orderButtonHtml}
-                                            ${reservationButtonHtml}
-                                        </div>
-                                    </div>
-                                </div>
-                                <figure class="cta-banner">
-                                    <img src="${sanitizeUrl(webConfig.cta.bannerImg)}" width="700" height="637" alt="Burger" class="w-100 cta-img" onerror="this.src='https://via.placeholder.com/700x637'">
-                                    <img src="${sanitizeUrl(webConfig.cta.saleImg)}" width="216" height="226" alt="get up to 50% off now" class="abs-img scale-up-anim" style="top:50px; left:10px;">
-                                </figure>
-                            </div>
-                        </section>
-
-                        <section class="section section-divider gray delivery" data-section="delivery">
-                            <div class="container">
-                                <div class="delivery-content">
-                                    <h2 class="h2 section-title">${escapeHtml(webConfig.delivery.title)}</h2>
-                                    <p class="section-text">${escapeHtml(webConfig.delivery.text)}</p>
-                                    <div style="--jc: flex-start;">
-                                        <div style="display:flex; gap:10px; justify-content: var(--jc, center); flex-wrap: wrap;">
-                                            ${orderButtonHtml}
-                                            ${reservationButtonHtml}
-                                        </div>
-                                    </div>
-                                </div>
-                                <figure class="delivery-banner">
-                                    <img src="${sanitizeUrl(webConfig.delivery.bannerImg)}" width="700" height="602" alt="clouds" class="w-100">
-                                    <img src="${sanitizeUrl(webConfig.delivery.boyImg)}" width="1000" height="880" alt="delivery boy" class="w-100 delivery-img delivery-boy">
-                                </figure>
-                            </div>
-                        </section>
-                        <section class="section section-divider white testi" data-section="testimonials">
-                            <div class="container">
-                                <p class="section-subtitle">${escapeHtml(webConfig.testimonials.subtitle)}</p>
-                                <h2 class="h2 section-title">Our Customers <span class="span">Reviews</span></h2>
-                                <p class="section-text">${escapeHtml(webConfig.testimonials.text)}</p>
-                                <ul class="testi-list has-scrollbar">${testiHtml}</ul>
-                            </div>
-                        </section>
-
-                        <section class="section section-divider gray banner" data-section="banners">
-                            <div class="container">
-                                <ul class="banner-list">${bannersHtml}</ul>
-                            </div>
-                        </section>
-
-                        <section class="section section-divider white blog" id="blog" data-section="blog">
-                            <div class="container">
-                                <p class="section-subtitle">${escapeHtml(webConfig.blog.subtitle)}</p>
-                                <h2 class="h2 section-title">This Is All About <span class="span">Foods</span></h2>
-                                <p class="section-text">${escapeHtml(webConfig.blog.text)}</p>
-                                <ul class="blog-list">${blogHtml}</ul>
-                            </div>
-                        </section>
-                    </main>
-                    <footer class="footer" data-section="footer">
-                        <div class="footer-top" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/footer-illustration.png')">
-                            <div class="container">
-                                <div class="footer-brand">
-                                    <a href="" class="logo">${escapeHtml(webConfig.header.logo)}<span class="span">.</span></a>
-                                    <p class="footer-text">${escapeHtml(webConfig.footer.text)}</p>
-                                    <ul class="social-list">
-                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.facebook || '#')}" class="social-link"><ion-icon name="logo-facebook"></ion-icon></a></li>
-                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.twitter || '#')}" class="social-link"><ion-icon name="logo-twitter"></ion-icon></a></li>
-                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.instagram || '#')}" class="social-link"><ion-icon name="logo-instagram"></ion-icon></a></li>
-                                        <li><a href="${sanitizeUrl(webConfig.footer.social?.pinterest || '#')}" class="social-link"><ion-icon name="logo-pinterest"></ion-icon></a></li>
-                                    </ul>
-                                </div>
-                                <ul class="footer-list">
-                                    <li><p class="footer-list-title">Contact Info</p></li>
-                                    <li><p class="footer-list-item">${escapeHtml(webConfig.footer.phone)}</p></li>
-                                    <li><p class="footer-list-item">${escapeHtml(webConfig.footer.email)}</p></li>
-                                    <li><address class="footer-list-item">${escapeHtml(webConfig.footer.address)}</address></li>
-                                </ul>
-                                <ul class="footer-list">
-                                    <li><p class="footer-list-title">Opening Hours</p></li>
-                                    ${webConfig.footer.hours.map(h => `<li><p class="footer-list-item">${escapeHtml(h)}</p></li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="footer-bottom">
-                            <div class="container">
-                                <p class="copyright-text">
-                                    &copy; 2024 <a href="#" class="copyright-link">Tragalero</a> All Rights Reserved.
-                                </p>
-                            </div>
-                        </div>
-                    </footer>
-
-                    <a href="#top" class="back-top-btn" aria-label="Back to top" data-back-top-btn>
-                        <ion-icon name="chevron-up"></ion-icon>
-                    </a>
-
-                    <script>
-                        document.addEventListener('click', (e) => {
-                            const section = e.target.closest('[data-section]');
-                            if (section) {
-                                window.parent.postMessage({ type: 'selectSection', section: section.dataset.section }, '*');
-                            }
-                        });
-
-                        // Original Foodie Scripts
-                        const header = document.querySelector("[data-header]");
-                        const backTopBtn = document.querySelector("[data-back-top-btn]");
-                        window.addEventListener("scroll", function () {
-                            if (window.scrollY >= 100) {
-                                header.classList.add("active");
-                                backTopBtn.classList.add("active");
-                            } else {
-                                header.classList.remove("active");
-                                backTopBtn.classList.remove("active");
-                            }
-                        });
-
-                        const navbar = document.querySelector("[data-navbar]");
-                        const navbarLinks = document.querySelectorAll("[data-nav-link]");
-                        const menuToggleBtn = document.querySelector("[data-menu-toggle-btn]");
-                        if(menuToggleBtn && navbar) {
-                            menuToggleBtn.addEventListener("click", function () {
-                                navbar.classList.toggle("active");
-                                this.classList.toggle("active");
-                            });
-
-                            for (let i = 0; i < navbarLinks.length; i++) {
-                                navbarLinks[i].addEventListener("click", function () {
-                                    navbar.classList.toggle("active");
-                                    menuToggleBtn.classList.toggle("active");
-                                });
-                            }
-                        }
-
-                        const searchBtn = document.querySelector("[data-search-btn]");
-                        const searchContainer = document.querySelector("[data-search-container]");
-                        const searchCloseBtn = document.querySelector("[data-search-close-btn]");
-                        if(searchBtn && searchContainer) {
-                            [searchBtn, searchCloseBtn].forEach(el => {
-                                el.addEventListener("click", () => {
-                                    searchContainer.classList.toggle("active");
-                                });
-                            });
-                        }
-
-                        const deliveryBoy = document.querySelector(".delivery-boy");
-                        let deliveryBoyMove = -100;
-                        let lastScrollPos = 0;
-                        if(deliveryBoy) {
-                            window.addEventListener("scroll", function () {
-                                let deliveryBoyTopPos = deliveryBoy.getBoundingClientRect().top;
-                                if (deliveryBoyTopPos < 800 && deliveryBoyTopPos > -500) {
-                                    let activeScrollPos = window.scrollY;
-                                    if (lastScrollPos < activeScrollPos) {
-                                        deliveryBoyMove += 2;
-                                    } else {
-                                        deliveryBoyMove -= 2;
-                                    }
-                                    lastScrollPos = activeScrollPos;
-                                    deliveryBoy.style.transform = "translateX(" + deliveryBoyMove + "px)";
-                                }
-                            });
-                        }
-
-                        if(window.MenutechUI) {
-                            setTimeout(() => { MenutechUI.init(); }, 100);
-                        }
-                        if(typeof window.glfBindButtons === 'function') {
-                            setTimeout(() => { window.glfBindButtons(); }, 200);
-                        }
-                    ${S_CLOSE}
-                    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">${S_CLOSE}
-                    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js">${S_CLOSE}
-                </body>
-                </html>
+            const bannersHtml = `
+                <li class="banner-lg"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-1.jpg" class="banner-img"><div class="banner-item-content"><h2 class="banner-title">15% Off Your First Order!</h2><button class="btn">Order Now</button></div></div></li>
+                <li class="banner-sm"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-2.jpg" class="banner-img"></div></li>
+                <li class="banner-md"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-3.jpg" class="banner-img"></div></li>
+                <li class="banner-sm"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-4.jpg" class="banner-img"></div></li>
             `;
-            doc.open();
-            doc.write(fullHtml);
-            doc.close();
+
+            // Return full original Foodie template logic with placeholders
+            return `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Rubik:wght@400;500;600;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+                <script src="https://menutech.xyz/menutechUI.min.js">${S_CLOSE}
+                <script src="https://www.fbgcdn.com/embedder/js/ewm2.js">${S_CLOSE}
+                <style>
+                    :root {
+                        --rich-black-fogra-29: hsl(210, 26%, 7%); --deep-saffron: hsl(32, 100%, 59%); --dark-orange: hsl(28, 100%, 58%);
+                        --white: hsl(0, 0%, 100%); --sonic-silver: hsl(0, 0%, 47%); --isabelline: hsl(38, 44%, 96%);
+                        --ff-shadows-into-light: 'Shadows Into Light', cursive; --ff-roboto: 'Roboto', sans-serif; --ff-rubik: 'Rubik', sans-serif;
+                    }
+                    * { margin:0; padding:0; box-sizing: border-box; }
+                    li { list-style:none; }
+                    img { height: auto; max-width: 100%; display: block; }
+                    html { font-family: var(--ff-roboto); font-size: 10px; scroll-behavior: smooth; }
+                    body { background: white; color: var(--sonic-silver); font-size: 1.6rem; overflow-x: hidden; }
+                    .container { padding-inline: 15px; max-width: 1200px; margin: 0 auto; }
+                    .h1, .h2, .h3 { font-family: var(--ff-rubik); color: var(--rich-black-fogra-29); }
+                    .btn { background: var(--deep-saffron); color: white; padding: 12px 30px; cursor: pointer; border: none; font-family: var(--ff-rubik); font-weight: 500; }
+                    .header { padding: 20px 0; background: white; border-bottom: 1px solid #eee; position: sticky; top:0; z-index:100; }
+                    .header .container { display: flex; justify-content: space-between; align-items: center; }
+                    .logo { font-size: 2.8rem; font-weight: 700; color: var(--rich-black-fogra-29); text-decoration: none; }
+                    .logo span { color: var(--deep-saffron); }
+                    .hero { padding: 100px 0; background-size: cover; background-position: center; text-align: center; }
+                    .hero-subtitle { color: var(--dark-orange); font-family: var(--ff-shadows-into-light); font-size: 2.4rem; }
+                    .hero-title { font-size: 6rem; color: white; margin: 20px 0; }
+                    .hero-text { color: white; font-size: 1.8rem; margin-bottom: 30px; }
+                    .section { padding: 80px 0; text-align: center; }
+                    .section-subtitle { color: #f00; font-family: var(--ff-rubik); margin-bottom: 10px; }
+                    .promo-list { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; }
+                    .promo-card { min-width: 250px; background: white; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; }
+                    .about { display: flex; flex-wrap: wrap; align-items: center; gap: 40px; text-align: left; }
+                    .about-banner { flex: 1; min-width: 300px; }
+                    .about-content { flex: 1; min-width: 300px; }
+                    .food-menu-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+                    .food-menu-card { background: white; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+                    .footer { background: #111; color: #888; padding: 60px 0; }
+                    .footer-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+                    .social-list { display: flex; gap: 10px; margin-top: 20px; }
+                    .social-link { background: var(--dark-orange); color: white; padding: 10px; font-size: 1.8rem; }
+
+                    [data-section] { cursor: pointer; transition: outline 0.2s; }
+                    [data-section]:hover { outline: 2px dashed var(--deep-saffron); outline-offset: 4px; }
+                </style>
+            </head>
+            <body>
+                <header class="header" data-section="header">
+                    <div class="container">
+                        <a href="#" class="logo">${escapeHtml(webConfig.header.logo)}<span>.</span></a>
+                        <div style="display:flex; gap:10px;">${orderButtonHtml}</div>
+                    </div>
+                </header>
+                <main>
+                    <section class="hero" style="background-image: url('${sanitizeUrl(webConfig.hero.bgImg)}')" data-section="hero">
+                        <div class="container">
+                            <p class="hero-subtitle">${escapeHtml(webConfig.hero.subtitle)}</p>
+                            <h1 class="hero-title">${escapeHtml(webConfig.hero.title)}</h1>
+                            <p class="hero-text">${escapeHtml(webConfig.hero.text)}</p>
+                            <div style="display:flex; gap:10px; justify-content:center;">${orderButtonHtml}${reservationButtonHtml}</div>
+                        </div>
+                    </section>
+                    <section class="section" data-section="promos">
+                        <div class="container"><ul class="promo-list">${promosHtml}</ul></div>
+                    </section>
+                    <section class="section section-divider gray about" data-section="about">
+                        <div class="container about">
+                            <div class="about-banner"><img src="${sanitizeUrl(webConfig.about.img)}"></div>
+                            <div class="about-content">
+                                <h2 class="h2">${escapeHtml(webConfig.about.title)}</h2>
+                                <p style="margin:20px 0;">${escapeHtml(webConfig.about.text)}</p>
+                                <ul style="margin-bottom:30px;">${aboutFeaturesHtml}</ul>
+                                ${orderButtonHtml}
+                            </div>
+                        </div>
+                    </section>
+                    <section class="section" data-section="menu">
+                        <div class="container">
+                            <p class="section-subtitle">${escapeHtml(webConfig.menu.subtitle)}</p>
+                            <h2 class="h2">${escapeHtml(webConfig.menu.title)}</h2>
+                            <p style="margin-bottom:40px;">${escapeHtml(webConfig.menu.text)}</p>
+                            <ul class="food-menu-list">${menuHtml}</ul>
+                        </div>
+                    </section>
+                    <section class="section" data-section="cta" style="background: url('${sanitizeUrl(webConfig.cta.bgImg)}')">
+                        <div class="container">
+                            <h2 class="h2" style="color:white;">${escapeHtml(webConfig.cta.title)}</h2>
+                            <p style="color:white; margin:20px 0;">${escapeHtml(webConfig.cta.text)}</p>
+                            ${orderButtonHtml}
+                        </div>
+                    </section>
+                    <section class="section" data-section="testimonials">
+                        <div class="container">
+                            <p class="section-subtitle">${escapeHtml(webConfig.testimonials.subtitle)}</p>
+                            <p style="margin-bottom:40px;">${escapeHtml(webConfig.testimonials.text)}</p>
+                            <ul class="promo-list">${testiHtml}</ul>
+                        </div>
+                    </section>
+                </main>
+                <footer class="footer" data-section="footer">
+                    <div class="container footer-top">
+                        <div>
+                            <a href="#" class="logo" style="color:white;">${escapeHtml(webConfig.header.logo)}<span>.</span></a>
+                            <p style="margin:20px 0;">${escapeHtml(webConfig.footer.text)}</p>
+                            <ul class="social-list">
+                                <li><a href="${webConfig.footer.social.facebook}" class="social-link"><i class="bi bi-facebook"></i></a></li>
+                                <li><a href="${webConfig.footer.social.instagram}" class="social-link"><i class="bi bi-instagram"></i></a></li>
+                            </ul>
+                        </div>
+                        <div><h3 class="h3" style="color:white; margin-bottom:20px;">Contact Info</h3><p>${webConfig.footer.phone}</p><p>${webConfig.footer.email}</p><p>${webConfig.footer.address}</p></div>
+                        <div><h3 class="h3" style="color:white; margin-bottom:20px;">Opening Hours</h3>${webConfig.footer.hours.map(h => `<p>${h}</p>`).join('')}</div>
+                    </div>
+                </footer>
+                <script>
+                    if(window.MenutechUI) MenutechUI.init();
+                    if(window.glfBindButtons) window.glfBindButtons();
+                ${S_CLOSE}
+            </body>
+            </html>`;
+        }
+
+        function getProCardHtml() {
+            const isMenutech = webConfig.general.cuid && webConfig.general.ruid;
+            const orderBtn = isMenutech
+                ? `<div style="margin-bottom:10px;"><menutech-orders cuid="${webConfig.general.cuid}" ruid="${webConfig.general.ruid}" background="${webConfig.general.orderBgColor}" color="${webConfig.general.orderTextColor}"></menutech-orders></div>`
+                : `<button class="btn-main">${escapeHtml(webConfig.header.btnText)}</button>`;
+
+            const socialsHtml = (webConfig.hero.socials || []).map(s => `
+                <a href="${s.url}" class="social-icon"><ion-icon name="${s.icon}"></ion-icon></a>
+            `).join('');
+
+            const portfolioHtml = (webConfig.portfolio || []).map(img => `
+                <div class="portfolio-item"><img src="${img}"></div>
+            `).join('');
+
+            return `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+                <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">${S_CLOSE}
+                <script src="https://menutech.xyz/menutechUI.min.js">${S_CLOSE}
+                <script src="https://www.fbgcdn.com/embedder/js/ewm2.js">${S_CLOSE}
+                <style>
+                    body { font-family: 'Poppins', sans-serif; margin:0; background: #f4f7f6; color: #333; }
+                    .card-web { max-width: 600px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+                    .header { background: #333; color: white; padding: 15px; text-align: center; font-weight: 600; font-size: 1.2rem; }
+                    .hero { padding: 40px 20px; text-align: center; }
+                    .profile-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+                    .name { font-size: 2.2rem; font-weight: 600; margin: 0; }
+                    .bio { color: #666; margin: 10px 0 20px; font-size: 1rem; }
+                    .social-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+                    .social-icon { font-size: 2rem; color: #333; }
+                    .section { padding: 30px 20px; border-top: 1px solid #eee; }
+                    .section-title { font-weight: 600; margin-bottom: 15px; display: block; text-transform: uppercase; font-size: 0.9rem; color: #999; }
+                    .video-container { width: 100%; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16/9; }
+                    .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+                    .portfolio-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; }
+
+                    /* Before/After Slider */
+                    .ba-slider { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; cursor: col-resize; }
+                    .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+                    .ba-after { z-index: 1; }
+                    .ba-before { z-index: 2; width: 50%; border-right: 2px solid white; }
+                    .ba-handle { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; background: white; border-radius: 50%; transform: translate(-50%, -50%); z-index: 3; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); pointer-events: none;}
+
+                    .btn-main { width: 100%; background: #333; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; margin-bottom: 10px; cursor: pointer; }
+                    [data-section] { cursor: pointer; }
+                    [data-section]:hover { outline: 2px dashed #333; }
+                </style>
+            </head>
+            <body>
+                <div class="card-web">
+                    <div class="header" data-section="header">${escapeHtml(webConfig.header.logo)}</div>
+                    <div class="hero" data-section="hero">
+                        <img src="${webConfig.hero.bannerImg}" class="profile-img">
+                        <h1 class="name">${escapeHtml(webConfig.hero.title)}</h1>
+                        <p class="bio">${escapeHtml(webConfig.hero.text)}</p>
+                        <div class="social-links">${socialsHtml}</div>
+                        ${orderBtn}
+                        ${webConfig.general.hasReservation ? `<button class="btn-main" style="background:#555">RESERVAR</button>` : ''}
+                    </div>
+
+                    <div class="section" data-section="video">
+                        <span class="section-title">Video Presentación</span>
+                        <div class="video-container">
+                            <video src="${webConfig.video.url}" controls width="100%"></video>
+                        </div>
+                    </div>
+
+                    <div class="section" data-section="portfolio">
+                        <span class="section-title">Portafolio</span>
+                        <div class="portfolio-grid">${portfolioHtml}</div>
+                    </div>
+
+                    <div class="section" data-section="beforeAfter">
+                        <span class="section-title">Antes & Después</span>
+                        <div class="ba-slider" id="baSlider">
+                            <img src="${webConfig.beforeAfter.after}" class="ba-img ba-after">
+                            <div class="ba-before" id="baBefore">
+                                <img src="${webConfig.beforeAfter.before}" class="ba-img">
+                            </div>
+                            <div class="ba-handle" id="baHandle">
+                                <ion-icon name="swap-horizontal"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section" data-section="footer" style="text-align: center; color: #999; font-size: 0.9rem;">
+                        <p>${escapeHtml(webConfig.footer.address)}</p>
+                        <p>${escapeHtml(webConfig.footer.email)} | ${escapeHtml(webConfig.footer.phone)}</p>
+                    </div>
+                </div>
+
+                <script>
+                    const slider = document.getElementById('baSlider');
+                    const before = document.getElementById('baBefore');
+                    const handle = document.getElementById('baHandle');
+
+                    function moveSlider(e) {
+                        const rect = slider.getBoundingClientRect();
+                        let x = (e.pageX || (e.touches ? e.touches[0].pageX : 0)) - rect.left;
+                        if (x < 0) x = 0;
+                        if (x > rect.width) x = rect.width;
+                        let percent = (x / rect.width) * 100;
+                        before.style.width = percent + '%';
+                        handle.style.left = percent + '%';
+                    }
+
+                    if (slider) {
+                        slider.addEventListener('mousemove', moveSlider);
+                        slider.addEventListener('touchmove', moveSlider);
+                    }
+
+                    if(window.MenutechUI) MenutechUI.init();
+                    if(window.glfBindButtons) window.glfBindButtons();
+                ${S_CLOSE}
+            </body>
+            </html>`;
         }
 
         async function saveWebsite() {
             const user = getLoggedInUser();
             const btn = document.getElementById('saveWebBtn');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
-
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
             try {
                 const { error } = await supabaseClient
                     .from('user_websites')
                     .upsert([{ user_id: user.id, config: webConfig }], { onConflict: 'user_id' });
-
                 if (error) throw error;
-                alert("Sitio web guardado con éxito");
-            } catch (err) {
-                console.error("Error saving website:", err);
-                alert("Error al guardar: " + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-cloud-arrow-up me-2"></i>Guardar';
-            }
+                alert("¡Guardado correctamente!");
+            } catch (err) { alert("Error al guardar: " + err.message); }
+            finally { btn.disabled = false; btn.innerHTML = '<i class="bi bi-cloud-arrow-up me-2"></i>Guardar'; }
         }
 
         async function loadWebsite() {
             const targetId = viewUserId || getLoggedInUser()?.id;
-            if (!targetId) return;
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('user_websites')
-                    .select('config')
-                    .eq('user_id', targetId)
-                    .single();
-
-                if (data && data.config) {
-                    webConfig = data.config;
-                    if (!isViewOnly) renderDesigner();
-                    renderPreview();
-                }
-            } catch (err) {
-                console.error("Error loading website:", err);
+            if(!targetId) return;
+            const { data } = await supabaseClient.from('user_websites').select('config').eq('user_id', targetId).single();
+            if(data?.config) {
+                webConfig = Object.assign(webConfig, data.config);
+                renderDesigner();
+                renderPreview();
             }
         }
 
         function shareWebsite() {
             const user = getLoggedInUser();
-            const publicUrl = window.location.origin + window.location.pathname + '?user=' + user.id;
-            prompt("Copia este enlace para compartir tu sitio web:", publicUrl);
+            if (!user) return alert("Debes iniciar sesión para compartir.");
+            const url = window.location.origin + window.location.pathname + '?user=' + user.id;
+            const input = document.createElement('input');
+            input.value = url;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            alert("Enlace copiado al portapapeles: " + url);
         }
 
-
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'selectSection') {
-                const sectionId = event.data.section;
-                let accordionId = 'collapse' + sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-                if (sectionId === 'promos') accordionId = 'collapsePromo';
-                if (sectionId === 'cta') accordionId = 'collapseCTA';
-
-                const collapseEl = document.getElementById(accordionId);
-                if (collapseEl) {
-                    const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
-                    bsCollapse.show();
-                    collapseEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                    // Highlight the section briefly
-                    const originalBg = collapseEl.style.backgroundColor;
-                    collapseEl.style.backgroundColor = '#fff3cd';
-                    setTimeout(() => { collapseEl.style.backgroundColor = originalBg; }, 1000);
-                }
-            }
-        });
-
         window.onload = async () => {
-            try {
-                const user = getLoggedInUser();
-                if (!isViewOnly && !user) {
-                    window.location.href = './login.html';
-                    return;
-                }
+            const user = getLoggedInUser();
+            const isLocal = window.location.hostname.includes('localhost') ||
+                           window.location.hostname.includes('127.0.0.1') ||
+                           window.location.protocol === 'file:';
 
-                if (isViewOnly) {
-                    const sidebar = document.querySelector('.designer-sidebar');
-                    if (sidebar) sidebar.style.display = 'none';
-                    const controls = document.getElementById('previewControls');
-                    if (controls) controls.style.display = 'none';
-                    document.querySelector('.preview-area').style.padding = '0';
-                    document.getElementById('previewFrame').style.maxWidth = '100%';
-                    document.getElementById('previewFrame').style.borderRadius = '0';
-                    const nav = document.querySelector('nav');
-                    if (nav) nav.style.display = 'none';
-                    document.body.style.backgroundColor = 'white';
-                } else {
-                    renderUserMenu('authButtons');
-                    renderDesigner();
-                }
-
-                await loadWebsite();
-                renderPreview();
-            } catch (err) {
-                console.error("Initialization error:", err);
-            } finally {
-                const overlay = document.getElementById('loadingOverlay');
-                if (overlay) overlay.style.display = 'none';
+            if (!isViewOnly && !user && !isLocal) {
+                window.location.href = './login.html';
+                return;
             }
+            if(isViewOnly) {
+                document.querySelector('.designer-sidebar').style.display = 'none';
+                document.querySelector('nav').style.display = 'none';
+                document.querySelector('.preview-area').style.padding = '0';
+                document.querySelector('.preview-frame').style.maxWidth = '100%';
+                document.querySelector('.preview-frame').style.borderRadius = '0';
+                document.querySelector('.preview-frame').style.boxShadow = 'none';
+                document.getElementById('previewControls').style.display = 'none';
+            } else {
+                renderUserMenu('authButtons');
+            }
+            await loadWebsite();
+            renderDesigner();
+            renderPreview();
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
     </script>
 </body>
-
 </html>
