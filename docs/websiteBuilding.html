@@ -328,20 +328,60 @@
                     const sectionId = section.dataset.section;
                     webConfig.data[sectionId] = {};
 
-                    section.querySelectorAll('[data-editable]').forEach(el => {
+                    // Include the section itself if it's editable
+                    const editables = Array.from(section.querySelectorAll('[data-editable]'));
+                    if (section.dataset.editable) editables.unshift(section);
+
+                    editables.forEach(el => {
                         const key = el.id || el.dataset.label;
                         if (!key) return;
 
                         if (el.dataset.editable === 'list') {
-                            webConfig.data[sectionId][key] = [];
+                            webConfig.data[sectionId][key] = extractListItems(el, el.dataset.blueprint);
                         } else {
-                            webConfig.data[sectionId][key] = (el.dataset.editable === 'image' || el.dataset.editable === 'svg')
-                                ? (el.src || el.dataset.bg || '')
-                                : el.textContent.trim();
+                            if (el.dataset.editable === 'svg') {
+                                webConfig.data[sectionId][key] = el.innerHTML.trim();
+                            } else if (el.dataset.editable === 'image') {
+                                webConfig.data[sectionId][key] = el.src || el.dataset.bg || '';
+                            } else {
+                                webConfig.data[sectionId][key] = el.textContent.trim();
+                            }
                         }
                     });
                 });
             }
+        }
+
+        function extractListItems(container, blueprintName) {
+            const blueprintHtml = templateBlueprints[blueprintName];
+            if (!blueprintHtml) return [];
+
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(blueprintHtml, 'text/html');
+            const editableFields = doc.querySelectorAll('[data-editable]');
+
+            const items = [];
+            Array.from(container.children).forEach(itemEl => {
+                if (itemEl.nodeType !== 1) return;
+                const itemData = {};
+                let found = false;
+                editableFields.forEach(f => {
+                    const fId = f.id || f.dataset.label;
+                    const fType = f.dataset.editable;
+                    const target = (itemEl.id === fId || itemEl.dataset.label === fId)
+                                    ? itemEl
+                                    : (itemEl.querySelector(`#${fId}`) || itemEl.querySelector(`[data-label="${fId}"]`));
+
+                    if (target) {
+                        found = true;
+                        if (fType === 'image') itemData[fId] = target.src || target.dataset.bg || '';
+                        else if (fType === 'svg') itemData[fId] = target.innerHTML.trim();
+                        else itemData[fId] = target.textContent.trim();
+                    }
+                });
+                if (found) items.push(itemData);
+            });
+            return items;
         }
 
         /**
@@ -544,7 +584,10 @@
                 if (!sectionEl) return;
 
                 Object.entries(fields).forEach(([fieldId, value]) => {
-                    const el = sectionEl.querySelector(`#${fieldId}`) || sectionEl.querySelector(`[data-label="${fieldId}"]`);
+                    const el = (sectionEl.id === fieldId || sectionEl.dataset.label === fieldId)
+                                ? sectionEl
+                                : (sectionEl.querySelector(`#${fieldId}`) || sectionEl.querySelector(`[data-label="${fieldId}"]`));
+
                     if (!el) return;
 
                     const type = el.dataset.editable;
@@ -582,7 +625,10 @@
                     if (!target) return;
 
                     const type = target.dataset.editable;
-                    if (type === 'image') target.src = val;
+                    if (type === 'image') {
+                        if (target.tagName === 'IMG') target.src = val;
+                        else target.style.backgroundImage = `url('${val}')`;
+                    }
                     else if (type === 'svg') target.innerHTML = sanitizeSvg(val);
                     else target.textContent = val;
                 });
