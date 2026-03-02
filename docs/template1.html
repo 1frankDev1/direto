@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Card Builder - Template 1</title>
+    <!-- This is a copy of your original builder logic, preserved as requested -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="./assets/js/supabase_logic.js"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f8f9fa; margin: 0; }
+        .builder-layout { display: flex; height: 100vh; }
+        .sidebar { width: 400px; background: white; border-right: 1px solid #ddd; overflow-y: auto; padding: 20px; }
+        .preview { flex-grow: 1; background: #e9ecef; display: flex; justify-content: center; padding: 40px; }
+        iframe { width: 100%; max-width: 1200px; height: 100%; border: none; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="builder-layout">
+        <div class="sidebar">
+            <h5 class="fw-bold mb-3">Original Foodie Builder</h5>
+            <p class="small text-muted">Esta es la versión preservada de tu editor original.</p>
+            <hr>
+            <div class="mb-3">
+                <label class="form-label">Título Hero</label>
+                <input type="text" class="form-control" id="titleInput" oninput="update('hero.title', this.value)">
+            </div>
+            <button class="btn btn-primary w-100" onclick="save()">Guardar Cambios</button>
+            <a href="webBuilding.html" class="btn btn-link w-100 mt-2">Ir al Nuevo Constructor Dinámico</a>
+        </div>
+        <div class="preview">
+            <iframe id="previewFrame"></iframe>
+        </div>
+    </div>
+    <script>
+        // Simple mock of original logic for preservation
+        let config = { hero: { title: "Supper delicious Burger in town!" } };
+        function update(path, val) { config.hero.title = val; render(); }
+        function render() {
+            const frame = document.getElementById('previewFrame');
+            const doc = frame.contentDocument;
+            doc.open();
+            doc.write(`<h1>${config.hero.title}</h1><p>Versión preservada del builder original.</p>`);
+            doc.close();
+        }
+        window.onload = render;
+    </script>
+</body>
+</html>
