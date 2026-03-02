@@ -6,1274 +6,257 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Web Builder - Tragalero</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@400;500&family=Rubik:wght@400;500;600;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="./assets/css/pastel-theme.css">
 
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        /* Builder Layout */
-        .builder-container {
-            display: flex;
-            height: calc(100vh - 60px);
-            overflow: hidden;
-        }
-
-        .designer-sidebar {
-            width: 450px;
-            min-width: 450px;
-            background: white;
-            border-right: 1px solid #dee2e6;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-        }
-
-        .preview-area {
-            flex-grow: 1;
-            background: #e9ecef;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-            position: relative;
-        }
-
-        .preview-frame {
-            width: 100%;
-            max-width: 1200px;
-            background: white;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            min-height: 100%;
-            transform-origin: top center;
-            transition: transform 0.3s ease;
-        }
-
-        .preview-controls {
-            position: sticky;
-            top: -20px;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            z-index: 50;
-            display: flex;
-            gap: 15px;
-        }
-
-        /* Designer Components */
-        .designer-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            background: #fff;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .accordion-button:not(.collapsed) {
-            background-color: rgba(var(--bs-primary-rgb), 0.1);
-            color: var(--bs-primary);
-        }
-
-        .designer-section {
-            padding: 15px;
-        }
-
-        .form-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #6c757d;
-        }
-
-        .upload-drop-zone {
-            border: 2px dashed #dee2e6;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            background: #f8f9fa;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 15px;
-        }
-
-        .upload-drop-zone:hover {
-            border-color: var(--bs-primary);
-            background: rgba(var(--bs-primary-rgb), 0.02);
-        }
-
-        .upload-drop-zone i {
-            font-size: 1.5rem;
-            color: #adb5bd;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .list-item-editor {
-            background: #fff;
-            border: 1px solid #dee2e6;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-
-        .list-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            cursor: move;
-        }
-
-        .drag-handle {
-            color: #dee2e6;
-            font-size: 1.2rem;
-        }
-
-        .item-actions {
-            display: flex;
-            gap: 5px;
-        }
-
-        /* Template Selection */
-        .template-card {
-            border: 2px solid #eee;
-            border-radius: 12px;
-            padding: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .template-card:hover { border-color: var(--bs-primary); }
-        .template-card.active { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.05); }
-        .template-card img { width: 100%; border-radius: 8px; margin-bottom: 8px; }
-
-        /* Responsive Previews */
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        .builder-container { display: flex; height: calc(100vh - 60px); overflow: hidden; }
+        .designer-sidebar { width: 450px; min-width: 450px; background: white; border-right: 1px solid #dee2e6; overflow-y: auto; display: flex; flex-direction: column; z-index: 100; }
+        .preview-area { flex-grow: 1; background: #e9ecef; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; position: relative; }
+        .preview-frame { width: 100%; max-width: 1200px; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; min-height: 100%; transform-origin: top center; transition: transform 0.3s ease; }
+        .preview-controls { position: sticky; top: -20px; background: white; padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; z-index: 50; display: flex; gap: 15px; }
+        .designer-header { padding: 20px; border-bottom: 1px solid #eee; background: #fff; position: sticky; top: 0; z-index: 110; }
+        .template-switcher { background: #f8f9fa; border-radius: 12px; padding: 10px; margin-top: 10px; }
+        .accordion-button:not(.collapsed) { background-color: rgba(var(--bs-primary-rgb), 0.1); color: var(--bs-primary); }
+        .designer-section { padding: 15px; }
+        .form-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #6c757d; }
+        .upload-drop-zone { border: 2px dashed #dee2e6; border-radius: 12px; padding: 20px; text-align: center; background: #f8f9fa; cursor: pointer; transition: all 0.2s; margin-bottom: 15px; }
+        .upload-drop-zone:hover { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.02); }
+        .list-item-editor { background: #fff; border: 1px solid #dee2e6; border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: move; }
+        .drag-handle { color: #dee2e6; font-size: 1.2rem; }
         .preview-mobile { width: 375px; }
         .preview-tablet { width: 768px; }
         .preview-desktop { width: 100%; max-width: 1200px; }
-
-        /* Loader */
-        #loadingOverlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
+        #loadingOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
 
 <body>
-    <div id="loadingOverlay">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
-        </div>
-    </div>
+    <div id="loadingOverlay"><div class="spinner-border text-primary"></div></div>
 
     <nav class="navbar navbar-expand-lg border-bottom bg-white" style="height: 60px;">
         <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="./admin.html">
-                <img src="https://tragalero.com/assets/img/tragalero.png" alt="Tragalero" height="35" class="me-2">
-                <span class="fw-bold fs-5">Web Builder</span>
-            </a>
+            <a class="navbar-brand fw-bold" href="./admin.html">Web Builder</a>
             <div class="ms-auto d-flex align-items-center">
                 <div id="authButtons" class="me-3"></div>
-                <div class="btn-group me-2">
-                    <button class="btn btn-primary fw-bold" id="saveWebBtn" onclick="saveWebsite()">
-                        <i class="bi bi-cloud-arrow-up me-2"></i>Guardar
-                    </button>
-                </div>
-                <button class="btn btn-dark fw-bold" id="shareBtn" onclick="shareWebsite()">
-                    <i class="bi bi-share me-2"></i>Compartir
-                </button>
+                <button class="btn btn-primary fw-bold" id="saveWebBtn" onclick="saveWebsite()"><i class="bi bi-cloud-arrow-up me-2"></i>Guardar</button>
+                <button class="btn btn-dark fw-bold ms-2" onclick="shareWebsite()"><i class="bi bi-share me-2"></i>Compartir</button>
             </div>
         </div>
     </nav>
 
     <div class="builder-container">
-        <!-- Sidebar -->
         <div class="designer-sidebar">
             <div class="designer-header">
                 <h6 class="fw-bold mb-1">Editor de Sitio Web</h6>
-                <p class="text-muted small mb-0">Configura tu presencia online</p>
+                <div class="template-switcher">
+                    <label class="form-label small mb-1">Seleccionar Plantilla</label>
+                    <select class="form-select form-select-sm" id="templateSelect" onchange="changeTemplate(this.value)">
+                        <option value="foodie">Foodie (Restaurante)</option>
+                        <option value="pro">Professional (Personal/Card)</option>
+                    </select>
+                </div>
             </div>
 
             <div class="accordion accordion-flush" id="builderAccordion">
-
-                <!-- TEMPLATE SELECTOR -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTemplate">
-                            <i class="bi bi-grid-1x2 me-2"></i> Seleccionar Plantilla
-                        </button>
-                    </h2>
-                    <div id="collapseTemplate" class="accordion-collapse collapse show" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="row g-2" id="selectTemplate">
-                                <div class="col-6">
-                                    <div class="template-card" id="tpl-foodie" onclick="setTemplate('foodie')">
-                                        <img src="https://codewithsadee.github.io/foodie/assets/images/hero-banner.png" alt="Foodie">
-                                        <span class="small fw-bold">Foodie (Restaurante)</span>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="template-card" id="tpl-pro-card" onclick="setTemplate('pro-card')">
-                                        <img src="https://tragalero.com/assets/img/tragalero.png" alt="Pro Card">
-                                        <span class="small fw-bold">Professional Card</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Config General (Foodie) -->
+                <div class="accordion-item" data-template="foodie">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral">Configuración General</button></h2>
+                    <div id="collapseGeneral" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
+                        <label class="form-label">Menutech CUID</label><input type="text" class="form-control mb-2" id="inputCUID" oninput="updateConfig('general.cuid', this.value)">
+                        <label class="form-label">Menutech RUID</label><input type="text" class="form-control mb-2" id="inputRUID" oninput="updateConfig('general.ruid', this.value)">
+                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="inputHasRes" onchange="updateConfig('general.hasReservation', this.checked)"><label class="form-check-label">Habilitar Reservas</label></div>
+                    </div></div>
                 </div>
 
-                <!-- General Settings -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral">
-                            <i class="bi bi-gear me-2"></i> Configuración General
-                        </button>
-                    </h2>
-                    <div id="collapseGeneral" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Menutech CUID</label>
-                                <input type="text" class="form-control" id="inputGeneralCUID" oninput="updateConfig('general.cuid', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Menutech RUID</label>
-                                <input type="text" class="form-control" id="inputGeneralRUID" oninput="updateConfig('general.ruid', this.value)">
-                            </div>
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" id="inputGeneralHasRes" onchange="updateConfig('general.hasReservation', this.checked)">
-                                <label class="form-check-label">Habilitar Reservas</label>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <label class="form-label">Fondo Botón</label>
-                                    <input type="color" class="form-control form-control-color w-100" id="inputOrderBgColor" value="#ff9d2d" oninput="updateConfig('general.orderBgColor', this.value)">
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">Texto Botón</label>
-                                    <input type="color" class="form-control form-control-color w-100" id="inputOrderTextColor" value="#ffffff" oninput="updateConfig('general.orderTextColor', this.value)">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Cabecera (Both) -->
+                <div class="accordion-item" data-template="foodie pro">
+                    <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeader">Cabecera & Logo</button></h2>
+                    <div id="collapseHeader" class="accordion-collapse collapse show" data-bs-parent="#builderAccordion"><div class="designer-section">
+                        <label class="form-label">Nombre/Logo</label><input type="text" class="form-control mb-2" id="inputLogo" oninput="updateConfig('header.logo', this.value)">
+                        <label class="form-label">Texto Botón</label><input type="text" class="form-control mb-2" id="inputBtnText" oninput="updateConfig('header.btnText', this.value)">
+                    </div></div>
                 </div>
 
-                <!-- Header -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeader">
-                            <i class="bi bi-layout-text-window me-2"></i> Cabecera & Logo
-                        </button>
-                    </h2>
-                    <div id="collapseHeader" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Nombre/Logo</label>
-                                <input type="text" class="form-control" id="inputHeaderLogo" oninput="updateConfig('header.logo', this.value)">
-                            </div>
-                            <div class="mb-3 foodie-only">
-                                <label class="form-label">Texto Botón Pedido</label>
-                                <input type="text" class="form-control" id="inputHeaderBtn" oninput="updateConfig('header.btnText', this.value)">
-                            </div>
-                            <div class="mb-3 foodie-only">
-                                <label class="form-label">Texto Botón Reserva</label>
-                                <input type="text" class="form-control" id="inputHeaderResBtn" oninput="updateConfig('header.resBtnText', this.value)">
-                            </div>
-                        </div>
-                    </div>
+                <!-- Perfil (Pro) -->
+                <div class="accordion-item" data-template="pro">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonal">Perfil Personal</button></h2>
+                    <div id="collapsePersonal" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
+                        <label class="form-label">Nombre</label><input type="text" class="form-control mb-2" id="inputProName" oninput="updateConfig('name', this.value)">
+                        <label class="form-label">Bio</label><textarea class="form-control mb-2" id="inputProBio" rows="3" oninput="updateConfig('bio', this.value)"></textarea>
+                        <div class="upload-drop-zone" onclick="triggerUpload('profilePic')">Cambiar Foto</div>
+                    </div></div>
                 </div>
 
-                <!-- Hero -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHero">
-                            <i class="bi bi-stars me-2"></i> Hero / Portada
-                        </button>
-                    </h2>
-                    <div id="collapseHero" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3 foodie-only">
-                                <label class="form-label">Subtítulo</label>
-                                <input type="text" class="form-control" id="inputHeroSubtitle" oninput="updateConfig('hero.subtitle', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Título Principal</label>
-                                <input type="text" class="form-control" id="inputHeroTitle" oninput="updateConfig('hero.title', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Descripción / Bio</label>
-                                <textarea class="form-control" id="inputHeroText" rows="2" oninput="updateConfig('hero.text', this.value)"></textarea>
-                            </div>
-                            <div class="mb-3 pro-only">
-                                <label class="form-label">Redes Sociales (JSON)</label>
-                                <textarea class="form-control" id="inputHeroSocials" rows="3" oninput="tryUpdateSocials(this.value)"></textarea>
-                                <small class="text-muted">Formato: [{"icon":"logo-whatsapp","url":"#"}, ...]</small>
-                            </div>
-                            <div class="mb-3 foodie-only">
-                                <label class="form-label">Imagen de Fondo</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('hero.bgImg')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar fondo</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" id="labelHeroBanner">Imagen Principal (PNG)</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('hero.bannerImg')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar banner/foto</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Hero (Foodie) -->
+                <div class="accordion-item" data-template="foodie">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHero">Hero / Portada</button></h2>
+                    <div id="collapseHero" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
+                        <label class="form-label">Título</label><input type="text" class="form-control mb-2" id="inputHeroTitle" oninput="updateConfig('hero.title', this.value)">
+                        <label class="form-label">Subtítulo</label><input type="text" class="form-control mb-2" id="inputHeroSubtitle" oninput="updateConfig('hero.subtitle', this.value)">
+                        <textarea class="form-control mb-2" id="inputHeroText" oninput="updateConfig('hero.text', this.value)"></textarea>
+                        <div class="upload-drop-zone" onclick="triggerUpload('hero.bannerImg')">Cambiar Banner</div>
+                    </div></div>
                 </div>
 
-                <!-- Video (Pro Only) -->
-                <div class="accordion-item pro-only">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVideo">
-                            <i class="bi bi-play-circle me-2"></i> Video Presentación
-                        </button>
-                    </h2>
-                    <div id="collapseVideo" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">URL del Video (MP4)</label>
-                                <input type="text" class="form-control" id="inputVideoUrl" oninput="updateConfig('video.url', this.value)">
-                            </div>
+                <!-- Portfolio (Pro) -->
+                <div class="accordion-item" data-template="pro">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePortfolio">Portafolio</button></h2>
+                    <div id="collapsePortfolio" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
+                        <div class="row g-2">
+                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.0')">Img 1</div></div>
+                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.1')">Img 2</div></div>
+                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.2')">Img 3</div></div>
+                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.3')">Img 4</div></div>
                         </div>
-                    </div>
+                    </div></div>
                 </div>
 
-                <!-- Portfolio (Pro Only) -->
-                <div class="accordion-item pro-only">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePortfolio">
-                            <i class="bi bi-images me-2"></i> Portafolio
-                        </button>
-                    </h2>
-                    <div id="collapsePortfolio" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div id="portfolioContainer"></div>
-                            <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('portfolio')">
-                                <i class="bi bi-plus-lg me-1"></i> Añadir Imagen
-                            </button>
-                        </div>
-                    </div>
+                <!-- Listas (Foodie) -->
+                <div class="accordion-item" data-template="foodie">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePromo">Promociones</button></h2>
+                    <div id="collapsePromo" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
+                        <div id="promoList"></div><button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('promos')">Añadir</button>
+                    </div></div>
                 </div>
 
-                <!-- Before/After (Pro Only) -->
-                <div class="accordion-item pro-only">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeforeAfter">
-                            <i class="bi bi-layers me-2"></i> Antes y Después
-                        </button>
-                    </h2>
-                    <div id="collapseBeforeAfter" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Imagen Antes</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('beforeAfter.before')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Subir "Antes"</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Imagen Después</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('beforeAfter.after')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Subir "Después"</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Promo (Foodie Only) -->
-                <div class="accordion-item foodie-only">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePromo">
-                            <i class="bi bi-tag me-2"></i> Promociones
-                        </button>
-                    </h2>
-                    <div id="collapsePromo" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div id="promoListContainer"></div>
-                            <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('promos')">
-                                <i class="bi bi-plus-lg me-1"></i> Añadir Promoción
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- About (Foodie Only) -->
-                <div class="accordion-item foodie-only">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbout">
-                            <i class="bi bi-info-circle me-2"></i> Sobre Nosotros
-                        </button>
-                    </h2>
-                    <div id="collapseAbout" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Título</label>
-                                <input type="text" class="form-control" id="inputAboutTitle" oninput="updateConfig('about.title', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Texto</label>
-                                <textarea class="form-control" id="inputAboutText" rows="3" oninput="updateConfig('about.text', this.value)"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Imagen</label>
-                                <div class="upload-drop-zone" onclick="triggerUpload('about.img')">
-                                    <i class="bi bi-image"></i>
-                                    <span class="small">Cambiar imagen</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Características</label>
-                                <div id="aboutFeaturesContainer"></div>
-                                <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('aboutFeatures')">
-                                    <i class="bi bi-plus-lg me-1"></i> Añadir Característica
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu (Foodie Only) -->
-                <div class="accordion-item foodie-only">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMenu">
-                            <i class="bi bi-journal-richtext me-2"></i> Menú de Comida
-                        </button>
-                    </h2>
-                    <div id="collapseMenu" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Subtítulo</label>
-                                <input type="text" class="form-control" id="inputMenuSubtitle" oninput="updateConfig('menu.subtitle', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Título</label>
-                                <input type="text" class="form-control" id="inputMenuTitle" oninput="updateConfig('menu.title', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Texto Sección</label>
-                                <textarea class="form-control" id="inputMenuText" rows="2" oninput="updateConfig('menu.text', this.value)"></textarea>
-                            </div>
-                            <div id="menuListContainer"></div>
-                            <button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('menu')">
-                                <i class="bi bi-plus-lg me-1"></i> Añadir Plato
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFooter">
-                            <i class="bi bi-info-square me-2"></i> Pie de Página
-                        </button>
-                    </h2>
-                    <div id="collapseFooter" class="accordion-collapse collapse" data-bs-parent="#builderAccordion">
-                        <div class="designer-section">
-                            <div class="mb-3">
-                                <label class="form-label">Texto Footer</label>
-                                <textarea class="form-control" id="inputFooterText" rows="2" oninput="updateConfig('footer.text', this.value)"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="text" class="form-control" id="inputFooterEmail" oninput="updateConfig('footer.email', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Teléfono</label>
-                                <input type="text" class="form-control" id="inputFooterPhone" oninput="updateConfig('footer.phone', this.value)">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Dirección</label>
-                                <input type="text" class="form-control" id="inputFooterAddress" oninput="updateConfig('footer.address', this.value)">
-                            </div>
-                        </div>
-                    </div>
+                <!-- Footer (Both) -->
+                <div class="accordion-item" data-template="foodie pro">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFooter">Pie de Página</button></h2>
+                    <div id="collapseFooter" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
+                        <label class="form-label">Texto</label><textarea class="form-control mb-2" id="inputFooterText" oninput="updateConfig('footer.text', this.value)"></textarea>
+                        <label class="form-label">WhatsApp</label><input type="text" class="form-control mb-2" id="inputWA" oninput="updateConfig('socials.whatsapp', this.value)">
+                    </div></div>
                 </div>
             </div>
-
             <input type="file" id="globalUpload" style="display:none;" onchange="handleGlobalUpload(this)">
         </div>
 
-        <!-- Preview -->
         <div class="preview-area">
-            <div class="preview-controls" id="previewControls">
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 active" onclick="setPreviewSize('desktop', this)">
-                    <i class="bi bi-laptop me-1"></i> Desktop
-                </button>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="setPreviewSize('tablet', this)">
-                    <i class="bi bi-tablet me-1"></i> Tablet
-                </button>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="setPreviewSize('mobile', this)">
-                    <i class="bi bi-phone me-1"></i> Mobile
-                </button>
+            <div class="preview-controls">
+                <button class="btn btn-sm btn-outline-secondary rounded-pill active" onclick="setPreviewSize('desktop')">Desktop</button>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPreviewSize('tablet')">Tablet</button>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPreviewSize('mobile')">Mobile</button>
             </div>
-
-            <div class="preview-frame" id="previewFrame">
-                <iframe id="templateIframe" style="width: 100%; height: 100%; border: none;"></iframe>
-            </div>
+            <div class="preview-frame"><iframe id="templateIframe" style="width: 100%; height: 100%; border: none;"></iframe></div>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="./assets/js/theme.js"></script>
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
-        const S_CLOSE = '</' + 'script>';
-        const urlParams = new URLSearchParams(window.location.search);
-        const viewUserId = urlParams.get('user');
-        const isViewOnly = !!viewUserId;
-
-        // Default Config
-        let webConfig = {
-            template: 'foodie',
-            general: {
-                cuid: '',
-                ruid: '',
-                hasReservation: false,
-                orderBgColor: '#ff9d2d',
-                orderTextColor: '#ffffff'
-            },
-            header: { logo: 'Tragalero Pro', btnText: 'Order Now', resBtnText: 'Book A Table' },
-            hero: {
-                subtitle: 'Eat Sleep And',
-                title: 'Supper delicious Burger in town!',
-                text: 'Food is any substance consumed to provide nutritional support for an organism.',
-                bgImg: 'https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg',
-                bannerImg: 'https://codewithsadee.github.io/foodie/assets/images/hero-banner.png',
-                socials: [
-                    { icon: 'logo-whatsapp', url: '#' },
-                    { icon: 'logo-facebook', url: '#' },
-                    { icon: 'logo-instagram', url: '#' }
-                ]
-            },
-            video: { url: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-            portfolio: [
-                'https://picsum.photos/id/1/600/600',
-                'https://picsum.photos/id/2/600/600',
-                'https://picsum.photos/id/3/600/600',
-                'https://picsum.photos/id/4/600/600'
-            ],
-            beforeAfter: {
-                before: 'https://picsum.photos/id/10/800/600',
-                after: 'https://picsum.photos/id/11/800/600'
-            },
-            promos: [
-                { title: 'Mexican Pizza', text: 'Delicious pizza with authentic flavors.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-1.png' },
-                { title: 'Soft Drinks', text: 'Refreshing beverages for everyone.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-2.png' },
-                { title: 'French Fries', text: 'Crispy and golden potato fries.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-3.png' },
-                { title: 'Burger King', text: 'The ultimate burger experience.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-4.png' },
-                { title: 'Maxican Pizza', text: 'Spicy and tasty pizza.', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-5.png' }
-            ],
-            about: {
-                title: 'The Best Burgers in Town!',
-                text: 'We use only the freshest ingredients to create our signature dishes. Our passion for quality shows in every bite.',
-                img: 'https://codewithsadee.github.io/foodie/assets/images/about-banner.png',
-                features: ['Delicious & Healthy Foods', 'Spacific Family And Kids Zone', 'Music & Other Facilities', 'Fastest Food Home Delivery']
-            },
-            menu: {
-                subtitle: 'Popular Dishes',
-                title: 'Our Delicious Foods',
-                text: 'Food is any substance consumed to provide nutritional support for an organism.',
-                items: [
-                    { title: 'Fried Chicken', category: 'Chicken', price: '49.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-1.png' },
-                    { title: 'Burger King', category: 'Burger', price: '29.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-2.png' },
-                    { title: 'French Fries', category: 'Sides', price: '15.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-3.png' }
-                ]
-            },
-            cta: {
-                title: 'The Foodie Have Excellent Of Quality Food!',
-                text: 'The mouth-watering aroma of sizzling steaks fills the air, while the gentle hum of conversation creates a warm atmosphere.',
-                bgImg: 'https://codewithsadee.github.io/foodie/assets/images/cta-bg.jpg',
-                bannerImg: 'https://codewithsadee.github.io/foodie/assets/images/cta-banner.png',
-                saleImg: 'https://codewithsadee.github.io/foodie/assets/images/sale-shape-red.png'
-            },
-            delivery: {
-                title: 'A Moments Of Delivered On Right Time & Place',
-                text: 'The mouth-watering aroma of sizzling steaks fills the air, while the gentle hum of conversation creates a warm atmosphere.',
-                bannerImg: 'https://codewithsadee.github.io/foodie/assets/images/delivery-banner-bg.png',
-                boyImg: 'https://codewithsadee.github.io/foodie/assets/images/delivery-boy.svg'
-            },
-            testimonials: {
-                subtitle: 'Testimonials',
-                text: 'Our customers love us! Here is what they have to say about our delicious food.',
-                items: [
-                    { name: 'John Doe', title: 'Food Critic', text: 'Best burger I have ever had! The service was also top-notch.', avatar: 'https://codewithsadee.github.io/foodie/assets/images/testi-avatar.jpg' }
-                ]
-            },
-            blog: {
-                subtitle: 'Latest Blog Posts',
-                text: 'Stay updated with the latest food trends and recipes from our kitchen.',
-                items: [
-                    { title: 'The Secret to Perfect Fries', category: 'Cooking', date: '2024-01-01', img: 'https://codewithsadee.github.io/foodie/assets/images/blog-1.jpg' }
-                ]
-            },
-            footer: {
-                text: 'Visit us and enjoy the best food experience in town. We are committed to excellence.',
-                email: 'info@tragalero.com',
-                phone: '+1 234 567 890',
-                address: '123 Foodie Street, Flavor Town',
-                hours: ['Monday - Friday: 8am - 11pm', 'Saturday - Sunday: 9am - 12pm'],
-                social: { facebook: '#', twitter: '#', instagram: '#', pinterest: '#' }
-            }
-        };
-
+        let webConfig = { template: 'foodie', header: {logo: 'Foodie', btnText: 'Order'}, hero: {title: '', subtitle: '', text: ''}, promos: [], socials: {whatsapp: ''}, footer: {text: ''}, name: '', bio: '', portfolio: ['', '', '', ''] };
         let uploadTarget = null;
-
-        function escapeHtml(text) {
-            if (typeof text !== 'string') return text;
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function sanitizeUrl(url) {
-            if (!url) return '';
-            return url.replace(/[^-A-Za-z0-9+&@#/%?=~_|!:,.;]/g, '');
-        }
-
-        function setPreviewSize(size, btn) {
-            const frame = document.getElementById('previewFrame');
-            frame.className = 'preview-frame preview-' + size;
-            document.querySelectorAll('.preview-controls button').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-        }
 
         function updateConfig(path, value) {
             const keys = path.split('.');
-            let current = webConfig;
-            for(let i = 0; i < keys.length - 1; i++) {
-                if (!current[keys[i]]) current[keys[i]] = {};
-                current = current[keys[i]];
-            }
-            current[keys[keys.length - 1]] = value;
+            let curr = webConfig;
+            for(let i=0; i<keys.length-1; i++) { if(!curr[keys[i]]) curr[keys[i]] = {}; curr = curr[keys[i]]; }
+            curr[keys[keys.length-1]] = value;
             renderPreview();
         }
 
-        function tryUpdateSocials(val) {
-            try {
-                const arr = JSON.parse(val);
-                if(Array.isArray(arr)) {
-                    webConfig.hero.socials = arr;
-                    renderPreview();
-                }
-            } catch(e) {}
-        }
-
-        function setTemplate(tpl) {
-            webConfig.template = tpl;
+        async function changeTemplate(tid) {
+            webConfig.template = tid;
+            const iframe = document.getElementById('templateIframe');
+            iframe.src = tid === 'foodie' ? 'template1.html' : 'template2.html';
+            document.querySelectorAll('#builderAccordion .accordion-item').forEach(item => {
+                const allowed = item.dataset.template || 'foodie';
+                item.style.display = allowed.includes(tid) ? 'block' : 'none';
+            });
             renderDesigner();
-            renderPreview();
-        }
-
-        function triggerUpload(path) {
-            uploadTarget = path;
-            document.getElementById('globalUpload').click();
-        }
-
-        async function handleGlobalUpload(input) {
-            if (!input.files || !input.files[0]) return;
-            const file = input.files[0];
-            try {
-                document.getElementById('loadingOverlay').style.display = 'flex';
-                const url = await uploadToCloudinary(file);
-                updateConfig(uploadTarget, url);
-                renderDesigner();
-            } catch (err) {
-                alert("Error: " + err.message);
-            } finally {
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }
-        }
-
-        async function uploadToCloudinary(file) {
-            const CLOUD_NAME = "dbbjxhvz5";
-            const UPLOAD_PRESET = "Tragalero";
-            const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', UPLOAD_PRESET);
-            const response = await fetch(url, { method: 'POST', body: formData });
-            const data = await response.json();
-            return data.secure_url;
-        }
-
-        function addItem(type) {
-            if(type === 'portfolio') {
-                webConfig.portfolio.push('https://via.placeholder.com/600');
-            } else if (type === 'promos') {
-                webConfig.promos.push({ title: 'Nueva Promo', text: 'Descripción...', img: 'https://via.placeholder.com/300' });
-            } else if (type === 'menu') {
-                webConfig.menu.items.push({ title: 'Nuevo Plato', category: 'General', price: '0.00', img: 'https://via.placeholder.com/300' });
-            } else if (type === 'aboutFeatures') {
-                webConfig.about.features.push('Nueva Característica');
-            }
-            renderDesigner();
-            renderPreview();
-        }
-
-        function removeItem(type, index) {
-            if(type === 'portfolio') webConfig.portfolio.splice(index, 1);
-            else if(type === 'promos') webConfig.promos.splice(index, 1);
-            else if(type === 'menu') webConfig.menu.items.splice(index, 1);
-            else if(type === 'aboutFeatures') webConfig.about.features.splice(index, 1);
-            renderDesigner();
-            renderPreview();
+            iframe.onload = () => renderPreview();
         }
 
         function renderDesigner() {
-            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
-            document.getElementById('tpl-' + webConfig.template)?.classList.add('active');
-
-            const isFoodie = webConfig.template === 'foodie';
-
-            // Toggle sidebar sections visibility
-            document.querySelectorAll('.foodie-only').forEach(el => {
-                const accordionItem = el.closest('.accordion-item');
-                if (accordionItem) {
-                    accordionItem.style.display = isFoodie ? 'block' : 'none';
-                } else {
-                    el.style.display = isFoodie ? 'block' : 'none';
-                }
-            });
-            document.querySelectorAll('.pro-only').forEach(el => {
-                const accordionItem = el.closest('.accordion-item');
-                if (accordionItem) {
-                    accordionItem.style.display = !isFoodie ? 'block' : 'none';
-                } else {
-                    el.style.display = !isFoodie ? 'block' : 'none';
-                }
-            });
-
-            // Sync inputs with webConfig
-            document.getElementById('inputGeneralCUID').value = webConfig.general.cuid || '';
-            document.getElementById('inputGeneralRUID').value = webConfig.general.ruid || '';
-            document.getElementById('inputGeneralHasRes').checked = !!webConfig.general.hasReservation;
-            document.getElementById('inputHeaderLogo').value = webConfig.header.logo || '';
-            document.getElementById('inputHeroTitle').value = webConfig.hero.title || '';
-            document.getElementById('inputHeroText').value = webConfig.hero.text || '';
-            document.getElementById('inputFooterEmail').value = webConfig.footer.email || '';
-            document.getElementById('inputFooterPhone').value = webConfig.footer.phone || '';
-            document.getElementById('inputFooterAddress').value = webConfig.footer.address || '';
-
-            if (isFoodie) {
-                document.getElementById('inputHeaderBtn').value = webConfig.header.btnText || '';
-                document.getElementById('inputHeaderResBtn').value = webConfig.header.resBtnText || '';
-                document.getElementById('inputHeroSubtitle').value = webConfig.hero.subtitle || '';
-                document.getElementById('inputAboutTitle').value = webConfig.about.title || '';
-                document.getElementById('inputAboutText').value = webConfig.about.text || '';
-                document.getElementById('inputMenuSubtitle').value = webConfig.menu.subtitle || '';
-                document.getElementById('inputMenuTitle').value = webConfig.menu.title || '';
-                document.getElementById('inputMenuText').value = webConfig.menu.text || '';
-                document.getElementById('labelHeroBanner').textContent = 'Imagen Principal (PNG)';
+            document.getElementById('inputLogo').value = webConfig.header?.logo || '';
+            document.getElementById('inputBtnText').value = webConfig.header?.btnText || '';
+            if(webConfig.template === 'foodie') {
+                document.getElementById('inputHeroTitle').value = webConfig.hero?.title || '';
+                document.getElementById('inputHeroSubtitle').value = webConfig.hero?.subtitle || '';
+                document.getElementById('inputHeroText').value = webConfig.hero?.text || '';
             } else {
-                document.getElementById('inputHeroSocials').value = JSON.stringify(webConfig.hero.socials);
-                document.getElementById('inputVideoUrl').value = webConfig.video.url || '';
-                document.getElementById('labelHeroBanner').textContent = 'Foto de Perfil / Logo';
-
-                const pContainer = document.getElementById('portfolioContainer');
-                pContainer.innerHTML = '';
-                (webConfig.portfolio || []).forEach((img, i) => {
-                    pContainer.innerHTML += `
-                        <div class="list-item-editor" data-index="${i}">
-                            <div class="list-item-header">
-                                <span class="fw-bold small"><i class="bi bi-grip-vertical me-1 drag-handle"></i> Item ${i+1}</span>
-                                <button class="btn btn-sm text-danger" onclick="removeItem('portfolio', ${i})"><i class="bi bi-trash"></i></button>
-                            </div>
-                            <div class="upload-drop-zone p-2 mb-0" onclick="triggerUpload('portfolio.${i}')">
-                                <img src="${img}" style="height: 60px; width:60px; object-fit:cover; border-radius: 4px;" class="me-2">
-                                <span class="small">Cambiar imagen</span>
-                            </div>
-                        </div>
-                    `;
-                });
+                document.getElementById('inputProName').value = webConfig.name || '';
+                document.getElementById('inputProBio').value = webConfig.bio || '';
             }
-
-            if(isFoodie) {
-                const promoContainer = document.getElementById('promoListContainer');
-                promoContainer.innerHTML = '';
-                (webConfig.promos || []).forEach((p, i) => {
-                    promoContainer.innerHTML += `<div class="list-item-editor">
-                        <input type="text" class="form-control mb-1" value="${p.title}" oninput="webConfig.promos[${i}].title=this.value;renderPreview()">
-                        <div class="upload-drop-zone p-2 mb-1" onclick="triggerUpload('promos.${i}.img')">
-                            <img src="${p.img}" style="height: 40px; border-radius: 4px;" class="me-2">
-                            <span class="small">Cambiar imagen</span>
-                        </div>
-                        <button class="btn btn-sm text-danger" onclick="removeItem('promos', ${i})">Borrar</button>
-                    </div>`;
-                });
-
-                const menuContainer = document.getElementById('menuListContainer');
-                menuContainer.innerHTML = '';
-                (webConfig.menu.items || []).forEach((item, i) => {
-                    menuContainer.innerHTML += `<div class="list-item-editor">
-                        <input type="text" class="form-control mb-1" value="${item.title}" oninput="webConfig.menu.items[${i}].title=this.value;renderPreview()">
-                        <input type="text" class="form-control mb-1" value="${item.price}" oninput="webConfig.menu.items[${i}].price=this.value;renderPreview()">
-                        <button class="btn btn-sm text-danger" onclick="removeItem('menu', ${i})">Borrar</button>
-                    </div>`;
-                });
-
-                const featuresContainer = document.getElementById('aboutFeaturesContainer');
-                featuresContainer.innerHTML = '';
-                (webConfig.about.features || []).forEach((f, i) => {
-                    featuresContainer.innerHTML += `<div class="d-flex mb-1">
-                        <input type="text" class="form-control form-control-sm me-1" value="${f}" oninput="webConfig.about.features[${i}]=this.value;renderPreview()">
-                        <button class="btn btn-sm btn-outline-danger" onclick="removeItem('aboutFeatures', ${i})">&times;</button>
-                    </div>`;
-                });
-            }
-
-            initSortable();
+            document.getElementById('inputFooterText').value = webConfig.footer?.text || '';
+            document.getElementById('inputWA').value = webConfig.socials?.whatsapp || '';
+            renderListContainers();
         }
 
-        function initSortable() {
-            const pContainer = document.getElementById('portfolioContainer');
-            if(pContainer) {
-                new Sortable(pContainer, {
-                    handle: '.drag-handle',
-                    animation: 150,
-                    onEnd: (evt) => {
-                        const item = webConfig.portfolio.splice(evt.oldIndex, 1)[0];
-                        webConfig.portfolio.splice(evt.newIndex, 0, item);
-                        renderPreview();
-                    }
-                });
+        function renderListContainers() {
+            const promoCont = document.getElementById('promoList');
+            if(promoCont) {
+                promoCont.innerHTML = (webConfig.promos || []).map((p, i) => `
+                    <div class="list-item-editor" data-index="${i}">
+                        <input type="text" class="form-control form-control-sm mb-1" value="${p.title}" oninput="webConfig.promos[${i}].title = this.value; renderPreview()">
+                        <button class="btn btn-sm btn-link text-danger p-0" onclick="webConfig.promos.splice(${i},1); renderDesigner(); renderPreview()">Eliminar</button>
+                    </div>
+                `).join('');
             }
+        }
+
+        function addItem(type) {
+            if(type === 'promos') webConfig.promos.push({ title: 'Nueva Promo', text: '', img: 'https://via.placeholder.com/300' });
+            renderDesigner();
+            renderPreview();
         }
 
         function renderPreview() {
             const iframe = document.getElementById('templateIframe');
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-            const html = webConfig.template === 'foodie' ? getFoodieHtml() : getProCardHtml();
-            doc.open();
-            doc.write(html);
-            doc.close();
-        }
-
-        function getFoodieHtml() {
-            const isMenutech = webConfig.general.cuid && webConfig.general.ruid;
-            const orderButtonHtml = isMenutech
-                ? `<menutech-orders cuid="${webConfig.general.cuid}" ruid="${webConfig.general.ruid}" background="${webConfig.general.orderBgColor}" color="${webConfig.general.orderTextColor}"></menutech-orders>`
-                : `<button class="btn btn-hover">${escapeHtml(webConfig.header.btnText)}</button>`;
-
-            const reservationButtonHtml = (webConfig.general.hasReservation)
-                ? `<button class="btn btn-hover" style="--bg-color: #333">${escapeHtml(webConfig.header.resBtnText)}</button>`
-                : '';
-
-            const promosHtml = (webConfig.promos || []).map(p => `
-                <li class="promo-item">
-                    <div class="promo-card">
-                        <div class="card-icon"><img src="${sanitizeUrl(p.img)}" width="100" height="100"></div>
-                        <h3 class="h3 card-title">${escapeHtml(p.title)}</h3>
-                        <p class="card-text">${escapeHtml(p.text)}</p>
-                    </div>
-                </li>
-            `).join('');
-
-            const aboutFeaturesHtml = (webConfig.about.features || []).map(f => `
-                <li class="about-item">
-                    <ion-icon name="checkmark-outline"></ion-icon>
-                    <span class="span">${escapeHtml(f)}</span>
-                </li>
-            `).join('');
-
-            const menuHtml = (webConfig.menu.items || []).map(item => `
-                <li>
-                    <div class="food-menu-card">
-                        <div class="card-banner">
-                            <img src="${sanitizeUrl(item.img)}" width="300" height="300" class="w-100">
-                            <div class="badge">-15%</div>
-                            <button class="btn food-menu-btn">Order Now</button>
-                        </div>
-                        <div class="wrapper">
-                            <p class="category">${escapeHtml(item.category)}</p>
-                            <div class="rating-wrapper"><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon></div>
-                        </div>
-                        <h3 class="h3 card-title">${escapeHtml(item.title)}</h3>
-                        <div class="price-wrapper"><p class="price">$${escapeHtml(item.price)}</p></div>
-                    </div>
-                </li>
-            `).join('');
-
-            const testiHtml = (webConfig.testimonials.items || []).map(t => `
-                <li class="testi-item">
-                    <div class="testi-card">
-                        <div class="profile-wrapper">
-                            <figure class="avatar"><img src="${sanitizeUrl(t.avatar)}" width="80" height="80"></figure>
-                            <div><h3 class="h3 testi-name">${escapeHtml(t.name)}</h3><p class="testi-title">${escapeHtml(t.title)}</p></div>
-                        </div>
-                        <p class="testi-text">${escapeHtml(t.text)}</p>
-                    </div>
-                </li>
-            `).join('');
-
-            const blogHtml = (webConfig.blog.items || []).map(b => `
-                <li>
-                    <div class="blog-card">
-                        <figure class="card-banner"><img src="${sanitizeUrl(b.img)}" class="w-100"><div class="badge">${escapeHtml(b.category)}</div></figure>
-                        <div class="card-content">
-                            <div class="card-meta-wrapper"><div class="card-meta-link"><ion-icon name="calendar-outline"></ion-icon><time class="meta-info">${escapeHtml(b.date)}</time></div></div>
-                            <h3 class="h3 card-title">${escapeHtml(b.title)}</h3>
-                            <a href="#" class="btn-link">Read More</a>
-                        </div>
-                    </div>
-                </li>
-            `).join('');
-
-            const bannersHtml = `
-                <li class="banner-lg"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-1.jpg" class="banner-img"><div class="banner-item-content"><h2 class="banner-title">15% Off Your First Order!</h2><button class="btn">Order Now</button></div></div></li>
-                <li class="banner-sm"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-2.jpg" class="banner-img"></div></li>
-                <li class="banner-md"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-3.jpg" class="banner-img"></div></li>
-                <li class="banner-sm"><div class="banner-card"><img src="https://codewithsadee.github.io/foodie/assets/images/banner-4.jpg" class="banner-img"></div></li>
-            `;
-
-            // Return full original Foodie template logic with placeholders
-            return `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Rubik:wght@400;500;600;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-                <script src="https://menutech.xyz/menutechUI.min.js">${S_CLOSE}
-                <script src="https://www.fbgcdn.com/embedder/js/ewm2.js">${S_CLOSE}
-                <style>
-                    :root {
-                        --rich-black-fogra-29: hsl(210, 26%, 7%); --deep-saffron: hsl(32, 100%, 59%); --dark-orange: hsl(28, 100%, 58%);
-                        --white: hsl(0, 0%, 100%); --sonic-silver: hsl(0, 0%, 47%); --isabelline: hsl(38, 44%, 96%);
-                        --ff-shadows-into-light: 'Shadows Into Light', cursive; --ff-roboto: 'Roboto', sans-serif; --ff-rubik: 'Rubik', sans-serif;
-                    }
-                    * { margin:0; padding:0; box-sizing: border-box; }
-                    li { list-style:none; }
-                    img { height: auto; max-width: 100%; display: block; }
-                    html { font-family: var(--ff-roboto); font-size: 10px; scroll-behavior: smooth; }
-                    body { background: white; color: var(--sonic-silver); font-size: 1.6rem; overflow-x: hidden; }
-                    .container { padding-inline: 15px; max-width: 1200px; margin: 0 auto; }
-                    .h1, .h2, .h3 { font-family: var(--ff-rubik); color: var(--rich-black-fogra-29); }
-                    .btn { background: var(--deep-saffron); color: white; padding: 12px 30px; cursor: pointer; border: none; font-family: var(--ff-rubik); font-weight: 500; }
-                    .header { padding: 20px 0; background: white; border-bottom: 1px solid #eee; position: sticky; top:0; z-index:100; }
-                    .header .container { display: flex; justify-content: space-between; align-items: center; }
-                    .logo { font-size: 2.8rem; font-weight: 700; color: var(--rich-black-fogra-29); text-decoration: none; }
-                    .logo span { color: var(--deep-saffron); }
-                    .hero { padding: 100px 0; background-size: cover; background-position: center; text-align: center; }
-                    .hero-subtitle { color: var(--dark-orange); font-family: var(--ff-shadows-into-light); font-size: 2.4rem; }
-                    .hero-title { font-size: 6rem; color: white; margin: 20px 0; }
-                    .hero-text { color: white; font-size: 1.8rem; margin-bottom: 30px; }
-                    .section { padding: 80px 0; text-align: center; }
-                    .section-subtitle { color: #f00; font-family: var(--ff-rubik); margin-bottom: 10px; }
-                    .promo-list { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; }
-                    .promo-card { min-width: 250px; background: white; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; }
-                    .about { display: flex; flex-wrap: wrap; align-items: center; gap: 40px; text-align: left; }
-                    .about-banner { flex: 1; min-width: 300px; }
-                    .about-content { flex: 1; min-width: 300px; }
-                    .food-menu-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
-                    .food-menu-card { background: white; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-                    .footer { background: #111; color: #888; padding: 60px 0; }
-                    .footer-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
-                    .social-list { display: flex; gap: 10px; margin-top: 20px; }
-                    .social-link { background: var(--dark-orange); color: white; padding: 10px; font-size: 1.8rem; }
-
-                    [data-section] { cursor: pointer; transition: outline 0.2s; }
-                    [data-section]:hover { outline: 2px dashed var(--deep-saffron); outline-offset: 4px; }
-                </style>
-            </head>
-            <body>
-                <header class="header" data-section="header">
-                    <div class="container">
-                        <a href="#" class="logo">${escapeHtml(webConfig.header.logo)}<span>.</span></a>
-                        <div style="display:flex; gap:10px;">${orderButtonHtml}</div>
-                    </div>
-                </header>
-                <main>
-                    <section class="hero" style="background-image: url('${sanitizeUrl(webConfig.hero.bgImg)}')" data-section="hero">
-                        <div class="container">
-                            <p class="hero-subtitle">${escapeHtml(webConfig.hero.subtitle)}</p>
-                            <h1 class="hero-title">${escapeHtml(webConfig.hero.title)}</h1>
-                            <p class="hero-text">${escapeHtml(webConfig.hero.text)}</p>
-                            <div style="display:flex; gap:10px; justify-content:center;">${orderButtonHtml}${reservationButtonHtml}</div>
-                        </div>
-                    </section>
-                    <section class="section" data-section="promos">
-                        <div class="container"><ul class="promo-list">${promosHtml}</ul></div>
-                    </section>
-                    <section class="section section-divider gray about" data-section="about">
-                        <div class="container about">
-                            <div class="about-banner"><img src="${sanitizeUrl(webConfig.about.img)}"></div>
-                            <div class="about-content">
-                                <h2 class="h2">${escapeHtml(webConfig.about.title)}</h2>
-                                <p style="margin:20px 0;">${escapeHtml(webConfig.about.text)}</p>
-                                <ul style="margin-bottom:30px;">${aboutFeaturesHtml}</ul>
-                                ${orderButtonHtml}
-                            </div>
-                        </div>
-                    </section>
-                    <section class="section" data-section="menu">
-                        <div class="container">
-                            <p class="section-subtitle">${escapeHtml(webConfig.menu.subtitle)}</p>
-                            <h2 class="h2">${escapeHtml(webConfig.menu.title)}</h2>
-                            <p style="margin-bottom:40px;">${escapeHtml(webConfig.menu.text)}</p>
-                            <ul class="food-menu-list">${menuHtml}</ul>
-                        </div>
-                    </section>
-                    <section class="section" data-section="cta" style="background: url('${sanitizeUrl(webConfig.cta.bgImg)}')">
-                        <div class="container">
-                            <h2 class="h2" style="color:white;">${escapeHtml(webConfig.cta.title)}</h2>
-                            <p style="color:white; margin:20px 0;">${escapeHtml(webConfig.cta.text)}</p>
-                            ${orderButtonHtml}
-                        </div>
-                    </section>
-                    <section class="section" data-section="testimonials">
-                        <div class="container">
-                            <p class="section-subtitle">${escapeHtml(webConfig.testimonials.subtitle)}</p>
-                            <p style="margin-bottom:40px;">${escapeHtml(webConfig.testimonials.text)}</p>
-                            <ul class="promo-list">${testiHtml}</ul>
-                        </div>
-                    </section>
-                </main>
-                <footer class="footer" data-section="footer">
-                    <div class="container footer-top">
-                        <div>
-                            <a href="#" class="logo" style="color:white;">${escapeHtml(webConfig.header.logo)}<span>.</span></a>
-                            <p style="margin:20px 0;">${escapeHtml(webConfig.footer.text)}</p>
-                            <ul class="social-list">
-                                <li><a href="${webConfig.footer.social.facebook}" class="social-link"><i class="bi bi-facebook"></i></a></li>
-                                <li><a href="${webConfig.footer.social.instagram}" class="social-link"><i class="bi bi-instagram"></i></a></li>
-                            </ul>
-                        </div>
-                        <div><h3 class="h3" style="color:white; margin-bottom:20px;">Contact Info</h3><p>${webConfig.footer.phone}</p><p>${webConfig.footer.email}</p><p>${webConfig.footer.address}</p></div>
-                        <div><h3 class="h3" style="color:white; margin-bottom:20px;">Opening Hours</h3>${webConfig.footer.hours.map(h => `<p>${h}</p>`).join('')}</div>
-                    </div>
-                </footer>
-                <script>
-                    if(window.MenutechUI) MenutechUI.init();
-                    if(window.glfBindButtons) window.glfBindButtons();
-                ${S_CLOSE}
-            </body>
-            </html>`;
-        }
-
-        function getProCardHtml() {
-            const isMenutech = webConfig.general.cuid && webConfig.general.ruid;
-            const orderBtn = isMenutech
-                ? `<div style="margin-bottom:10px;"><menutech-orders cuid="${webConfig.general.cuid}" ruid="${webConfig.general.ruid}" background="${webConfig.general.orderBgColor}" color="${webConfig.general.orderTextColor}"></menutech-orders></div>`
-                : `<button class="btn-main">${escapeHtml(webConfig.header.btnText)}</button>`;
-
-            const socialsHtml = (webConfig.hero.socials || []).map(s => `
-                <a href="${s.url}" class="social-icon"><ion-icon name="${s.icon}"></ion-icon></a>
-            `).join('');
-
-            const portfolioHtml = (webConfig.portfolio || []).map(img => `
-                <div class="portfolio-item"><img src="${img}"></div>
-            `).join('');
-
-            return `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-                <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">${S_CLOSE}
-                <script src="https://menutech.xyz/menutechUI.min.js">${S_CLOSE}
-                <script src="https://www.fbgcdn.com/embedder/js/ewm2.js">${S_CLOSE}
-                <style>
-                    body { font-family: 'Poppins', sans-serif; margin:0; background: #f4f7f6; color: #333; }
-                    .card-web { max-width: 600px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-                    .header { background: #333; color: white; padding: 15px; text-align: center; font-weight: 600; font-size: 1.2rem; }
-                    .hero { padding: 40px 20px; text-align: center; }
-                    .profile-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-                    .name { font-size: 2.2rem; font-weight: 600; margin: 0; }
-                    .bio { color: #666; margin: 10px 0 20px; font-size: 1rem; }
-                    .social-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
-                    .social-icon { font-size: 2rem; color: #333; }
-                    .section { padding: 30px 20px; border-top: 1px solid #eee; }
-                    .section-title { font-weight: 600; margin-bottom: 15px; display: block; text-transform: uppercase; font-size: 0.9rem; color: #999; }
-                    .video-container { width: 100%; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16/9; }
-                    .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-                    .portfolio-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; }
-
-                    /* Before/After Slider */
-                    .ba-slider { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; cursor: col-resize; }
-                    .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-                    .ba-after { z-index: 1; }
-                    .ba-before { z-index: 2; width: 50%; border-right: 2px solid white; }
-                    .ba-handle { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; background: white; border-radius: 50%; transform: translate(-50%, -50%); z-index: 3; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); pointer-events: none;}
-
-                    .btn-main { width: 100%; background: #333; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; margin-bottom: 10px; cursor: pointer; }
-                    [data-section] { cursor: pointer; }
-                    [data-section]:hover { outline: 2px dashed #333; }
-                </style>
-            </head>
-            <body>
-                <div class="card-web">
-                    <div class="header" data-section="header">${escapeHtml(webConfig.header.logo)}</div>
-                    <div class="hero" data-section="hero">
-                        <img src="${webConfig.hero.bannerImg}" class="profile-img">
-                        <h1 class="name">${escapeHtml(webConfig.hero.title)}</h1>
-                        <p class="bio">${escapeHtml(webConfig.hero.text)}</p>
-                        <div class="social-links">${socialsHtml}</div>
-                        ${orderBtn}
-                        ${webConfig.general.hasReservation ? `<button class="btn-main" style="background:#555">RESERVAR</button>` : ''}
-                    </div>
-
-                    <div class="section" data-section="video">
-                        <span class="section-title">Video Presentación</span>
-                        <div class="video-container">
-                            <video src="${webConfig.video.url}" controls width="100%"></video>
-                        </div>
-                    </div>
-
-                    <div class="section" data-section="portfolio">
-                        <span class="section-title">Portafolio</span>
-                        <div class="portfolio-grid">${portfolioHtml}</div>
-                    </div>
-
-                    <div class="section" data-section="beforeAfter">
-                        <span class="section-title">Antes & Después</span>
-                        <div class="ba-slider" id="baSlider">
-                            <img src="${webConfig.beforeAfter.after}" class="ba-img ba-after">
-                            <div class="ba-before" id="baBefore">
-                                <img src="${webConfig.beforeAfter.before}" class="ba-img">
-                            </div>
-                            <div class="ba-handle" id="baHandle">
-                                <ion-icon name="swap-horizontal"></ion-icon>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section" data-section="footer" style="text-align: center; color: #999; font-size: 0.9rem;">
-                        <p>${escapeHtml(webConfig.footer.address)}</p>
-                        <p>${escapeHtml(webConfig.footer.email)} | ${escapeHtml(webConfig.footer.phone)}</p>
-                    </div>
-                </div>
-
-                <script>
-                    const slider = document.getElementById('baSlider');
-                    const before = document.getElementById('baBefore');
-                    const handle = document.getElementById('baHandle');
-
-                    function moveSlider(e) {
-                        const rect = slider.getBoundingClientRect();
-                        let x = (e.pageX || (e.touches ? e.touches[0].pageX : 0)) - rect.left;
-                        if (x < 0) x = 0;
-                        if (x > rect.width) x = rect.width;
-                        let percent = (x / rect.width) * 100;
-                        before.style.width = percent + '%';
-                        handle.style.left = percent + '%';
-                    }
-
-                    if (slider) {
-                        slider.addEventListener('mousemove', moveSlider);
-                        slider.addEventListener('touchmove', moveSlider);
-                    }
-
-                    if(window.MenutechUI) MenutechUI.init();
-                    if(window.glfBindButtons) window.glfBindButtons();
-                ${S_CLOSE}
-            </body>
-            </html>`;
+            if(iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'update', config: webConfig }, '*');
         }
 
         async function saveWebsite() {
             const user = getLoggedInUser();
-            const btn = document.getElementById('saveWebBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
+            if(!user) return alert("Inicia sesión");
             try {
-                const { error } = await supabaseClient
-                    .from('user_websites')
-                    .upsert([{ user_id: user.id, config: webConfig }], { onConflict: 'user_id' });
-                if (error) throw error;
-                alert("¡Guardado correctamente!");
-            } catch (err) { alert("Error al guardar: " + err.message); }
-            finally { btn.disabled = false; btn.innerHTML = '<i class="bi bi-cloud-arrow-up me-2"></i>Guardar'; }
+                const { error } = await supabaseClient.from('user_websites').upsert([{ user_id: user.id, config: webConfig }], { onConflict: 'user_id' });
+                if(error) throw error; alert("Guardado");
+            } catch(e) { alert(e.message); }
         }
 
         async function loadWebsite() {
-            const targetId = viewUserId || getLoggedInUser()?.id;
-            if(!targetId) return;
-            const { data } = await supabaseClient.from('user_websites').select('config').eq('user_id', targetId).single();
+            const user = getLoggedInUser();
+            if(!user) return;
+            const { data } = await supabaseClient.from('user_websites').select('config').eq('user_id', user.id).single();
             if(data?.config) {
-                webConfig = Object.assign(webConfig, data.config);
-                renderDesigner();
-                renderPreview();
+                webConfig = data.config;
+                document.getElementById('templateSelect').value = webConfig.template;
+                changeTemplate(webConfig.template);
             }
         }
 
-        function shareWebsite() {
-            const user = getLoggedInUser();
-            if (!user) return alert("Debes iniciar sesión para compartir.");
-            const url = window.location.origin + window.location.pathname + '?user=' + user.id;
-            const input = document.createElement('input');
-            input.value = url;
-            document.body.appendChild(input);
-            input.select();
-            document.execCommand('copy');
-            document.body.removeChild(input);
-            alert("Enlace copiado al portapapeles: " + url);
+        function triggerUpload(path) { uploadTarget = path; document.getElementById('globalUpload').click(); }
+        async function handleGlobalUpload(input) {
+            if(!input.files?.[0]) return;
+            const url = "https://via.placeholder.com/600"; // Mock upload
+            updateConfig(uploadTarget, url); renderDesigner();
         }
+
+        function setPreviewSize(s) { document.querySelector('.preview-frame').className = 'preview-frame preview-' + s; }
+
+        window.addEventListener('message', (e) => {
+            if(e.data.type === 'selectSection') {
+                const map = { 'personal': 'collapsePersonal', 'hero': 'collapseHero', 'promos': 'collapsePromo' };
+                const el = document.getElementById(map[e.data.section] || 'collapseHeader');
+                if(el) bootstrap.Collapse.getOrCreateInstance(el).show();
+            }
+        });
 
         window.onload = async () => {
-            const user = getLoggedInUser();
-            const isLocal = window.location.hostname.includes('localhost') ||
-                           window.location.hostname.includes('127.0.0.1') ||
-                           window.location.protocol === 'file:';
-
-            if (!isViewOnly && !user && !isLocal) {
-                window.location.href = './login.html';
-                return;
-            }
-            if(isViewOnly) {
-                document.querySelector('.designer-sidebar').style.display = 'none';
-                document.querySelector('nav').style.display = 'none';
-                document.querySelector('.preview-area').style.padding = '0';
-                document.querySelector('.preview-frame').style.maxWidth = '100%';
-                document.querySelector('.preview-frame').style.borderRadius = '0';
-                document.querySelector('.preview-frame').style.boxShadow = 'none';
-                document.getElementById('previewControls').style.display = 'none';
-            } else {
-                renderUserMenu('authButtons');
-            }
+            if(!getLoggedInUser()) { window.location.href = './login.html'; return; }
             await loadWebsite();
-            renderDesigner();
-            renderPreview();
+            if(!webConfig.template) changeTemplate('foodie');
             document.getElementById('loadingOverlay').style.display = 'none';
         }
     </script>
