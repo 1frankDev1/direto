@@ -1,0 +1,5 @@
+127.0.0.1 - - [02/Mar/2026 10:31:46] "GET /docs/websiteBuilding.html HTTP/1.1" 200 -
+127.0.0.1 - - [02/Mar/2026 10:31:46] "GET /docs/assets/css/pastel-theme.css HTTP/1.1" 200 -
+127.0.0.1 - - [02/Mar/2026 10:31:46] "GET /docs/assets/js/theme.js HTTP/1.1" 200 -
+127.0.0.1 - - [02/Mar/2026 10:31:46] "GET /docs/assets/js/supabase_logic.js HTTP/1.1" 200 -
+127.0.0.1 - - [02/Mar/2026 10:31:47] "GET /docs/plantilla1.html HTTP/1.1" 200 -

@@ -201,10 +201,6 @@ body.active { overflow: hidden; }
   height: var(--height, 45px);
   padding-inline: var(--padding-inline, 35px);
   transition: var(--transition-1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
 
 .btn-hover {
@@ -800,7 +796,7 @@ body.active { overflow: hidden; }
 
 .food-menu-card .price { color: var(--deep-saffron); }
 
-.food-menu-card .del { color: var(--gray-x-11-gray); text-decoration: line-through; }
+.food-menu-card .del { color: var(--gray-x-11-gray); }
 
 
 
@@ -1002,10 +998,8 @@ body.active { overflow: hidden; }
   max-width: 16ch;
 }
 
-:is(.banner-md, .banner-sm) .banner-title {
-  font-size: var(--fs-2);
-  max-width: 10ch;
-}
+:is(.banner-md, .banner-sm) .banner-title,
+.banner-lg .banner-subtitle { --fs-2: 3.2rem; }
 
 .banner-card .banner-text { margin-block: 10px 15px; }
 
@@ -1143,7 +1137,7 @@ body.active { overflow: hidden; }
 }
 
 .footer-top::after {
-  content: url(https://codewithsadee.github.io/foodie/assets/images/delivery-boy.svg);
+  content: url("https://codewithsadee.github.io/foodie/assets/images/delivery-boy.svg");
   position: absolute;
   bottom: -11px;
   left: -160px;
@@ -1291,6 +1285,475 @@ textarea.input-field {
 
 .back-top-btn:is(:hover, :focus) { background-color: var(--rich-black-fogra-29); }
 
+
+
+
+
+/*-----------------------------------*\
+  #MEDIA QUERIES
+\*-----------------------------------*/
+
+/**
+ * responsive for larger than 480px screen
+ */
+
+@media (min-width: 480px) {
+
+  /**
+   * HEADER
+   */
+
+  .header-btn-group .btn {
+    display: block;
+    --bg-color: var(--dark-orange);
+  }
+
+}
+
+
+
+
+
+/**
+ * responsive for larger than 550px screen
+ */
+
+@media (min-width: 550px) {
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container {
+    max-width: 550px;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .has-scrollbar > li { min-width: calc(50% - 5px); }
+
+
+
+  /**
+   * HERO
+   */
+
+  .hero-title { --fs-1: 4.2rem; }
+
+
+
+  /**
+   * FOOTER
+   */
+
+  .footer-top .container { grid-template-columns: 1fr 1fr; }
+
+}
+
+
+
+
+
+/**
+ * responsive for larger than 768px screen
+ */
+
+@media (min-width: 768px) {
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container { max-width: 720px; }
+
+
+
+  /**
+   * HERO
+   */
+
+  .hero {
+    position: relative;
+    text-align: left;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-content > :is(*, .btn) { margin-inline: 0; }
+
+  .hero-banner {
+    display: block;
+    position: absolute;
+    top: calc(50% + 86px);
+    transform: translateY(-50%);
+    right: 50px;
+    max-width: 40%;
+    aspect-ratio: 1 / 0.9;
+  }
+
+  .hero-img {
+    position: absolute;
+    bottom: 0;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://codewithsadee.github.io/foodie/assets/images/hero-bg-shape.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: right bottom;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+
+
+  /**
+   * ABOUT
+   */
+
+  .about .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .about { text-align: left; }
+
+  .about .section-title { margin-block-start: 0; }
+
+  .about :is(.section-title, .btn) { margin-inline: 0; }
+
+  .about-item { justify-content: flex-start; }
+
+
+
+  /**
+   * FOOD MENU
+   */
+
+  .food-menu-list { grid-template-columns: 1fr 1fr; }
+
+  .food-menu-card :is(.wrapper, .price-wrapper) { justify-content: flex-start; }
+
+  .food-menu-card .card-title { text-align: left; }
+
+
+
+  /**
+   * CTA
+   */
+
+  .cta .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .cta { text-align: left; }
+
+  .cta :is(.section-title, .btn) { margin-inline: 0; }
+
+  .cta-img { transform: scale(1.3) translate(90px, 20px); }
+
+
+
+  /**
+   * DELIVERY
+   */
+
+  .delivery .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 50px;
+  }
+
+
+
+  /**
+   * BANNER
+   */
+
+  .banner-list { grid-template-columns: repeat(4, 1fr); }
+
+  .banner-lg {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+  }
+
+  .banner-md {
+    grid-column: 3 / 5;
+    grid-row: 2 / 3;
+    height: 220px;
+  }
+
+
+
+  /**
+   * BLOG
+   */
+
+  .blog-list { grid-template-columns: 1fr 1fr; }
+
+  .blog-card { height: 100%; }
+
+
+
+  /**
+   * FOOTER
+   */
+
+  .input-wrapper { grid-template-columns: 1fr 1fr; }
+
+}
+
+
+
+
+
+/**
+ * responsive for larger than 992px screen
+ */
+
+@media (min-width: 992px) {
+
+  /**
+   * CUSTOM PROPERTY
+   */
+
+  :root {
+
+    /**
+     * spacing
+     */
+
+    --section-padding: 120px;
+
+  }
+
+
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container { max-width: 960px; }
+
+  .has-scrollbar > li { min-width: calc(33.33% - 6.66px); }
+
+  .h2 { --fs-1: 4.2rem; }
+
+
+
+  /**
+   * HEADER
+   */
+
+  .nav-toggle-btn { display: none; }
+
+  .header .container { gap: 20px; }
+
+  .navbar,
+  .navbar.active {
+    all: unset;
+    margin-inline-start: auto;
+  }
+
+  .navbar-list {
+    margin-block: 0;
+    display: flex;
+    gap: 5px;
+  }
+
+  .nav-item:not(:last-child) { border-block-end: none; }
+
+  .navbar-link {
+    --fs-4: 1.5rem;
+    color: var(--btn-color);
+    letter-spacing: -0.5px;
+  }
+
+
+
+  /**
+   * HERO
+   */
+
+  .hero {
+    min-height: 660px;
+    display: grid;
+    align-items: center;
+  }
+
+  .hero-subtitle { --fs-3: 3.2rem; }
+
+  .hero-title {
+    --fs-1: 7rem;
+    letter-spacing: -2.5px;
+  }
+
+  .hero-text { font-size: var(--fs-3); }
+
+  .hero-banner {
+    max-width: 45%;
+    top: auto;
+    bottom: 0;
+    transform: translateY(0);
+  }
+
+  .hero-img-bg { transform: scale(1.4) translate(20px, -20px); }
+
+
+
+  /**
+   * FOOD MENU
+   */
+
+  .food-menu-list { grid-template-columns: repeat(3, 1fr); }
+
+  .food-menu-card { height: 100%; }
+
+
+
+  /**
+   * CTA
+   */
+
+  .cta-img { transform: scale(1.4) translate(20px, 40px); }
+
+  .cta-banner .abs-img { left: -50px; }
+
+  :is(.cta, .delivery) .section-title { line-height: 1.2; }
+
+
+
+  /**
+   * BANNER
+   */
+
+  .banner-lg .banner-title {
+    --fs-1: 3.6rem;
+    letter-spacing: -2px;
+  }
+
+  :is(.banner-md, .banner-sm) .banner-title,
+  .banner-lg .banner-subtitle { --fs-2: 3.2rem; }
+
+
+
+  /**
+   * TESTIMONIALS
+   */
+
+  .testi-list { padding-block-end: 0; }
+
+
+
+  /**
+   * BLOG
+   */
+
+  .blog-list { grid-template-columns: repeat(3, 1fr); }
+
+  .blog-card .card-title { --fs-3: 2.2rem; }
+
+
+
+  /**
+   * FOOTER
+   */
+
+  .footer-top .container { grid-template-columns: 1fr 1fr 1fr 1.6fr; }
+
+  .footer-form { margin-block-start: -170px; }
+
+
+
+  /**
+   * BACK TO TOP
+   */
+
+  .back-top-btn {
+    bottom: 20px;
+    right: 30px;
+  }
+
+}
+
+
+
+
+
+/**
+ * responsive for larger than 1200px screen
+ */
+
+@media (min-width: 1200px) {
+
+  /**
+   * REUSED STYLE
+   */
+
+  .container { max-width: 1200px; }
+
+
+
+  /**
+   * HERO
+   */
+
+  .hero { min-height: 770px; }
+
+
+
+  /**
+   * PROMO
+   */
+
+  .promo .promo-item { min-width: calc(25% - 7.5px); }
+
+
+
+  /**
+   * ABOUT
+   */
+
+  .about .container { gap: 60px; }
+
+
+
+  /**
+   * CTA
+   */
+
+  .cta { --section-padding: 60px; }
+
+  .cta .section-title { max-width: 18ch; }
+
+
+
+  /**
+   * BANNER
+   */
+
+  .banner-md .banner-item-content { left: 55%; }
+
+
+
+  /**
+   * FOOTER
+   */
+
+  .footer-top .container { grid-template-columns: 1.4fr 1fr 1fr 1.6fr; }
+
+}
   </style>
 
 </head>
@@ -1300,7 +1763,7 @@ textarea.input-field {
     <div class="container">
 
       <h1>
-        <a href="#" class="logo" id="header-logo" data-editable="text" data-label="Nombre del Negocio">Foodie<span class="span">.</span></a>
+        <a href="#" class="logo" id="logo" data-editable="text" data-label="Logo">Foodie<span class="span">.</span></a>
       </h1>
 
       <nav class="navbar" data-navbar>
@@ -1323,19 +1786,18 @@ textarea.input-field {
           </li>
 
           <li class="nav-item">
-            <a href="#footer" class="navbar-link" data-nav-link>Contact Us</a>
+            <a href="#" class="navbar-link" data-nav-link>Contact Us</a>
           </li>
 
         </ul>
       </nav>
 
-      <div class="header-btn-group" id="header-btns">
+      <div class="header-btn-group" id="header-btn-group" data-editable="text" data-label="Grupo Botones Cabecera">
         <button class="search-btn" aria-label="Search" data-search-btn>
           <ion-icon name="search-outline"></ion-icon>
         </button>
 
-        <div id="header-order-btn-placeholder"></div>
-        <div id="header-res-btn-placeholder"></div>
+        <button class="btn btn-hover customCodeArea" id="header-order-btn" data-editable="text" data-label="Botón Pedir Cabecera">Order Now</button>
 
         <button class="nav-toggle-btn" aria-label="Toggle Menu" data-menu-toggle-btn>
           <span class="line top"></span>
@@ -1346,20 +1808,26 @@ textarea.input-field {
 
     </div>
   </header>
+  <div id="customCode2"></div>
+  <div id="navbar"></div>
 
   <!--
     - #SEARCH BOX
   -->
 
   <div class="search-container" data-search-container>
+
     <div class="search-box">
       <input type="search" name="search" aria-label="Search here" placeholder="Type keywords here..."
         class="search-input">
+
       <button class="search-submit" aria-label="Submit search" data-search-submit-btn>
         <ion-icon name="search-outline"></ion-icon>
       </button>
     </div>
+
     <button class="search-close-btn" aria-label="Cancel search" data-search-close-btn></button>
+
   </div>
 
 
@@ -1370,21 +1838,18 @@ textarea.input-field {
         - #HERO
       -->
 
-      <section class="hero" id="home" data-section="hero" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg')">
+      <section class="hero" id="home" data-section="hero" data-editable="image" data-label="Fondo Hero" data-bg="https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg')">
         <div class="container">
 
           <div class="hero-content">
 
-            <p class="hero-subtitle" id="hero-subtitle" data-editable="text" data-label="Subtítulo">Eat Sleep And</p>
+            <p class="hero-subtitle" id="hero-subtitle" data-editable="text" data-label="Subtítulo Hero">Eat Sleep And</p>
 
-            <h2 class="h1 hero-title" id="hero-title" data-editable="text" data-label="Título Principal">Supper delicious Burger in town!</h2>
+            <h2 class="h1 hero-title" id="hero-title" data-editable="text" data-label="Título Hero">Supper delicious Burger in town!</h2>
 
-            <p class="hero-text" id="hero-text" data-editable="text" data-label="Descripción">Food is any substance consumed to provide nutritional support for an organism.</p>
+            <p class="hero-text" id="hero-text" data-editable="text" data-label="Descripción Hero">Food is any substance consumed to provide nutritional support for an organism.</p>
 
-            <div style="display:flex; gap:10px; justify-content: center; flex-wrap: wrap;">
-                <div id="hero-order-btn-placeholder"></div>
-                <div id="hero-res-btn-placeholder"></div>
-            </div>
+            <button class="btn customCodeArea" id="hero-btn" data-editable="text" data-label="Botón Hero">Book A Table</button>
 
           </div>
 
@@ -1393,7 +1858,7 @@ textarea.input-field {
               class="w-100 hero-img-bg">
 
             <img src="https://codewithsadee.github.io/foodie/assets/images/hero-banner.png" width="700" height="637" loading="lazy" alt="Burger"
-              class="w-100 hero-img" id="hero-banner-img" data-editable="image" data-label="Imagen Hero">
+              class="w-100 hero-img" id="hero-img" data-editable="image" data-label="Imagen Hero">
           </figure>
 
         </div>
@@ -1406,9 +1871,11 @@ textarea.input-field {
 
       <section class="section section-divider white promo" id="promos" data-section="promos">
         <div class="container">
+
           <ul class="promo-list has-scrollbar" id="promo-list" data-editable="list" data-label="Promociones" data-blueprint="promo">
-             <!-- Promos will be injected here -->
+            <!-- Items added by script -->
           </ul>
+
         </div>
       </section>
 
@@ -1422,7 +1889,7 @@ textarea.input-field {
 
           <div class="about-banner">
             <img src="https://codewithsadee.github.io/foodie/assets/images/about-banner.png" width="509" height="459" loading="lazy" alt="Burger with Drinks"
-              class="w-100 about-img" id="about-img" data-editable="image" data-label="Imagen Sobre Nosotros">
+              class="w-100 about-img" id="about-img" data-editable="image" data-label="Imagen About">
 
             <img src="https://codewithsadee.github.io/foodie/assets/images/sale-shape-red.png" width="216" height="226" alt="get up to 50% off now"
               class="abs-img scale-up-anim">
@@ -1430,25 +1897,22 @@ textarea.input-field {
 
           <div class="about-content">
 
-            <h2 class="h2 section-title" id="about-title" data-editable="text" data-label="Título">
+            <h2 class="h2 section-title" id="about-title" data-editable="text" data-label="Título About">
               Caferio, Burgers, and Best Pizzas
               <span class="span">in Town!</span>
             </h2>
 
-            <p class="section-text" id="about-text" data-editable="text" data-label="Descripción">
+            <p class="section-text" id="about-text" data-editable="text" data-label="Descripción About">
               The restaurants in Hangzhou also catered to many northern Chinese who had fled south from Kaifeng during
               the Jurchen
               invasion of the 1120s, while it is also known that many restaurants were run by families.
             </p>
 
             <ul class="about-list" id="about-features" data-editable="list" data-label="Características" data-blueprint="feature">
-              <!-- Features will be injected here -->
+              <!-- Items added by script -->
             </ul>
 
-            <div style="display:flex; gap:10px; justify-content: flex-start; flex-wrap: wrap;">
-                <div id="about-order-btn-placeholder"></div>
-                <div id="about-res-btn-placeholder"></div>
-            </div>
+            <button class="btn btn-hover" id="about-btn" data-editable="text" data-label="Botón About">Order Now</button>
 
           </div>
 
@@ -1456,6 +1920,7 @@ textarea.input-field {
       </section>
 
 
+      <div id="carousel"></div>
       <!--
         - #FOOD MENU
       -->
@@ -1463,60 +1928,88 @@ textarea.input-field {
       <section class="section food-menu" id="food-menu" data-section="food-menu">
         <div class="container">
 
-          <p class="section-subtitle" id="menu-subtitle" data-editable="text" data-label="Subtítulo">Popular Dishes</p>
+          <p class="section-subtitle" id="menu-subtitle" data-editable="text" data-label="Subtítulo Menú">Popular Dishes</p>
 
-          <h2 class="h2 section-title" id="menu-title" data-editable="text" data-label="Título">
+          <h2 class="h2 section-title" id="menu-title" data-editable="text" data-label="Título Menú">
             Our Delicious <span class="span">Foods</span>
           </h2>
 
-          <p class="section-text" id="menu-text" data-editable="text" data-label="Descripción">
+          <p class="section-text" id="menu-text" data-editable="text" data-label="Descripción Menú">
             Food is any substance consumed to provide nutritional support for an organism.
           </p>
 
-          <ul class="food-menu-list" id="menu-list" data-editable="list" data-label="Platillos" data-blueprint="menu-item">
-             <!-- Menu items will be injected here -->
+          <ul class="fiter-list">
+
+            <li>
+              <button class="filter-btn  active">All</button>
+            </li>
+
+            <li>
+              <button class="filter-btn">Pizza</button>
+            </li>
+
+            <li>
+              <button class="filter-btn">Burger</button>
+            </li>
+
+            <li>
+              <button class="filter-btn">Drinks</button>
+            </li>
+
+            <li>
+              <button class="filter-btn">Sandwich</button>
+            </li>
+
           </ul>
+
+          <ul class="food-menu-list" id="menu-list" data-editable="list" data-label="Lista del Menú" data-blueprint="menu-item">
+            <!-- Items added by script -->
+          </ul>
+
 
         </div>
       </section>
+
+
+
 
 
       <!--
         - #CTA
       -->
 
-      <section class="section section-divider white cta" id="cta" data-section="cta" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg')">
+      <section class="section section-divider white cta" id="cta" data-section="cta" data-editable="image" data-label="Fondo CTA" data-bg="https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg')">
         <div class="container">
 
           <div class="cta-content">
 
-            <h2 class="h2 section-title" id="cta-title" data-editable="text" data-label="Título">
+            <h2 class="h2 section-title" id="cta-title" data-editable="text" data-label="Título CTA">
               The Foodie Have Excellent Of
               <span class="span">Quality Burgers!</span>
             </h2>
 
-            <p class="section-text" id="cta-text" data-editable="text" data-label="Descripción">
+            <p class="section-text" id="cta-text" data-editable="text" data-label="Descripción CTA">
               The restaurants in Hangzhou also catered to many northern Chinese who had fled south from Kaifeng during
               the Jurchen
               invasion of the 1120s, while it is also known that many restaurants were run by families.
             </p>
 
-            <div style="display:flex; gap:10px; justify-content: flex-start; flex-wrap: wrap;">
-                <div id="cta-order-btn-placeholder"></div>
-                <div id="cta-res-btn-placeholder"></div>
-            </div>
+            <button class="btn btn-hover customCodeArea" id="cta-btn" data-editable="text" data-label="Botón CTA">Order Now</button>
           </div>
 
           <figure class="cta-banner">
             <img src="https://codewithsadee.github.io/foodie/assets/images/cta-banner.png" width="700" height="637" loading="lazy" alt="Burger"
-              class="w-100 cta-img" id="cta-banner-img" data-editable="image" data-label="Imagen CTA">
+              class="w-100 cta-img" id="cta-img" data-editable="image" data-label="Imagen CTA">
 
             <img src="https://codewithsadee.github.io/foodie/assets/images/sale-shape.png" width="216" height="226" loading="lazy"
-              alt="get up to 50% off now" class="abs-img scale-up-anim" id="cta-sale-img">
+              alt="get up to 50% off now" class="abs-img scale-up-anim">
           </figure>
 
         </div>
       </section>
+
+
+
 
 
       <!--
@@ -1528,33 +2021,33 @@ textarea.input-field {
 
           <div class="delivery-content">
 
-            <h2 class="h2 section-title" id="delivery-title" data-editable="text" data-label="Título">
+            <h2 class="h2 section-title" id="delivery-title" data-editable="text" data-label="Título Delivery">
               A Moments Of Delivered On <span class="span">Right Time</span> & Place
             </h2>
 
-            <p class="section-text" id="delivery-text" data-editable="text" data-label="Descripción">
+            <p class="section-text" id="delivery-text" data-editable="text" data-label="Descripción Delivery">
               The restaurants in Hangzhou also catered to many northern Chinese who had fled south from Kaifeng during
               the Jurchen
               invasion of the 1120s, while it is also known that many restaurants were run by families.
             </p>
 
-            <div style="display:flex; gap:10px; justify-content: flex-start; flex-wrap: wrap;">
-                <div id="delivery-order-btn-placeholder"></div>
-                <div id="delivery-res-btn-placeholder"></div>
-            </div>
+            <button class="btn btn-hover customCodeArea" id="delivery-btn" data-editable="text" data-label="Botón Delivery">Order Now</button>
           </div>
 
           <figure class="delivery-banner">
             <img src="https://codewithsadee.github.io/foodie/assets/images/delivery-banner-bg.png" width="700" height="602" loading="lazy" alt="clouds"
-              class="w-100" id="delivery-clouds-img">
+              class="w-100">
 
             <img src="https://codewithsadee.github.io/foodie/assets/images/delivery-boy.svg" width="1000" height="880" loading="lazy" alt="delivery boy"
-              class="w-100 delivery-img" data-delivery-boy id="delivery-boy-img">
+              class="w-100 delivery-img" data-delivery-boy id="delivery-boy">
           </figure>
 
         </div>
       </section>
 
+
+
+      <div id="form"></div>
 
       <!--
         - #TESTIMONIALS
@@ -1563,19 +2056,19 @@ textarea.input-field {
       <section class="section section-divider white testi" id="testimonials" data-section="testimonials">
         <div class="container">
 
-          <p class="section-subtitle" id="testimonials-subtitle" data-editable="text" data-label="Subtítulo">Testimonials</p>
+          <p class="section-subtitle" id="testi-subtitle" data-editable="text" data-label="Subtítulo Testimonios">Testimonials</p>
 
-          <h2 class="h2 section-title" id="testimonials-title" data-editable="text" data-label="Título">
+          <h2 class="h2 section-title" id="testi-title" data-editable="text" data-label="Título Testimonios">
             Our Customers <span class="span">Reviews</span>
           </h2>
 
-          <p class="section-text" id="testimonials-text" data-editable="text" data-label="Descripción">
+          <p class="section-text" id="testi-text" data-editable="text" data-label="Descripción Testimonios">
             Food is any substance consumed to provide nutritional
             support for an organism.
           </p>
 
           <ul class="testi-list has-scrollbar" id="testi-list" data-editable="list" data-label="Testimonios" data-blueprint="testimonial">
-             <!-- Testimonials will be injected here -->
+            <!-- Items added by script -->
           </ul>
 
         </div>
@@ -1583,27 +2076,28 @@ textarea.input-field {
 
       <section class="section section-divider gray banner" id="banners" data-section="banners">
         <div class="container">
-          <ul class="banner-list" id="banner-list" data-editable="list" data-label="Banners Publicitarios" data-blueprint="banner">
-             <!-- Banners will be injected here -->
+
+          <ul class="banner-list" id="banner-list" data-editable="list" data-label="Banners" data-blueprint="banner-item">
+            <!-- Items added by script -->
           </ul>
+
         </div>
       </section>
-
       <section class="section section-divider white blog" id="blog" data-section="blog">
         <div class="container">
 
-          <p class="section-subtitle" id="blog-subtitle" data-editable="text" data-label="Subtítulo">Latest Blog Posts</p>
+          <p class="section-subtitle" id="blog-subtitle" data-editable="text" data-label="Subtítulo Blog">Latest Blog Posts</p>
 
-          <h2 class="h2 section-title" id="blog-title" data-editable="text" data-label="Título">
+          <h2 class="h2 section-title" id="blog-title" data-editable="text" data-label="Título Blog">
             This Is All About <span class="span">Foods</span>
           </h2>
 
-          <p class="section-text" id="blog-text" data-editable="text" data-label="Descripción">
+          <p class="section-text" id="blog-text" data-editable="text" data-label="Descripción Blog">
             Food is any substance consumed to provide nutritional support for an organism.
           </p>
 
           <ul class="blog-list" id="blog-list" data-editable="list" data-label="Entradas de Blog" data-blueprint="blog-post">
-             <!-- Blog posts will be injected here -->
+            <!-- Items added by script -->
           </ul>
 
         </div>
@@ -1617,47 +2111,120 @@ textarea.input-field {
 
   <footer class="footer" id="footer" data-section="footer">
 
-    <div class="footer-top" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/footer-illustration.png')">
+    <div class="footer-top" id="footer-bg" data-editable="image" data-label="Imagen Footer" data-bg="https://codewithsadee.github.io/foodie/assets/images/footer-illustration.png" style="background-image: url('https://codewithsadee.github.io/foodie/assets/images/footer-illustration.png')">
       <div class="container">
 
         <div class="footer-brand">
 
           <a href="" class="logo" id="footer-logo" data-editable="text" data-label="Logo Footer">Foodie<span class="span">.</span></a>
 
-          <p class="footer-text" id="footer-text" data-editable="text" data-label="Texto Footer">
+          <p class="footer-text" id="footer-text" data-editable="text" data-label="Descripción Footer">
             Financial experts support or help you to to find out which way you can raise your funds more.
           </p>
 
-          <ul class="social-list" id="footer-social-list">
-            <li><a href="#" class="social-link" id="social-fb"><ion-icon name="logo-facebook"></ion-icon></a></li>
-            <li><a href="#" class="social-link" id="social-tw"><ion-icon name="logo-twitter"></ion-icon></a></li>
-            <li><a href="#" class="social-link" id="social-ig"><ion-icon name="logo-instagram"></ion-icon></a></li>
-            <li><a href="#" class="social-link" id="social-pi"><ion-icon name="logo-pinterest"></ion-icon></a></li>
+          <ul class="social-list">
+
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-facebook"></ion-icon>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-twitter"></ion-icon>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-instagram"></ion-icon>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="social-link">
+                <ion-icon name="logo-pinterest"></ion-icon>
+              </a>
+            </li>
+
           </ul>
 
         </div>
 
         <ul class="footer-list">
-          <li><p class="footer-list-title">Contact Info</p></li>
-          <li><p class="footer-list-item" id="footer-phone" data-editable="text" data-label="Teléfono">+1 (062) 109-9222</p></li>
-          <li><p class="footer-list-item" id="footer-email" data-editable="text" data-label="Email">Info@YourGmail24.com</p></li>
-          <li><address class="footer-list-item" id="footer-address" data-editable="text" data-label="Dirección">153 Williamson Plaza, Maggieberg, MT 09514</address></li>
+
+          <li>
+            <p class="footer-list-title" id="footer-contact-title" data-editable="text" data-label="Título Contacto">Contact Info</p>
+          </li>
+
+          <li>
+            <p class="footer-list-item" id="footer-phone" data-editable="text" data-label="Teléfono Contacto">+1 (062) 109-9222</p>
+          </li>
+
+          <li>
+            <p class="footer-list-item" id="footer-email" data-editable="text" data-label="Email Contacto">Info@YourGmail24.com</p>
+          </li>
+
+          <li>
+            <address class="footer-list-item" id="footer-address" data-editable="text" data-label="Dirección Contacto">153 Williamson Plaza, Maggieberg, MT 09514</address>
+          </li>
+
         </ul>
 
         <ul class="footer-list">
-          <li><p class="footer-list-title">Opening Hours</p></li>
-          <div id="footer-hours" data-editable="list" data-label="Horarios" data-blueprint="hour-item">
-              <!-- Hours will be injected here -->
+
+          <li>
+            <p class="footer-list-title" id="footer-hours-title" data-editable="text" data-label="Título Horarios">Opening Hours</p>
+          </li>
+
+          <div id="footer-hours-list" data-editable="list" data-label="Horarios" data-blueprint="hour-item">
+            <!-- Items added by script -->
           </div>
+
         </ul>
+
+        <form action="" class="footer-form">
+
+          <p class="footer-list-title">Book a Table</p>
+
+          <div class="input-wrapper">
+
+            <input type="text" name="full_name" required placeholder="Your Name" aria-label="Your Name"
+              class="input-field">
+
+            <input type="email" name="email_address" required placeholder="Email" aria-label="Email"
+              class="input-field">
+
+          </div>
+
+          <div class="input-wrapper">
+
+            <select name="total_person" aria-label="Total person" class="input-field">
+              <option value="person">Person</option>
+              <option value="2 person">2 Person</option>
+              <option value="3 person">3 Person</option>
+              <option value="4 person">4 Person</option>
+              <option value="5 person">5 Person</option>
+            </select>
+
+            <input type="date" name="booking_date" aria-label="Reservation date" class="input-field">
+
+          </div>
+
+          <textarea name="message" required placeholder="Message" aria-label="Message" class="input-field"></textarea>
+
+          <button type="submit" class="btn">Book a Table</button>
+
+        </form>
 
       </div>
     </div>
 
     <div class="footer-bottom">
       <div class="container">
-        <p class="copyright-text" id="footer-copyright" data-editable="text" data-label="Copyright">
-          &copy; 2024 <a href="#" class="copyright-link">Tragalero</a> All Rights Reserved.
+        <p class="copyright-text" id="footer-copyright" data-editable="text" data-label="Copyright Text">
+          &copy; 2022 <a href="#" class="copyright-link">codewithsadee</a> All Rights Reserved.
         </p>
       </div>
     </div>
@@ -1668,16 +2235,16 @@ textarea.input-field {
     <ion-icon name="chevron-up"></ion-icon>
   </a>
 
-  <!-- Templates for list items -->
+  <!-- Blueprints for dynamic lists -->
   <template id="blueprint-promo">
     <li class="promo-item">
       <div class="promo-card">
-        <div class="card-icon" data-editable="svg" data-label="Icono SVG">
-          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" viewBox="0 0 60 60"><path fill="#ff9d2d" d="M30 10L35 25H25L30 10Z"/></svg>
+        <div class="card-icon" id="item-icon" data-editable="svg" data-label="Icono SVG">
+          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none"><path fill="#ff9d2d" d="M30 10L35 25H25L30 10Z"/></svg>
         </div>
-        <h3 class="h3 card-title" data-editable="text" data-label="Título">Nombre Promo</h3>
-        <p class="card-text" data-editable="text" data-label="Descripción">Descripción de la promoción.</p>
-        <img src="https://codewithsadee.github.io/foodie/assets/images/promo-1.png" width="300" height="300" loading="lazy" alt="Promo" class="w-100 card-banner" data-editable="image" data-label="Imagen">
+        <h3 class="h3 card-title" id="item-title" data-editable="text" data-label="Título Promo">Promo</h3>
+        <p class="card-text" id="item-text" data-editable="text" data-label="Descripción Promo">Texto</p>
+        <img src="https://codewithsadee.github.io/foodie/assets/images/promo-1.png" width="300" height="300" loading="lazy" alt="Promo" class="w-100 card-banner" id="item-img" data-editable="image" data-label="Imagen Promo">
       </div>
     </li>
   </template>
@@ -1685,7 +2252,7 @@ textarea.input-field {
   <template id="blueprint-feature">
     <li class="about-item">
       <ion-icon name="checkmark-outline"></ion-icon>
-      <span class="span" data-editable="text" data-label="Característica">Característica Nueva</span>
+      <span class="span" id="item-text" data-editable="text" data-label="Texto Característica">Característica</span>
     </li>
   </template>
 
@@ -1693,21 +2260,21 @@ textarea.input-field {
     <li>
       <div class="food-menu-card">
         <div class="card-banner">
-          <img src="https://codewithsadee.github.io/foodie/assets/images/food-menu-1.png" width="300" height="300" loading="lazy" alt="Platillo" class="w-100" data-editable="image" data-label="Imagen">
-          <div class="badge" data-editable="text" data-label="Etiqueta">-10%</div>
+          <img src="https://codewithsadee.github.io/foodie/assets/images/food-menu-1.png" width="300" height="300" loading="lazy" alt="Food" class="w-100" id="item-img" data-editable="image" data-label="Imagen Plato">
+          <div class="badge" id="item-badge" data-editable="text" data-label="Etiqueta Plato">-15%</div>
           <button class="btn food-menu-btn">Order Now</button>
         </div>
         <div class="wrapper">
-          <p class="category" data-editable="text" data-label="Categoría">Categoría</p>
+          <p class="category" id="item-category" data-editable="text" data-label="Categoría Plato">Category</p>
           <div class="rating-wrapper">
             <ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon>
           </div>
         </div>
-        <h3 class="h3 card-title" data-editable="text" data-label="Nombre">Nombre del Platillo</h3>
+        <h3 class="h3 card-title" id="item-title" data-editable="text" data-label="Nombre Plato">Plato</h3>
         <div class="price-wrapper">
           <p class="price-text">Price:</p>
-          <data class="price" data-editable="text" data-label="Precio">$0.00</data>
-          <del class="del" data-editable="text" data-label="Precio Anterior">$0.00</del>
+          <data class="price" id="item-price" data-editable="text" data-label="Precio">$0.00</data>
+          <del class="del" id="item-old-price" data-editable="text" data-label="Precio Anterior">$0.00</del>
         </div>
       </div>
     </li>
@@ -1718,14 +2285,14 @@ textarea.input-field {
       <div class="testi-card">
         <div class="profile-wrapper">
           <figure class="avatar">
-            <img src="https://codewithsadee.github.io/foodie/assets/images/avatar-1.jpg" width="80" height="80" loading="lazy" alt="Avatar" data-editable="image" data-label="Avatar">
+            <img src="https://codewithsadee.github.io/foodie/assets/images/avatar-1.jpg" width="80" height="80" loading="lazy" alt="Avatar" id="item-avatar" data-editable="image" data-label="Avatar Testimonio">
           </figure>
           <div>
-            <h3 class="h4 testi-name" data-editable="text" data-label="Nombre">Nombre Cliente</h3>
-            <p class="testi-title" data-editable="text" data-label="Cargo">Cargo / Título</p>
+            <h3 class="h4 testi-name" id="item-name" data-editable="text" data-label="Nombre Testimonio">Nombre</h3>
+            <p class="testi-title" id="item-title" data-editable="text" data-label="Cargo Testimonio">CEO</p>
           </div>
         </div>
-        <blockquote class="testi-text" data-editable="text" data-label="Testimonio">"Texto del testimonio."</blockquote>
+        <blockquote class="testi-text" id="item-text" data-editable="text" data-label="Texto Testimonio">"Texto"</blockquote>
         <div class="rating-wrapper">
           <ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon><ion-icon name="star"></ion-icon>
         </div>
@@ -1733,14 +2300,15 @@ textarea.input-field {
     </li>
   </template>
 
-  <template id="blueprint-banner">
-    <li class="banner-item banner-sm">
+  <template id="blueprint-banner-item">
+    <li class="banner-item">
       <div class="banner-card">
-        <img src="https://codewithsadee.github.io/foodie/assets/images/banner-1.jpg" width="550" height="450" loading="lazy" alt="Banner" class="banner-img" data-editable="image" data-label="Imagen">
+        <img src="https://codewithsadee.github.io/foodie/assets/images/banner-1.jpg" width="550" height="450" loading="lazy" alt="Banner" class="banner-img" id="item-img" data-editable="image" data-label="Imagen Banner">
         <div class="banner-item-content">
-          <h3 class="banner-title" data-editable="text" data-label="Título">Título Banner</h3>
-          <p class="banner-text" data-editable="text" data-label="Texto">Texto secundario</p>
-          <button class="btn">Order Now</button>
+          <p class="banner-subtitle" id="item-subtitle" data-editable="text" data-label="Subtítulo Banner">Subtitle</p>
+          <h3 class="banner-title" id="item-title" data-editable="text" data-label="Título Banner">Title</h3>
+          <p class="banner-text" id="item-text" data-editable="text" data-label="Texto Banner">Text</p>
+          <button class="btn" id="item-btn" data-editable="text" data-label="Botón Banner">Order Now</button>
         </div>
       </div>
     </li>
@@ -1750,16 +2318,16 @@ textarea.input-field {
     <li>
       <div class="blog-card">
         <div class="card-banner">
-          <img src="https://codewithsadee.github.io/foodie/assets/images/blog-1.jpg" width="600" height="390" loading="lazy" alt="Blog" class="w-100" data-editable="image" data-label="Imagen">
-          <div class="badge" data-editable="text" data-label="Categoría">Categoría</div>
+          <img src="https://codewithsadee.github.io/foodie/assets/images/blog-1.jpg" width="600" height="390" loading="lazy" alt="Blog" class="w-100" id="item-img" data-editable="image" data-label="Imagen Blog">
+          <div class="badge" id="item-category" data-editable="text" data-label="Categoría Blog">Category</div>
         </div>
         <div class="card-content">
           <div class="card-meta-wrapper">
-            <div class="card-meta-link"><ion-icon name="calendar-outline"></ion-icon><time class="meta-info" data-editable="text" data-label="Fecha">Jan 01 2024</time></div>
-            <div class="card-meta-link"><ion-icon name="person-outline"></ion-icon><p class="meta-info" data-editable="text" data-label="Autor">Admin</p></div>
+            <div class="card-meta-link"><ion-icon name="calendar-outline"></ion-icon><time class="meta-info" id="item-date" data-editable="text" data-label="Fecha Blog">Jan 01 2024</time></div>
+            <div class="card-meta-link"><ion-icon name="person-outline"></ion-icon><p class="meta-info" id="item-author" data-editable="text" data-label="Autor Blog">Author</p></div>
           </div>
-          <h3 class="h3"><a href="#" class="card-title" data-editable="text" data-label="Título">Título de la Entrada</a></h3>
-          <p class="card-text" data-editable="text" data-label="Resumen">Resumen corto de la entrada del blog...</p>
+          <h3 class="h3"><a href="#" class="card-title" id="item-title" data-editable="text" data-label="Título Blog">Title</a></h3>
+          <p class="card-text" id="item-text" data-editable="text" data-label="Texto Blog">Text</p>
           <div class="btn-link"><span>Read More</span><ion-icon name="arrow-forward"></ion-icon></div>
         </div>
       </div>
@@ -1767,11 +2335,16 @@ textarea.input-field {
   </template>
 
   <template id="blueprint-hour-item">
-    <li><p class="footer-list-item" data-editable="text" data-label="Horario">Lunes-Viernes: 08:00-22:00</p></li>
+    <li><p class="footer-list-item" id="item-text" data-editable="text" data-label="Texto Horario">Monday-Friday: 08:00-22:00</p></li>
   </template>
 
+  <!--
+    - custom js link
+  -->
 <script>
   'use strict';
+
+
 
 /**
  * navbar toggle
@@ -1795,6 +2368,8 @@ if(menuToggleBtn && navbar) {
     }
 }
 
+
+
 /**
  * header sticky & back to top
  */
@@ -1812,22 +2387,29 @@ window.addEventListener("scroll", function () {
   }
 });
 
+
+
 /**
  * search box toggle
  */
 
 const searchBtn = document.querySelector("[data-search-btn]");
 const searchContainer = document.querySelector("[data-search-container]");
+const searchSubmitBtn = document.querySelector("[data-search-submit-btn]");
 const searchCloseBtn = document.querySelector("[data-search-close-btn]");
 
-if(searchBtn && searchContainer) {
-    [searchBtn, searchCloseBtn].forEach(el => {
-        el.addEventListener("click", function () {
-          searchContainer.classList.toggle("active");
-          document.body.classList.toggle("active");
-        });
-    });
+const searchBoxElems = [searchBtn, searchSubmitBtn, searchCloseBtn];
+
+for (let i = 0; i < searchBoxElems.length; i++) {
+  if(searchBoxElems[i]) {
+      searchBoxElems[i].addEventListener("click", function () {
+        searchContainer.classList.toggle("active");
+        document.body.classList.toggle("active");
+      });
+  }
 }
+
+
 
 /**
  * move cycle on scroll
@@ -1840,27 +2422,32 @@ let lastScrollPos = 0;
 
 if(deliveryBoy) {
     window.addEventListener("scroll", function () {
+
       let deliveryBoyTopPos = deliveryBoy.getBoundingClientRect().top;
+
       if (deliveryBoyTopPos < 800 && deliveryBoyTopPos > -500) {
         let activeScrollPos = window.scrollY;
+
         if (lastScrollPos < activeScrollPos) {
           deliveryBoyMove += 2;
         } else {
           deliveryBoyMove -= 2;
         }
+
         lastScrollPos = activeScrollPos;
-        deliveryBoy.style.transform = `translateX(${deliveryBoyMove}px)`;
+        deliveryBoy.style.transform = `translateX(\${deliveryBoyMove}px)`;
       }
+
     });
 }
 
-// Click to edit
+// Click to edit bridge
 document.addEventListener('click', (e) => {
     const editable = e.target.closest('[data-editable]');
     if (editable) {
         const section = editable.closest('[data-section]');
         const sectionName = section ? section.dataset.section : '';
-        const fieldId = editable.id || '';
+        const fieldId = editable.id || editable.dataset.label;
         window.parent.postMessage({
             type: 'selectField',
             section: sectionName,
@@ -1878,12 +2465,10 @@ document.addEventListener('click', (e) => {
         }
     }
 });
-
 </script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <script src="https://menutech.xyz/menutechUI.min.js"></script>
-  <script src="https://www.fbgcdn.com/embedder/js/ewm2.js"></script>
 
 </body>
 
