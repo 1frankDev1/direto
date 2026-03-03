@@ -1,5 +1,5 @@
--- SQL for Web Builder with Multiple Templates
--- Execute this in your Supabase SQL Editor
+-- SQL updated for Website Builder with Multiple Templates
+-- Run this in your Supabase SQL Editor
 
 CREATE TABLE IF NOT EXISTS user_websites (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -9,5 +9,4 @@ CREATE TABLE IF NOT EXISTS user_websites (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Note: The 'config' column stores the JSON object containing the selected template ID
--- and all its specific content (texts, images, list items, etc.).
+-- Note: 'config' stores the current template ID and all user-defined content.

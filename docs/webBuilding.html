@@ -1,264 +1,297 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="es">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Web Builder - Tragalero</title>
-
+    <title>Master Web Builder - Tragalero</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@400;500&family=Rubik:wght@400;500;600;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/pastel-theme.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
-        .builder-container { display: flex; height: calc(100vh - 60px); overflow: hidden; }
-        .designer-sidebar { width: 450px; min-width: 450px; background: white; border-right: 1px solid #dee2e6; overflow-y: auto; display: flex; flex-direction: column; z-index: 100; }
-        .preview-area { flex-grow: 1; background: #e9ecef; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; position: relative; }
-        .preview-frame { width: 100%; max-width: 1200px; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; min-height: 100%; transform-origin: top center; transition: transform 0.3s ease; }
-        .preview-controls { position: sticky; top: -20px; background: white; padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; z-index: 50; display: flex; gap: 15px; }
-        .designer-header { padding: 20px; border-bottom: 1px solid #eee; background: #fff; position: sticky; top: 0; z-index: 110; }
-        .template-switcher { background: #f8f9fa; border-radius: 12px; padding: 10px; margin-top: 10px; }
-        .accordion-button:not(.collapsed) { background-color: rgba(var(--bs-primary-rgb), 0.1); color: var(--bs-primary); }
-        .designer-section { padding: 15px; }
-        .form-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #6c757d; }
-        .upload-drop-zone { border: 2px dashed #dee2e6; border-radius: 12px; padding: 20px; text-align: center; background: #f8f9fa; cursor: pointer; transition: all 0.2s; margin-bottom: 15px; }
-        .upload-drop-zone:hover { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.02); }
-        .list-item-editor { background: #fff; border: 1px solid #dee2e6; border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: move; }
-        .drag-handle { color: #dee2e6; font-size: 1.2rem; }
+        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; height: 100vh; overflow: hidden; }
+        .builder-wrapper { display: flex; height: calc(100vh - 60px); }
+        .sidebar { width: 450px; min-width: 450px; background: white; border-right: 1px solid #ddd; overflow-y: auto; display: flex; flex-direction: column; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
+        .preview-pane { flex-grow: 1; background: #e4e6e9; display: flex; flex-direction: column; align-items: center; padding: 20px; position: relative; }
+        .iframe-container { width: 100%; height: 100%; max-width: 1200px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: width 0.3s ease; }
+        .device-toggle { background: white; padding: 5px; border-radius: 30px; margin-bottom: 15px; display: flex; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #eee; background: #fff; position: sticky; top: 0; z-index: 20; }
+        .section-card { border-bottom: 1px solid #eee; }
+        .section-header { padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #fff; transition: background 0.2s; }
+        .section-header:hover { background: #f8f9fa; }
+        .section-header.active { background: rgba(var(--bs-primary-rgb), 0.05); color: var(--bs-primary); font-weight: 600; }
+        .section-content { padding: 0 20px 20px; display: none; }
+        .section-content.active { display: block; }
+        .form-label { font-size: 0.8rem; font-weight: 600; color: #666; margin-bottom: 5px; display: block; }
+        .upload-box { border: 2px dashed #ddd; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; position: relative; overflow: hidden; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+        .upload-box:hover { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.02); }
+        .upload-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; }
+        .list-item-editor { background: #f8f9fa; border: 1px solid #eee; border-radius: 10px; padding: 12px; margin-bottom: 12px; position: relative; }
+        .list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 600; font-size: 0.8rem; }
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .preview-mobile { width: 375px; }
         .preview-tablet { width: 768px; }
-        .preview-desktop { width: 100%; max-width: 1200px; }
-        #loadingOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
-
 <body>
     <div id="loadingOverlay"><div class="spinner-border text-primary"></div></div>
 
-    <nav class="navbar navbar-expand-lg border-bottom bg-white" style="height: 60px;">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold" href="./admin.html">Web Builder</a>
-            <div class="ms-auto d-flex align-items-center">
-                <div id="authButtons" class="me-3"></div>
-                <button class="btn btn-primary fw-bold" id="saveWebBtn" onclick="saveWebsite()"><i class="bi bi-cloud-arrow-up me-2"></i>Guardar</button>
-                <button class="btn btn-dark fw-bold ms-2" onclick="shareWebsite()"><i class="bi bi-share me-2"></i>Compartir</button>
-            </div>
+    <nav class="navbar border-bottom bg-white px-4" style="height: 60px;">
+        <a class="navbar-brand fw-bold" href="./admin.html">Web Builder</a>
+        <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-outline-dark btn-sm fw-bold" onclick="shareWeb()"><i class="bi bi-share me-1"></i> Compartir</button>
+            <button class="btn btn-primary btn-sm fw-bold" id="saveBtn" onclick="saveWeb()"><i class="bi bi-cloud-arrow-up me-1"></i> Guardar</button>
         </div>
     </nav>
 
-    <div class="builder-container">
-        <div class="designer-sidebar">
-            <div class="designer-header">
-                <h6 class="fw-bold mb-1">Editor de Sitio Web</h6>
-                <div class="template-switcher">
-                    <label class="form-label small mb-1">Seleccionar Plantilla</label>
-                    <select class="form-select form-select-sm" id="templateSelect" onchange="changeTemplate(this.value)">
-                        <option value="foodie">Foodie (Restaurante)</option>
-                        <option value="pro">Professional (Personal/Card)</option>
-                    </select>
-                </div>
+    <div class="builder-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <label class="form-label">Plantilla Activa</label>
+                <select class="form-select form-select-sm" id="templateSelect" onchange="switchTemplate(this.value)">
+                    <option value="template1.html">Foodie (Restaurante)</option>
+                    <option value="template2.html">Professional (Personal)</option>
+                </select>
             </div>
+            <div id="sidebarAccordion"></div>
+        </aside>
 
-            <div class="accordion accordion-flush" id="builderAccordion">
-                <!-- Config General (Foodie) -->
-                <div class="accordion-item" data-template="foodie">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral">Configuración General</button></h2>
-                    <div id="collapseGeneral" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
-                        <label class="form-label">Menutech CUID</label><input type="text" class="form-control mb-2" id="inputCUID" oninput="updateConfig('general.cuid', this.value)">
-                        <label class="form-label">Menutech RUID</label><input type="text" class="form-control mb-2" id="inputRUID" oninput="updateConfig('general.ruid', this.value)">
-                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="inputHasRes" onchange="updateConfig('general.hasReservation', this.checked)"><label class="form-check-label">Habilitar Reservas</label></div>
-                    </div></div>
-                </div>
-
-                <!-- Cabecera (Both) -->
-                <div class="accordion-item" data-template="foodie pro">
-                    <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHeader">Cabecera & Logo</button></h2>
-                    <div id="collapseHeader" class="accordion-collapse collapse show" data-bs-parent="#builderAccordion"><div class="designer-section">
-                        <label class="form-label">Nombre/Logo</label><input type="text" class="form-control mb-2" id="inputLogo" oninput="updateConfig('header.logo', this.value)">
-                        <label class="form-label">Texto Botón</label><input type="text" class="form-control mb-2" id="inputBtnText" oninput="updateConfig('header.btnText', this.value)">
-                    </div></div>
-                </div>
-
-                <!-- Perfil (Pro) -->
-                <div class="accordion-item" data-template="pro">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonal">Perfil Personal</button></h2>
-                    <div id="collapsePersonal" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
-                        <label class="form-label">Nombre</label><input type="text" class="form-control mb-2" id="inputProName" oninput="updateConfig('name', this.value)">
-                        <label class="form-label">Bio</label><textarea class="form-control mb-2" id="inputProBio" rows="3" oninput="updateConfig('bio', this.value)"></textarea>
-                        <div class="upload-drop-zone" onclick="triggerUpload('profilePic')">Cambiar Foto</div>
-                    </div></div>
-                </div>
-
-                <!-- Hero (Foodie) -->
-                <div class="accordion-item" data-template="foodie">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHero">Hero / Portada</button></h2>
-                    <div id="collapseHero" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
-                        <label class="form-label">Título</label><input type="text" class="form-control mb-2" id="inputHeroTitle" oninput="updateConfig('hero.title', this.value)">
-                        <label class="form-label">Subtítulo</label><input type="text" class="form-control mb-2" id="inputHeroSubtitle" oninput="updateConfig('hero.subtitle', this.value)">
-                        <textarea class="form-control mb-2" id="inputHeroText" oninput="updateConfig('hero.text', this.value)"></textarea>
-                        <div class="upload-drop-zone" onclick="triggerUpload('hero.bannerImg')">Cambiar Banner</div>
-                    </div></div>
-                </div>
-
-                <!-- Portfolio (Pro) -->
-                <div class="accordion-item" data-template="pro">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePortfolio">Portafolio</button></h2>
-                    <div id="collapsePortfolio" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
-                        <div class="row g-2">
-                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.0')">Img 1</div></div>
-                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.1')">Img 2</div></div>
-                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.2')">Img 3</div></div>
-                            <div class="col-6"><div class="upload-drop-zone p-2" onclick="triggerUpload('portfolio.3')">Img 4</div></div>
-                        </div>
-                    </div></div>
-                </div>
-
-                <!-- Listas (Foodie) -->
-                <div class="accordion-item" data-template="foodie">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePromo">Promociones</button></h2>
-                    <div id="collapsePromo" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
-                        <div id="promoList"></div><button class="btn btn-sm btn-outline-primary w-100" onclick="addItem('promos')">Añadir</button>
-                    </div></div>
-                </div>
-
-                <!-- Footer (Both) -->
-                <div class="accordion-item" data-template="foodie pro">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFooter">Pie de Página</button></h2>
-                    <div id="collapseFooter" class="accordion-collapse collapse" data-bs-parent="#builderAccordion"><div class="designer-section">
-                        <label class="form-label">Texto</label><textarea class="form-control mb-2" id="inputFooterText" oninput="updateConfig('footer.text', this.value)"></textarea>
-                        <label class="form-label">WhatsApp</label><input type="text" class="form-control mb-2" id="inputWA" oninput="updateConfig('socials.whatsapp', this.value)">
-                    </div></div>
-                </div>
+        <main class="preview-pane">
+            <div class="device-toggle">
+                <button class="btn btn-sm btn-light rounded-pill px-3 active" onclick="setDevice('desktop', this)">Desktop</button>
+                <button class="btn btn-sm btn-light rounded-pill px-3" onclick="setDevice('tablet', this)">Tablet</button>
+                <button class="btn btn-sm btn-light rounded-pill px-3" onclick="setDevice('mobile', this)">Mobile</button>
             </div>
-            <input type="file" id="globalUpload" style="display:none;" onchange="handleGlobalUpload(this)">
-        </div>
-
-        <div class="preview-area">
-            <div class="preview-controls">
-                <button class="btn btn-sm btn-outline-secondary rounded-pill active" onclick="setPreviewSize('desktop')">Desktop</button>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPreviewSize('tablet')">Tablet</button>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setPreviewSize('mobile')">Mobile</button>
+            <div class="iframe-container" id="iframeCont">
+                <iframe id="previewIframe" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
-            <div class="preview-frame"><iframe id="templateIframe" style="width: 100%; height: 100%; border: none;"></iframe></div>
-        </div>
+        </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <input type="file" id="globalFile" style="display:none" onchange="handleFileUpload(this)">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
-        let webConfig = { template: 'foodie', header: {logo: 'Foodie', btnText: 'Order'}, hero: {title: '', subtitle: '', text: ''}, promos: [], socials: {whatsapp: ''}, footer: {text: ''}, name: '', bio: '', portfolio: ['', '', '', ''] };
-        let uploadTarget = null;
+        let webConfig = {
+            template: 'template1.html',
+            header: { logo: 'Foodie', btnText: 'Order Now', btnColor: '#ff9d2d' },
+            hero: { title: 'Supper delicious Burger in town!', subtitle: 'Eat Sleep And', text: 'Food is any substance consumed to provide nutritional support for an organism.', bgImg: 'https://codewithsadee.github.io/foodie/assets/images/hero-bg.jpg' },
+            promos: [
+                { title: 'Mexican Pizza', text: 'Delicious pizza with mexican flavor', img: 'https://codewithsadee.github.io/foodie/assets/images/promo-1.png', iconSvg: '<svg width="40" height="40"><circle cx="20" cy="20" r="15" fill="orange"/></svg>' }
+            ],
+            menu: { subtitle: 'Popular Dishes', title: 'Our Delicious <span class="span">Foods</span>', text: 'Our best menu selection.', items: [
+                { title: 'Burger Unlimited', category: 'Burger', price: '49.00', img: 'https://codewithsadee.github.io/foodie/assets/images/food-menu-1.png', badge: '-15%' }
+            ] },
+            about: { title: 'Best Burgers <span class="span">in Town!</span>', text: 'We serve quality food since 1990.', img: 'https://codewithsadee.github.io/foodie/assets/images/about-banner.png', features: ['Healthy Foods', 'Fast Delivery'] },
+            testimonials: { subtitle: 'Testimonials', title: 'Our Customers <span class="span">Reviews</span>', items: [
+                { name: 'Robert William', title: 'CEO', text: 'Excellent service!', img: 'https://codewithsadee.github.io/foodie/assets/images/avatar-1.jpg' }
+            ] },
+            cta: { title: 'Excellent Quality Burgers!', text: 'Order yours today.', btnText: 'Order Now' },
+            delivery: { title: 'Right Time & Place', text: 'We deliver to your door.' },
+            banners: [
+                { title: 'Discount Burgers', subtitle: '50% Off', text: 'Limited time offer', img: 'https://codewithsadee.github.io/foodie/assets/images/banner-1.jpg', size: 'lg' }
+            ],
+            blog: { subtitle: 'Latest News', title: 'This Is All About <span class="span">Foods</span>', posts: [
+                { title: 'Cheese Pizza Recipes', badge: 'Pizza', date: 'Jan 01 2024', author: 'Admin', text: 'Discover our secrets...', img: 'https://codewithsadee.github.io/foodie/assets/images/blog-1.jpg' }
+            ] },
+            socials: { whatsapp: '', facebook: '', instagram: '', twitter: '', pinterest: '' },
+            footer: { text: '© 2024 Tragalero', info: { phone: '+1 234 567', email: 'info@foodie.com', address: '123 Main St' }, hours: { monFri: '08:00-22:00', tue: 'Till Mid Night', sat: '10:00-16:00' } },
+            menutech: { cuid: '', ruid: '' },
+            config: { hasReservation: true, reservationBtnText: 'Book a Table' },
+            name: 'John Doe', bio: 'Professional Chef', profilePic: '', portfolio: ['', '', '', ''], videoUrl: '', beforeAfter: { before: '', after: '' }
+        };
 
-        function updateConfig(path, value) {
-            const keys = path.split('.');
-            let curr = webConfig;
-            for(let i=0; i<keys.length-1; i++) { if(!curr[keys[i]]) curr[keys[i]] = {}; curr = curr[keys[i]]; }
-            curr[keys[keys.length-1]] = value;
-            renderPreview();
+        let uploadTarget = null;
+        let activeSection = null;
+
+        const sectionMap = {
+            'header': 'Cabecera & Logo', 'hero': 'Sección Principal', 'promos': 'Promociones', 'about': 'Sobre Nosotros', 'menu': 'Carta / Menú', 'cta': 'Llamada a la Acción', 'delivery': 'Delivery', 'testi': 'Testimonios', 'banners': 'Banners', 'blog': 'Blog', 'footer': 'Pie de Página', 'menutech': 'Menutech', 'personal': 'Perfil Personal', 'portfolio': 'Galería', 'video': 'Video', 'ba': 'Antes/Después'
+        };
+
+        function sanitizeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        async function changeTemplate(tid) {
-            webConfig.template = tid;
-            const iframe = document.getElementById('templateIframe');
-            iframe.src = tid === 'foodie' ? 'template1.html' : 'template2.html';
-            document.querySelectorAll('#builderAccordion .accordion-item').forEach(item => {
-                const allowed = item.dataset.template || 'foodie';
-                item.style.display = allowed.includes(tid) ? 'block' : 'none';
-            });
-            renderDesigner();
-            iframe.onload = () => renderPreview();
+        function deepMerge(target, source) {
+            for (const key in source) {
+                if (source[key] instanceof Object && key in target) Object.assign(source[key], deepMerge(target[key], source[key]));
+            }
+            Object.assign(target || {}, source);
+            return target;
+        }
+
+        async function switchTemplate(file) {
+            webConfig.template = file;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            const iframe = document.getElementById('previewIframe');
+            iframe.src = file;
+            iframe.onload = () => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                renderDesigner();
+                renderPreview();
+            };
         }
 
         function renderDesigner() {
-            document.getElementById('inputLogo').value = webConfig.header?.logo || '';
-            document.getElementById('inputBtnText').value = webConfig.header?.btnText || '';
-            if(webConfig.template === 'foodie') {
-                document.getElementById('inputHeroTitle').value = webConfig.hero?.title || '';
-                document.getElementById('inputHeroSubtitle').value = webConfig.hero?.subtitle || '';
-                document.getElementById('inputHeroText').value = webConfig.hero?.text || '';
-            } else {
-                document.getElementById('inputProName').value = webConfig.name || '';
-                document.getElementById('inputProBio').value = webConfig.bio || '';
-            }
-            document.getElementById('inputFooterText').value = webConfig.footer?.text || '';
-            document.getElementById('inputWA').value = webConfig.socials?.whatsapp || '';
-            renderListContainers();
-        }
+            const container = document.getElementById('sidebarAccordion');
+            container.innerHTML = '';
+            const sections = webConfig.template === 'template1.html' ?
+                ['header', 'hero', 'promos', 'about', 'menu', 'cta', 'delivery', 'testi', 'banners', 'blog', 'footer', 'menutech'] :
+                ['header', 'personal', 'portfolio', 'video', 'ba', 'footer'];
 
-        function renderListContainers() {
-            const promoCont = document.getElementById('promoList');
-            if(promoCont) {
-                promoCont.innerHTML = (webConfig.promos || []).map((p, i) => `
-                    <div class="list-item-editor" data-index="${i}">
-                        <input type="text" class="form-control form-control-sm mb-1" value="${p.title}" oninput="webConfig.promos[${i}].title = this.value; renderPreview()">
-                        <button class="btn btn-sm btn-link text-danger p-0" onclick="webConfig.promos.splice(${i},1); renderDesigner(); renderPreview()">Eliminar</button>
+            sections.forEach(id => {
+                const card = document.createElement('div');
+                card.className = 'section-card';
+                card.innerHTML = `
+                    <div class="section-header" onclick="toggleSection('${id}')" id="header-${id}">
+                        <span>${sectionMap[id] || id}</span><i class="bi bi-chevron-down small"></i>
                     </div>
-                `).join('');
-            }
+                    <div class="section-content" id="content-${id}">${generateFields(id)}</div>
+                `;
+                container.appendChild(card);
+                initSortable(id);
+            });
+            if(activeSection) toggleSection(activeSection, true);
         }
 
-        function addItem(type) {
-            if(type === 'promos') webConfig.promos.push({ title: 'Nueva Promo', text: '', img: 'https://via.placeholder.com/300' });
-            renderDesigner();
+        function initSortable(id) {
+            const list = document.querySelector(`#content-${id} .sortable-list`);
+            if(!list) return;
+            new Sortable(list, {
+                animation: 150, handle: '.list-item-header',
+                onEnd: (evt) => {
+                    const path = list.dataset.path;
+                    const keys = path.split('.');
+                    let target = webConfig;
+                    keys.forEach(k => target = target[k]);
+                    const item = target.splice(evt.oldIndex, 1)[0];
+                    target.splice(evt.newIndex, 0, item);
+                    renderPreview();
+                }
+            });
+        }
+
+        function generateFields(id) {
+            let h = '';
+            const getV = (p) => p.split('.').reduce((o, i) => (o ? o[i] : ''), webConfig) || '';
+            const input = (l, p, t='text') => `<label class="form-label">${l}</label><input type="${t}" class="form-control form-control-sm mb-2" value="${getV(p)}" oninput="updateVal('${p}', this.value)">`;
+            const area = (l, p) => `<label class="form-label">${l}</label><textarea class="form-control form-control-sm mb-2" rows="3" oninput="updateVal('${p}', this.value)">${getV(p)}</textarea>`;
+            const upload = (l, p) => `<label class="form-label">${l}</label><div class="upload-box" onclick="triggerUpload('${p}')">${getV(p) ? '<img src="'+getV(p)+'">' : ''}<span>Subir</span></div>`;
+
+            if(id === 'header') h += input('Logo', 'header.logo') + input('Botón', 'header.btnText') + input('Color', 'header.btnColor', 'color');
+            if(id === 'hero') h += input('Subtítulo', 'hero.subtitle') + input('Título', 'hero.title') + area('Texto', 'hero.text') + upload('Fondo', 'hero.bgImg');
+            if(id === 'personal') h += input('Nombre', 'name') + area('Bio', 'bio') + upload('Perfil', 'profilePic');
+            if(id === 'footer') h += area('Créditos', 'footer.text') + input('Tel', 'footer.info.phone') + input('Email', 'footer.info.email') + input('Dirección', 'footer.info.address');
+            if(id === 'about') h += input('Título', 'about.title') + area('Texto', 'about.text') + upload('Imagen', 'about.img');
+            if(id === 'cta') h += input('Título', 'cta.title') + area('Texto', 'cta.text') + input('Botón', 'cta.btnText');
+            if(id === 'menutech') h += input('CUID', 'menutech.cuid') + input('RUID', 'menutech.ruid') + input('Texto Botón', 'config.reservationBtnText');
+
+            if(['promos', 'menu', 'testi', 'banners', 'blog'].includes(id)) {
+                const path = id === 'menu' ? 'menu.items' : (id === 'testi' ? 'testimonials.items' : (id === 'blog' ? 'blog.posts' : id));
+                const fields = { promos:['title','text','img'], menu:['title','category','price','img'], testi:['name','title','text','img'], banners:['title','subtitle','img'], blog:['title','date','img'] }[id];
+                h += `<button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="addListItem('${path}')">+ Añadir</button><div class="sortable-list" data-path="${path}">`;
+                (getV(path) || []).forEach((item, i) => {
+                    h += `<div class="list-item-editor"><div class="list-item-header"><span>Item #${i+1}</span><button class="btn btn-link text-danger p-0" onclick="removeListItem('${path}', ${i})"><i class="bi bi-trash"></i></button></div>`;
+                    fields.forEach(f => {
+                        if(f === 'img') h += `<div class="upload-box py-2 mb-1" onclick="triggerUpload('${path}.${i}.img')">${item.img ? '<img src="'+item.img+'">' : ''}<small>Imagen</small></div>`;
+                        else h += `<input type="text" class="form-control form-control-sm mb-1" placeholder="${f}" value="${item[f]||''}" oninput="updateVal('${path}.${i}.${f}', this.value)">`;
+                    });
+                    h += `</div>`;
+                });
+                h += `</div>`;
+            }
+            if(id === 'portfolio') h += `<div class="row g-1">` + [0,1,2,3].map(i => `<div class="col-6">${upload('Img '+(i+1), 'portfolio.'+i)}</div>`).join('') + `</div>`;
+            if(id === 'ba') h += upload('Antes', 'beforeAfter.before') + upload('Después', 'beforeAfter.after');
+
+            return h;
+        }
+
+        function toggleSection(id, forceOpen=false) {
+            const el = document.getElementById(`content-${id}`);
+            if(!el) return;
+            const wasActive = el.classList.contains('active');
+            document.querySelectorAll('.section-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.section-header').forEach(h => h.classList.remove('active'));
+            if (!wasActive || forceOpen) {
+                el.classList.add('active'); document.getElementById(`header-${id}`).classList.add('active');
+                activeSection = id;
+            } else activeSection = null;
+        }
+
+        function updateVal(path, val) {
+            const keys = path.split('.'); let curr = webConfig;
+            for(let i=0; i<keys.length-1; i++) { if(!curr[keys[i]]) curr[keys[i]]={}; curr = curr[keys[i]]; }
+            curr[keys[keys.length-1]] = val;
             renderPreview();
         }
 
         function renderPreview() {
-            const iframe = document.getElementById('templateIframe');
+            const iframe = document.getElementById('previewIframe');
             if(iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'update', config: webConfig }, '*');
         }
 
-        async function saveWebsite() {
+        function addListItem(path) {
+            const keys = path.split('.'); let target = webConfig;
+            keys.forEach(k => { if(!target[k]) target[k]=[]; target = target[k]; });
+            target.push({ title: 'Nuevo', text: '', img: '' });
+            renderDesigner(); renderPreview();
+        }
+
+        function removeListItem(path, i) {
+            const keys = path.split('.'); let target = webConfig;
+            keys.forEach((k, idx) => { if(idx < keys.length) target = target[k]; });
+            target.splice(i, 1);
+            renderDesigner(); renderPreview();
+        }
+
+        function triggerUpload(path) { uploadTarget = path; document.getElementById('globalFile').click(); }
+        async function handleFileUpload(input) {
+            if(!input.files?.[0]) return;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            try {
+                const formData = new FormData(); formData.append('file', input.files[0]); formData.append('upload_preset', 'Tragalero');
+                const res = await fetch('https://api.cloudinary.com/v1_1/dbbjxhvz5/auto/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                updateVal(uploadTarget, data.secure_url);
+                renderDesigner();
+            } catch(e) { alert("Error al subir"); }
+            finally { document.getElementById('loadingOverlay').style.display = 'none'; }
+        }
+
+        function setDevice(d, btn) {
+            document.getElementById('iframeCont').className = 'iframe-container preview-' + d;
+            document.querySelectorAll('.device-toggle .btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function shareWeb() {
+            const user = getLoggedInUser();
+            const url = window.location.origin + window.location.pathname.replace('webBuilding.html', 'view.html') + '?user=' + (user?.id || '');
+            navigator.clipboard.writeText(url).then(() => alert('Link copiado: ' + url));
+        }
+
+        async function saveWeb() {
             const user = getLoggedInUser();
             if(!user) return alert("Inicia sesión");
-            try {
-                const { error } = await supabaseClient.from('user_websites').upsert([{ user_id: user.id, config: webConfig }], { onConflict: 'user_id' });
-                if(error) throw error; alert("Guardado");
-            } catch(e) { alert(e.message); }
+            const { error } = await supabaseClient.from('user_websites').upsert([{ user_id: user.id, config: webConfig }], { onConflict: 'user_id' });
+            if(error) alert(error.message); else alert("Guardado");
         }
 
-        async function loadWebsite() {
+        async function loadWeb() {
             const user = getLoggedInUser();
-            if(!user) return;
+            if(!user) { switchTemplate('template1.html'); return; }
             const { data } = await supabaseClient.from('user_websites').select('config').eq('user_id', user.id).single();
-            if(data?.config) {
-                webConfig = data.config;
-                document.getElementById('templateSelect').value = webConfig.template;
-                changeTemplate(webConfig.template);
-            }
+            if(data?.config) webConfig = deepMerge(webConfig, data.config);
+            document.getElementById('templateSelect').value = webConfig.template || 'template1.html';
+            switchTemplate(webConfig.template || 'template1.html');
         }
 
-        function triggerUpload(path) { uploadTarget = path; document.getElementById('globalUpload').click(); }
-        async function handleGlobalUpload(input) {
-            if(!input.files?.[0]) return;
-            const url = "https://via.placeholder.com/600"; // Mock upload
-            updateConfig(uploadTarget, url); renderDesigner();
-        }
-
-        function setPreviewSize(s) { document.querySelector('.preview-frame').className = 'preview-frame preview-' + s; }
-
-        window.addEventListener('message', (e) => {
-            if(e.data.type === 'selectSection') {
-                const map = { 'personal': 'collapsePersonal', 'hero': 'collapseHero', 'promos': 'collapsePromo' };
-                const el = document.getElementById(map[e.data.section] || 'collapseHeader');
-                if(el) bootstrap.Collapse.getOrCreateInstance(el).show();
-            }
-        });
-
-        window.onload = async () => {
-            if(!getLoggedInUser()) { window.location.href = './login.html'; return; }
-            await loadWebsite();
-            if(!webConfig.template) changeTemplate('foodie');
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }
+        window.addEventListener('message', (e) => { if(e.data.type === 'selectSection') toggleSection(e.data.section); });
+        window.onload = loadWeb;
     </script>
 </body>
 </html>
