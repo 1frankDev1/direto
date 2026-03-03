@@ -177,7 +177,7 @@
                 <i class="bi bi-phone"></i>
             </button>
             <div class="vr mx-2"></div>
-            <span class="badge bg-secondary" id="template-name">Plantilla 1: Foodie</span>
+            <span class="badge bg-secondary" id="template-name">Plantilla: Foodie</span>
         </div>
 
         <iframe id="preview-frame" src="plantilla1.html"></iframe>
@@ -195,11 +195,13 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const viewUserId = urlParams.get('user');
+    const templateParam = urlParams.get('template') || 'plantilla1.html';
     const user = getLoggedInUser();
     const isViewOnly = !!viewUserId;
 
     let webConfig = {};
     let iframeDoc = null;
+    let activeTemplateId = 'plantilla1.html';
 
     // Initialization
     window.addEventListener('load', async () => {
@@ -214,6 +216,18 @@
         }
 
         await loadConfig();
+
+        // Update Template based on config or URL param
+        activeTemplateId = webConfig.templateId || templateParam;
+        const iframe = document.getElementById('preview-frame');
+        iframe.src = activeTemplateId;
+
+        // Update Template Name in UI
+        const templateNameEl = document.getElementById('template-name');
+        if (activeTemplateId.includes('plantilla1')) templateNameEl.innerText = 'Plantilla 1: Foodie';
+        else if (activeTemplateId.includes('plantilla2')) templateNameEl.innerText = 'Plantilla 2: Profesional';
+        else templateNameEl.innerText = 'Personalizada';
+
         setupIframe();
         setupDeviceSwitcher();
 
@@ -251,6 +265,9 @@
         const btn = document.getElementById('save-btn');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+
+        // Ensure current template is saved
+        webConfig.templateId = activeTemplateId;
 
         try {
             const { error } = await supabaseClient
@@ -321,7 +338,7 @@
     function instrumentIframe() {
         // Automatically assign IDs to editable elements if they don't have them
         const selectors = {
-            'text': 'h1, h2, h3, h4, h5, p, span, .btn, .navbar-link, time, data, address',
+            'text': 'h1, h2, h3, h4, h5, p, span, i, .btn, .navbar-link, .nav-link, .navbar-brand, time, data, address',
             'image': 'img',
             'bg': 'section, header, footer, .hero, .cta, .footer-top, .about-banner, .delivery-banner'
         };
@@ -338,9 +355,9 @@
 
             // 2. Mark Editable Elements inside section
             sec.querySelectorAll(`${selectors.text}, ${selectors.image}`).forEach(el => {
-                // Skip icons and complex containers
-                if (el.tagName === 'ION-ICON' || el.children.length > 1) {
-                    // But if it's a button or link with one child (like a span), it's fine
+                // Skip complex containers but keep small ones like icons or buttons with simple text
+                if (el.tagName === 'ION-ICON' || (el.children.length > 0 && !['A', 'BUTTON', 'SPAN', 'I'].includes(el.tagName))) {
+                    return;
                 }
 
                 if (!el.getAttribute('data-builder-id')) {

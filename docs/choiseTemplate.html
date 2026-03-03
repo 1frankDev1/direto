@@ -175,6 +175,18 @@
                 </div>
             </div>
 
+            <!-- Template 2: Professional -->
+            <div class="template-card" onclick="openPreview('plantilla2.html', 'Profesional - Negocios')">
+                <span class="template-badge bg-info">Nuevo</span>
+                <div class="template-img-container">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+                <div class="template-info">
+                    <h5 class="fw-bold mb-1">Profesional</h5>
+                    <p class="small text-muted mb-0">Diseño moderno para agencias, consultoras y servicios.</p>
+                </div>
+            </div>
+
             <!-- Future templates placeholders -->
             <div class="template-card opacity-50" style="cursor: default;">
                 <div class="template-img-container">
@@ -232,8 +244,8 @@
         function openPreview(url, title) {
             modalTitle.textContent = 'Vista Previa: ' + title;
             previewIframe.src = url;
-            // In the future, if we have multiple templates, we might want to pass the template ID to webBuilding.html
-            // editButton.href = `./webBuilding.html?template=${url}`;
+            // Pass the template URL to the editor
+            editButton.href = `./webBuilding.html?template=${url}`;
             previewModal.show();
         }
 
