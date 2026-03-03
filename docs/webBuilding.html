@@ -338,7 +338,7 @@
     function instrumentIframe() {
         // Automatically assign IDs to editable elements if they don't have them
         const selectors = {
-            'text': 'h1, h2, h3, h4, h5, p, span, i, .btn, .navbar-link, .nav-link, .navbar-brand, time, data, address',
+            'text': 'h1, h2, h3, h4, h5, h6, p, a, span, i, .btn, .navbar-link, .nav-link, .navbar-brand, time, data, address',
             'image': 'img',
             'bg': 'section, header, footer, .hero, .cta, .footer-top, .about-banner, .delivery-banner'
         };
@@ -356,7 +356,9 @@
             // 2. Mark Editable Elements inside section
             sec.querySelectorAll(`${selectors.text}, ${selectors.image}`).forEach(el => {
                 // Skip complex containers but keep small ones like icons or buttons with simple text
-                if (el.tagName === 'ION-ICON' || (el.children.length > 0 && !['A', 'BUTTON', 'SPAN', 'I'].includes(el.tagName))) {
+                // Also allow links that contain a single text node or a single simple child
+                const hasComplexChildren = Array.from(el.children).some(child => !['SPAN', 'I', 'B', 'STRONG', 'EM'].includes(child.tagName));
+                if (el.tagName === 'ION-ICON' || hasComplexChildren) {
                     return;
                 }
 
