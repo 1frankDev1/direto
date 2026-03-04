@@ -25,6 +25,7 @@
             font-family: 'Inter', sans-serif;
             color: var(--dark-color);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .navbar {
@@ -92,6 +93,18 @@
             display: block;
         }
 
+        .gallery-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.03);
+        }
+
         .footer {
             background: var(--dark-color);
             color: white;
@@ -120,97 +133,130 @@
 </head>
 <body>
 
-    <header class="navbar navbar-expand-lg sticky-top">
+    <header class="navbar navbar-expand-lg sticky-top" id="cabecera">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-3" href="#" id="brand-logo">PRO<span>DESIGN</span></a>
+            <a class="navbar-brand fw-bold fs-3" href="#" id="marca-logo" data-label="Logotipo">PRO<span>DESIGN</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#home">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#services">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#about">Nosotros</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#contact">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#inicio">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#servicios">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#galeria">Galería</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#nosotros">Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#contacto">Contacto</a></li>
                 </ul>
             </div>
         </div>
     </header>
 
     <main>
-        <!-- Hero Section -->
-        <section class="hero" id="home">
+        <!-- Inicio Section -->
+        <section class="hero" id="inicio">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6">
-                        <h1 class="hero-title" id="hero-heading">Elevamos tu marca al siguiente nivel.</h1>
-                        <p class="lead mb-4" id="hero-subtext">Somos un equipo apasionado por el diseño y la tecnología, enfocados en crear soluciones profesionales que impulsan el crecimiento de tu negocio en el mundo digital.</p>
+                        <h1 class="hero-title" id="titulo-principal" data-label="Título Principal">Elevamos tu marca al siguiente nivel.</h1>
+                        <p class="lead mb-4" id="subtitulo-hero" data-label="Subtítulo">Somos un equipo apasionado por el diseño y la tecnología, enfocados en crear soluciones profesionales.</p>
                         <div class="d-flex gap-3">
-                            <a href="#contact" class="btn btn-primary" id="hero-btn-primary">Empezar ahora</a>
-                            <a href="#services" class="btn btn-outline-dark px-4 py-2 fw-semibold" id="hero-btn-secondary">Saber más</a>
+                            <a href="#contacto" class="btn btn-primary" id="boton-cta-1" data-label="Botón Principal">Empezar ahora</a>
+                            <a href="#servicios" class="btn btn-outline-dark px-4 py-2 fw-semibold" id="boton-cta-2" data-label="Botón Secundario">Saber más</a>
                         </div>
                     </div>
                     <div class="col-lg-6 d-none d-lg-block">
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Professional Design" class="img-fluid img-rounded" id="hero-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Professional Design" class="img-fluid img-rounded" id="imagen-hero" data-label="Imagen Hero">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Services Section -->
-        <section class="section-padding" id="services">
+        <!-- Galería Section -->
+        <section class="section-padding" id="galeria">
             <div class="container">
-                <h2 class="section-title" id="services-title">Nuestros Servicios</h2>
+                <h2 class="section-title" id="titulo-galeria" data-label="Título Galería">Nuestra Galería</h2>
                 <div class="row g-4">
                     <div class="col-md-4">
-                        <div class="card-service">
-                            <i class="bi bi-laptop"></i>
-                            <h4 class="fw-bold" id="service-1-title">Diseño Web</h4>
-                            <p class="text-muted" id="service-1-desc">Sitios web modernos, responsivos y optimizados para convertir visitantes en clientes leales.</p>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80" class="gallery-img" id="img-galeria-1" data-label="Imagen 1">
                     </div>
                     <div class="col-md-4">
-                        <div class="card-service">
-                            <i class="bi bi-graph-up-arrow"></i>
-                            <h4 class="fw-bold" id="service-2-title">Marketing Digital</h4>
-                            <p class="text-muted" id="service-2-desc">Estrategias personalizadas para aumentar tu visibilidad y posicionamiento en buscadores.</p>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=400&q=80" class="gallery-img" id="img-galeria-2" data-label="Imagen 2">
                     </div>
                     <div class="col-md-4">
-                        <div class="card-service">
-                            <i class="bi bi-palette"></i>
-                            <h4 class="fw-bold" id="service-3-title">Branding</h4>
-                            <p class="text-muted" id="service-3-desc">Identidad visual única que transmite la esencia y los valores de tu empresa.</p>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=400&q=80" class="gallery-img" id="img-galeria-3" data-label="Imagen 3">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- About Section -->
-        <section class="section-padding bg-light" id="about">
+        <!-- Orden en Línea / Servicios Section -->
+        <section class="section-padding bg-light" id="orden-en-linea">
+            <div class="container text-center">
+                <h2 class="section-title" id="titulo-orden" data-label="Título Pedidos">Ordena en Línea</h2>
+                <p class="mb-5" id="desc-orden" data-label="Descripción Pedidos">Disfruta de nuestros servicios desde la comodidad de tu hogar.</p>
+                <div class="row g-4 text-start">
+                    <div class="col-md-4">
+                        <div class="card-service">
+                            <i class="bi bi-cart-check"></i>
+                            <h4 class="fw-bold" id="item-1-titulo" data-label="Servicio 1 Título">Pedido Rápido</h4>
+                            <p class="text-muted" id="item-1-desc" data-label="Servicio 1 Desc">Entrega inmediata para todos nuestros clientes locales.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card-service">
+                            <i class="bi bi-shield-check"></i>
+                            <h4 class="fw-bold" id="item-2-titulo" data-label="Servicio 2 Título">Calidad Garantizada</h4>
+                            <p class="text-muted" id="item-2-desc" data-label="Servicio 2 Desc">Solo utilizamos los mejores materiales y procesos.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card-service">
+                            <i class="bi bi-headset"></i>
+                            <h4 class="fw-bold" id="item-3-titulo" data-label="Servicio 3 Título">Soporte 24/7</h4>
+                            <p class="text-muted" id="item-3-desc" data-label="Servicio 3 Desc">Atención personalizada en cualquier momento del día.</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-5" id="btn-ordenar-ahora" data-label="Botón de Acción">¡Ordenar Ahora!</button>
+            </div>
+        </section>
+
+        <!-- Nosotros Section -->
+        <section class="section-padding" id="nosotros">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6 mb-4 mb-lg-0">
-                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Team" class="img-fluid img-rounded" id="about-image">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Team" class="img-fluid img-rounded" id="img-nosotros" data-label="Imagen Nosotros">
                     </div>
                     <div class="col-lg-6 ps-lg-5">
-                        <h2 class="fw-bold mb-4" id="about-title">Impulsamos tu Éxito</h2>
-                        <p id="about-p1">Con más de 10 años de experiencia, hemos ayudado a cientos de empresas a transformar su presencia digital. Entendemos los desafíos del mercado actual y ofrecemos soluciones a medida.</p>
-                        <p id="about-p2">Nuestra metodología se basa en la colaboración estrecha con nuestros clientes para asegurar que cada detalle refleje su visión única.</p>
-                        <button class="btn btn-primary mt-3" id="about-btn">Conoce al equipo</button>
+                        <h2 class="fw-bold mb-4" id="titulo-nosotros" data-label="Título Nosotros">Nuestra Historia</h2>
+                        <p id="parrafo-nosotros-1" data-label="Párrafo 1">Con más de 10 años de experiencia, hemos ayudado a cientos de empresas a transformar su presencia digital.</p>
+                        <p id="parrafo-nosotros-2" data-label="Párrafo 2">Nuestra metodología se basa en la colaboración estrecha con nuestros clientes.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Contact Section -->
-        <section class="section-padding" id="contact">
+        <!-- Visítanos / Redes Section -->
+        <section class="section-padding bg-dark text-white" id="visitanos">
+            <div class="container text-center">
+                <h2 class="fw-bold mb-4 text-white" id="titulo-visitanos" data-label="Título Visítanos">Visítanos en Redes</h2>
+                <p class="mb-5 text-light" id="sub-visitanos" data-label="Subtítulo Redes">Síguenos para estar al tanto de todas nuestras novedades.</p>
+                <div class="d-flex justify-content-center gap-4">
+                    <a href="#" class="text-white fs-1" id="link-facebook" data-label="Enlace Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white fs-1" id="link-instagram" data-label="Enlace Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-white fs-1" id="link-whatsapp" data-label="Enlace WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contacto Section -->
+        <section class="section-padding" id="contacto">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 text-center">
-                        <h2 class="fw-bold mb-4" id="contact-title">¿Listo para empezar tu proyecto?</h2>
-                        <p class="text-muted mb-5" id="contact-subtitle">Contáctanos hoy mismo para una consulta gratuita y descubre cómo podemos ayudarte a crecer.</p>
+                        <h2 class="fw-bold mb-4" id="titulo-contacto" data-label="Título Contacto">Contáctanos</h2>
+                        <p class="text-muted mb-5" id="sub-contacto" data-label="Subtítulo Contacto">Estamos aquí para ayudarte.</p>
                         <div class="row g-4 text-start">
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center mb-3">
@@ -219,7 +265,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0 fw-bold">Email</h6>
-                                        <p class="mb-0 text-muted" id="contact-email">contacto@tuempresa.com</p>
+                                        <p class="mb-0 text-muted" id="email-contacto" data-label="Email">contacto@tuempresa.com</p>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center">
@@ -228,7 +274,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0 fw-bold">Teléfono</h6>
-                                        <p class="mb-0 text-muted" id="contact-phone">+1 (555) 000-0000</p>
+                                        <p class="mb-0 text-muted" id="tel-contacto" data-label="Teléfono">+1 (555) 000-0000</p>
                                     </div>
                                 </div>
                             </div>
@@ -239,16 +285,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0 fw-bold">Dirección</h6>
-                                        <p class="mb-0 text-muted" id="contact-address">Calle Principal #123, Ciudad</p>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
-                                        <i class="bi bi-clock-fill text-primary"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0 fw-bold">Horario</h6>
-                                        <p class="mb-0 text-muted" id="contact-hours">Lun - Vie: 9:00 - 18:00</p>
+                                        <p class="mb-0 text-muted" id="dir-contacto" data-label="Dirección">Calle Principal #123</p>
                                     </div>
                                 </div>
                             </div>
@@ -259,34 +296,10 @@
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="row g-4 border-bottom pb-5 mb-4">
-                <div class="col-lg-4">
-                    <h4 class="fw-bold mb-3" id="footer-brand">PRODESIGN</h4>
-                    <p class="text-muted" id="footer-text">Líderes en transformación digital y diseño profesional. Creamos el futuro hoy.</p>
-                </div>
-                <div class="col-lg-4">
-                    <h5 class="fw-bold mb-3">Enlaces Rápidos</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-muted text-decoration-none">Políticas de Privacidad</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Términos de Servicio</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Preguntas Frecuentes</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4">
-                    <h5 class="fw-bold mb-3">Síguenos</h5>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-white fs-4"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="text-white fs-4"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center">
-                <p class="small text-muted mb-0" id="copyright">&copy; 2024 PRODESIGN. Todos los derechos reservados.</p>
-            </div>
+    <footer class="footer" id="pie-pagina">
+        <div class="container text-center">
+            <h4 class="fw-bold mb-3" id="footer-nombre" data-label="Nombre Footer">PRODESIGN</h4>
+            <p class="text-muted mb-0" id="copyright" data-label="Copyright">&copy; 2024 PRODESIGN. Todos los derechos reservados.</p>
         </div>
     </footer>
 

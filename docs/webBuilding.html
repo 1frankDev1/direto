@@ -331,6 +331,7 @@
 
             if (data.text !== undefined) el.innerText = data.text;
             if (data.src !== undefined) el.src = data.src;
+            if (data.href !== undefined) el.href = data.href;
             if (data.bgImage !== undefined) el.style.backgroundImage = `url('${data.bgImage}')`;
         });
     }
@@ -349,8 +350,16 @@
         iframeDoc.querySelectorAll('section, header, footer').forEach((sec, idx) => {
             const sectionId = sec.id || `section-${idx}`;
             sec.setAttribute('data-builder-section', sectionId);
-            let sectionName = sec.id || sec.className.replace('section', '').replace('section-divider', '').trim();
-            if (!sectionName || sectionName === 'white' || sectionName === 'gray') sectionName = `Sección ${idx + 1}`;
+
+            // Improved section name logic
+            let sectionName = sec.getAttribute('data-label') || sec.id;
+            if (!sectionName) {
+                // Filter out common technical classes
+                const techClasses = ['section-padding', 'bg-dark', 'text-white', 'text-center', 'container', 'row', 'col', 'section', 'bg-light'];
+                const classes = Array.from(sec.classList).filter(c => !techClasses.some(tc => c.includes(tc)));
+                sectionName = classes[0] || `Sección ${idx + 1}`;
+            }
+
             sec.setAttribute('data-section-name', sectionName);
 
             // 2. Mark Editable Elements inside section
@@ -431,6 +440,7 @@
 
             filteredEditables.forEach(el => {
                 const id = el.getAttribute('data-builder-id');
+                const label = el.getAttribute('data-label') || id;
                 const tagName = el.tagName.toLowerCase();
                 const isBg = el.hasAttribute('data-has-bg');
 
@@ -438,7 +448,7 @@
                     const currentSrc = isBg ? (window.getComputedStyle(el).backgroundImage.slice(5, -2)) : el.src;
                     fieldsHtml += `
                         <div class="mb-3 border-bottom pb-3 field-group" data-field-for="${id}" onmouseenter="focusElement('${id}')">
-                            <label class="form-label small fw-bold text-primary"><i class="bi bi-image"></i> ${id}</label>
+                            <label class="form-label small fw-bold text-primary"><i class="bi bi-image"></i> ${label}</label>
                             <div class="upload-zone"
                                  onclick="triggerUpload('${id}', '${isBg ? 'bg' : 'img'}')"
                                  ondragover="handleDragOver(event, this)"
@@ -453,8 +463,14 @@
                 } else {
                     fieldsHtml += `
                         <div class="mb-3 border-bottom pb-3 field-group" data-field-for="${id}" onmouseenter="focusElement('${id}')">
-                            <label class="form-label small fw-bold text-primary"><i class="bi bi-type"></i> ${id}</label>
+                            <label class="form-label small fw-bold text-primary"><i class="bi bi-type"></i> ${label}</label>
                             <textarea class="form-control form-control-sm" rows="3" oninput="updateContent('${id}', this.value)" onfocus="focusElement('${id}')">${el.innerText.trim()}</textarea>
+                            ${tagName === 'a' ? `
+                                <div class="mt-2">
+                                    <label class="form-label extra-small text-muted mb-0">Enlace (URL)</label>
+                                    <input type="text" class="form-control form-control-sm" value="${el.getAttribute('href') || ''}" oninput="updateLink('${id}', this.value)">
+                                </div>
+                            ` : ''}
                         </div>
                     `;
                 }
@@ -510,10 +526,32 @@
 
     window.updateContent = (id, val) => {
         const el = iframeDoc.querySelector(`[data-builder-id="${id}"]`);
-        if (el) el.innerText = val;
+        if (el) {
+            // Preserve icons if present
+            const icon = el.querySelector('i, ion-icon');
+            if (icon) {
+                // Keep the icon and update text node
+                let textNode = Array.from(el.childNodes).find(node => node.nodeType === 3);
+                if (textNode) {
+                    textNode.nodeValue = val;
+                } else {
+                    el.appendChild(document.createTextNode(val));
+                }
+            } else {
+                el.innerText = val;
+            }
+        }
 
         if (!webConfig[id]) webConfig[id] = {};
         webConfig[id].text = val;
+    };
+
+    window.updateLink = (id, val) => {
+        const el = iframeDoc.querySelector(`[data-builder-id="${id}"]`);
+        if (el) el.href = val;
+
+        if (!webConfig[id]) webConfig[id] = {};
+        webConfig[id].href = val;
     };
 
     window.triggerUpload = (id, type) => {
