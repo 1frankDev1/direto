@@ -144,11 +144,16 @@
 <div id="editor-container">
     <!-- Sidebar -->
     <aside id="sidebar">
-        <div class="sidebar-header d-flex justify-content-between align-items-center">
+        <div class="sidebar-header">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <a href="./choiseTemplate.html" class="btn btn-sm btn-light text-primary fw-bold">
+                    <i class="bi bi-arrow-left"></i> Plantillas
+                </a>
+                <button class="btn btn-sm btn-light" id="save-btn">
+                    <i class="bi bi-cloud-arrow-up"></i> Guardar
+                </button>
+            </div>
             <h5 class="mb-0 fw-bold">Editor Web</h5>
-            <button class="btn btn-sm btn-light" id="save-btn">
-                <i class="bi bi-cloud-arrow-up"></i> Guardar
-            </button>
         </div>
 
         <div class="sidebar-content">
@@ -217,8 +222,10 @@
 
         await loadConfig();
 
-        // Update Template based on config or URL param
-        activeTemplateId = webConfig.templateId || templateParam;
+        // URL parameter takes precedence to allow switching from choiseTemplate.html
+        const urlTemplate = urlParams.get('template');
+        activeTemplateId = urlTemplate || webConfig.templateId || 'plantilla1.html';
+
         const iframe = document.getElementById('preview-frame');
         iframe.src = activeTemplateId;
 
@@ -233,7 +240,7 @@
 
         document.getElementById('save-btn').onclick = saveConfig;
         document.getElementById('btn-view-public').onclick = () => {
-            const publicUrl = `${window.location.origin}${window.location.pathname}?user=${user.id}`;
+            const publicUrl = `${window.location.origin}${window.location.pathname}?user=${user.id}&template=${activeTemplateId}`;
             window.open(publicUrl, '_blank');
         };
 
@@ -254,6 +261,17 @@
 
             if (data && data.config) {
                 webConfig = data.config;
+
+                // Detect legacy structure: flat config without templateId
+                // If it's legacy and has content, migrate it to plantilla1.html
+                if (!webConfig.templateId && Object.keys(webConfig).length > 0) {
+                    console.log("Migrating legacy config...");
+                    const legacyConfig = { ...webConfig };
+                    webConfig = {
+                        'plantilla1.html': legacyConfig,
+                        'templateId': 'plantilla1.html'
+                    };
+                }
             }
         } catch (err) {
             console.error("Error loading config:", err);
@@ -323,14 +341,18 @@
     }
 
     function applyConfigToIframe() {
-        if (!webConfig || Object.keys(webConfig).length === 0) return;
+        const config = webConfig[activeTemplateId];
+        if (!config || Object.keys(config).length === 0) return;
 
-        Object.entries(webConfig).forEach(([id, data]) => {
+        Object.entries(config).forEach(([id, data]) => {
             const el = iframeDoc.querySelector(`[data-builder-id="${id}"]`) || iframeDoc.getElementById(id);
             if (!el) return;
 
             if (data.text !== undefined) el.innerText = data.text;
-            if (data.src !== undefined) el.src = data.src;
+            if (data.src !== undefined) {
+                el.src = data.src;
+                // If it's an iframe, we might need to reload or it handles it via src update
+            }
             if (data.href !== undefined) el.href = data.href;
             if (data.bgImage !== undefined) el.style.backgroundImage = `url('${data.bgImage}')`;
         });
@@ -339,15 +361,16 @@
     function instrumentIframe() {
         // Automatically assign IDs to editable elements if they don't have them
         const selectors = {
-            'text': 'h1, h2, h3, h4, h5, h6, p, a, span, i, .btn, .navbar-link, .nav-link, .navbar-brand, time, data, address',
-            'image': 'img',
-            'bg': 'section, header, footer, .hero, .cta, .footer-top, .about-banner, .delivery-banner'
+            'text': 'h1, h2, h3, h4, h5, h6, p, a, span, i, .btn, .navbar-link, .nav-link, .navbar-brand, time, data, address, strong, em, label',
+            'image': 'img, iframe, video',
+            'bg': 'section, header, footer, [class*="section"], .hero, .cta, .footer-top, .about-banner, .delivery-banner'
         };
 
         let counter = 0;
 
-        // 1. Mark Sections
-        iframeDoc.querySelectorAll('section, header, footer').forEach((sec, idx) => {
+        // 1. First Pass: Mark all Sections
+        const sections = iframeDoc.querySelectorAll(selectors.bg);
+        sections.forEach((sec, idx) => {
             const sectionId = sec.id || `section-${idx}`;
             sec.setAttribute('data-builder-section', sectionId);
 
@@ -359,29 +382,35 @@
                 const classes = Array.from(sec.classList).filter(c => !techClasses.some(tc => c.includes(tc)));
                 sectionName = classes[0] || `Sección ${idx + 1}`;
             }
-
             sec.setAttribute('data-section-name', sectionName);
+        });
 
-            // 2. Mark Editable Elements inside section
-            sec.querySelectorAll(`${selectors.text}, ${selectors.image}`).forEach(el => {
-                // Skip complex containers but keep small ones like icons or buttons with simple text
-                // Also allow links that contain a single text node or a single simple child
-                const hasComplexChildren = Array.from(el.children).some(child => !['SPAN', 'I', 'B', 'STRONG', 'EM'].includes(child.tagName));
-                if (el.tagName === 'ION-ICON' || hasComplexChildren) {
-                    return;
-                }
+        // 2. Second Pass: Mark Editable Elements
+        iframeDoc.querySelectorAll(`${selectors.text}, ${selectors.image}`).forEach(el => {
+            // Skip if already marked or is a section itself
+            if (el.hasAttribute('data-builder-id') || el.hasAttribute('data-builder-section')) return;
 
-                if (!el.getAttribute('data-builder-id')) {
-                    const id = el.id || `el-${counter++}`;
-                    el.setAttribute('data-builder-id', id);
-                    el.classList.add('builder-editable');
-                    el.style.cursor = 'pointer';
-                }
-            });
+            // Skip complex containers but keep small ones like icons or buttons with simple text
+            const allowedChildren = ['SPAN', 'I', 'B', 'STRONG', 'EM', 'ION-ICON'];
+            const hasComplexChildren = Array.from(el.children).some(child => !allowedChildren.includes(child.tagName));
 
-            // Mark for background images
+            if (el.tagName !== 'IMG' && el.tagName !== 'IFRAME' && el.tagName !== 'VIDEO' && hasComplexChildren) {
+                return;
+            }
+
+            if (el.tagName === 'ION-ICON') return;
+
+            const id = el.id || `el-${counter++}`;
+            el.setAttribute('data-builder-id', id);
+            el.classList.add('builder-editable');
+            el.style.cursor = 'pointer';
+        });
+
+        // 3. Mark for background images
+        sections.forEach((sec, idx) => {
             const computedStyle = window.getComputedStyle(sec);
-            if (computedStyle.backgroundImage !== 'none' && computedStyle.backgroundImage !== 'initial') {
+            const bgImg = computedStyle.backgroundImage;
+            if (bgImg && bgImg !== 'none' && bgImg !== 'initial' && bgImg.includes('url(')) {
                 if (!sec.getAttribute('data-builder-id')) {
                     const id = sec.id || `bg-${idx}`;
                     sec.setAttribute('data-builder-id', id);
@@ -444,11 +473,17 @@
                 const tagName = el.tagName.toLowerCase();
                 const isBg = el.hasAttribute('data-has-bg');
 
-                if (tagName === 'img' || isBg) {
+                if (tagName === 'img' || tagName === 'iframe' || isBg) {
                     const currentSrc = isBg ? (window.getComputedStyle(el).backgroundImage.slice(5, -2)) : el.src;
+                    const isIframe = tagName === 'iframe';
+
                     fieldsHtml += `
                         <div class="mb-3 border-bottom pb-3 field-group" data-field-for="${id}" onmouseenter="focusElement('${id}')">
-                            <label class="form-label small fw-bold text-primary"><i class="bi bi-image"></i> ${label}</label>
+                            <label class="form-label small fw-bold text-primary"><i class="bi bi-${isIframe ? 'code-slash' : 'image'}"></i> ${label}</label>
+                            ${isIframe ? `
+                                <input type="text" class="form-control form-control-sm" value="${currentSrc}" oninput="updateSrc('${id}', this.value)">
+                                <p class="extra-small text-muted mt-1">Pega aquí el enlace del mapa o video</p>
+                            ` : `
                             <div class="upload-zone"
                                  onclick="triggerUpload('${id}', '${isBg ? 'bg' : 'img'}')"
                                  ondragover="handleDragOver(event, this)"
@@ -457,7 +492,7 @@
                                 <i class="bi bi-cloud-arrow-up"></i>
                                 <p class="mb-0 small text-muted">Click o Arrastra aquí</p>
                                 <img src="${currentSrc}" id="sidebar-preview-${id}" class="mt-2 rounded shadow-sm" style="max-width: 100%; max-height: 100px;">
-                            </div>
+                            </div>`}
                         </div>
                     `;
                 } else {
@@ -527,31 +562,49 @@
     window.updateContent = (id, val) => {
         const el = iframeDoc.querySelector(`[data-builder-id="${id}"]`);
         if (el) {
-            // Preserve icons if present
-            const icon = el.querySelector('i, ion-icon');
-            if (icon) {
-                // Keep the icon and update text node
-                let textNode = Array.from(el.childNodes).find(node => node.nodeType === 3);
+            // Preserve allowed children if present
+            const allowedTags = ['I', 'ION-ICON', 'SPAN', 'B', 'STRONG', 'EM'];
+            const preservedChildren = Array.from(el.children).filter(child => allowedTags.includes(child.tagName));
+
+            if (preservedChildren.length > 0) {
+                // Update only the first text node found
+                let textNode = Array.from(el.childNodes).find(node => node.nodeType === 3 && node.nodeValue.trim().length > 0);
                 if (textNode) {
                     textNode.nodeValue = val;
+                } else if (el.childNodes.length > 0) {
+                    // If no text node with content, but has children, try to find any text node or prepend
+                    let anyTextNode = Array.from(el.childNodes).find(node => node.nodeType === 3);
+                    if (anyTextNode) anyTextNode.nodeValue = val;
+                    else el.prepend(document.createTextNode(val));
                 } else {
-                    el.appendChild(document.createTextNode(val));
+                    el.innerText = val;
                 }
             } else {
                 el.innerText = val;
             }
         }
 
-        if (!webConfig[id]) webConfig[id] = {};
-        webConfig[id].text = val;
+        if (!webConfig[activeTemplateId]) webConfig[activeTemplateId] = {};
+        if (!webConfig[activeTemplateId][id]) webConfig[activeTemplateId][id] = {};
+        webConfig[activeTemplateId][id].text = val;
     };
 
     window.updateLink = (id, val) => {
         const el = iframeDoc.querySelector(`[data-builder-id="${id}"]`);
         if (el) el.href = val;
 
-        if (!webConfig[id]) webConfig[id] = {};
-        webConfig[id].href = val;
+        if (!webConfig[activeTemplateId]) webConfig[activeTemplateId] = {};
+        if (!webConfig[activeTemplateId][id]) webConfig[activeTemplateId][id] = {};
+        webConfig[activeTemplateId][id].href = val;
+    };
+
+    window.updateSrc = (id, val) => {
+        const el = iframeDoc.querySelector(`[data-builder-id="${id}"]`);
+        if (el) el.src = val;
+
+        if (!webConfig[activeTemplateId]) webConfig[activeTemplateId] = {};
+        if (!webConfig[activeTemplateId][id]) webConfig[activeTemplateId][id] = {};
+        webConfig[activeTemplateId][id].src = val;
     };
 
     window.triggerUpload = (id, type) => {
@@ -590,15 +643,16 @@
 
         try {
             const url = await uploadToCloudinary(file);
-            if (!webConfig[id]) webConfig[id] = {};
+            if (!webConfig[activeTemplateId]) webConfig[activeTemplateId] = {};
+            if (!webConfig[activeTemplateId][id]) webConfig[activeTemplateId][id] = {};
 
             const el = iframeDoc.querySelector(`[data-builder-id="${id}"]`);
             if (type === 'bg') {
                 el.style.backgroundImage = `url('${url}')`;
-                webConfig[id].bgImage = url;
+                webConfig[activeTemplateId][id].bgImage = url;
             } else {
                 el.src = url;
-                webConfig[id].src = url;
+                webConfig[activeTemplateId][id].src = url;
             }
 
             zone.innerHTML = `
