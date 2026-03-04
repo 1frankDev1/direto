@@ -185,7 +185,7 @@
             <span class="badge bg-secondary" id="template-name">Plantilla: Foodie</span>
         </div>
 
-        <iframe id="preview-frame" src="plantilla1.html"></iframe>
+        <iframe id="preview-frame" src="about:blank"></iframe>
     </main>
 </div>
 
@@ -200,7 +200,6 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const viewUserId = urlParams.get('user');
-    const templateParam = urlParams.get('template') || 'plantilla1.html';
     const user = getLoggedInUser();
     const isViewOnly = !!viewUserId;
 
@@ -222,9 +221,15 @@
 
         await loadConfig();
 
-        // URL parameter takes precedence to allow switching from choiseTemplate.html
+        // Determine active template: URL param > Saved config > Default
         const urlTemplate = urlParams.get('template');
-        activeTemplateId = urlTemplate || webConfig.templateId || 'plantilla1.html';
+        if (urlTemplate) {
+            activeTemplateId = urlTemplate;
+        } else if (webConfig && webConfig.templateId) {
+            activeTemplateId = webConfig.templateId;
+        } else {
+            activeTemplateId = 'plantilla1.html';
+        }
 
         const iframe = document.getElementById('preview-frame');
         iframe.src = activeTemplateId;
@@ -239,27 +244,17 @@
         setupDeviceSwitcher();
 
         document.getElementById('save-btn').onclick = saveConfig;
-        document.getElementById('btn-view-public').onclick = async () => {
-            let publicUrl = `${window.location.origin}${window.location.pathname}?user=${user.id}`;
-
-            // Try to find business slug for this user
-            try {
-                const { data } = await supabaseClient
-                    .from('businesses')
-                    .select('slug')
-                    .eq('owner_id', user.id)
-                    .limit(1)
-                    .single();
-
-                if (data && data.slug) {
-                    publicUrl = window.location.origin + '/' + data.slug;
-                }
-            } catch (e) {
-                console.error("Error fetching slug for public view:", e);
-            }
-
+        document.getElementById('btn-view-public').onclick = () => {
+            const userId = isViewOnly ? viewUserId : user.id;
+            const publicUrl = `${window.location.origin}${window.location.pathname}?user=${userId}&template=${activeTemplateId}`;
             window.open(publicUrl, '_blank');
         };
+
+        // Update back button to preserve template context
+        const backBtn = document.querySelector('a[href="./choiseTemplate.html"]');
+        if (backBtn) {
+            backBtn.href = `./choiseTemplate.html?lastTemplate=${activeTemplateId}`;
+        }
 
         // Hide loader after a delay to ensure iframe is ready
         setTimeout(() => {
@@ -380,7 +375,7 @@
         const selectors = {
             'text': 'h1, h2, h3, h4, h5, h6, p, a, span, i, .btn, .navbar-link, .nav-link, .navbar-brand, time, data, address, strong, em, label',
             'image': 'img, iframe, video',
-            'bg': 'section, header, footer, [class*="section"], .hero, .cta, .footer-top, .about-banner, .delivery-banner'
+            'bg': 'section, header, footer, main > section, [class*="section"], .hero, .cta, .footer-top, .about-banner, .delivery-banner'
         };
 
         let counter = 0;
@@ -409,10 +404,21 @@
 
             // Skip complex containers but keep small ones like icons or buttons with simple text
             const allowedChildren = ['SPAN', 'I', 'B', 'STRONG', 'EM', 'ION-ICON'];
-            const hasComplexChildren = Array.from(el.children).some(child => !allowedChildren.includes(child.tagName));
+            const childrenArray = Array.from(el.children);
+            const hasComplexChildren = childrenArray.some(child => !allowedChildren.includes(child.tagName));
 
             if (el.tagName !== 'IMG' && el.tagName !== 'IFRAME' && el.tagName !== 'VIDEO' && hasComplexChildren) {
-                return;
+                // Special case for buttons or links with icons: if they have exactly one icon and some text, allow it
+                const iconChildren = childrenArray.filter(c => c.tagName === 'ION-ICON' || c.tagName === 'I');
+                if (iconChildren.length > 0 && iconChildren.length === childrenArray.length) {
+                    // It's just icons, maybe editable if we support icon change, but for now skip
+                    return;
+                }
+                if (iconChildren.length === 1 && childrenArray.length === 1) {
+                    // One icon + text (text is a sibling node) - Allow this!
+                } else {
+                    return;
+                }
             }
 
             if (el.tagName === 'ION-ICON') return;
@@ -581,22 +587,23 @@
         if (el) {
             // Preserve allowed children if present
             const allowedTags = ['I', 'ION-ICON', 'SPAN', 'B', 'STRONG', 'EM'];
-            const preservedChildren = Array.from(el.children).filter(child => allowedTags.includes(child.tagName));
+            const children = Array.from(el.childNodes);
 
-            if (preservedChildren.length > 0) {
-                // Update only the first text node found
-                let textNode = Array.from(el.childNodes).find(node => node.nodeType === 3 && node.nodeValue.trim().length > 0);
-                if (textNode) {
-                    textNode.nodeValue = val;
-                } else if (el.childNodes.length > 0) {
-                    // If no text node with content, but has children, try to find any text node or prepend
-                    let anyTextNode = Array.from(el.childNodes).find(node => node.nodeType === 3);
-                    if (anyTextNode) anyTextNode.nodeValue = val;
-                    else el.prepend(document.createTextNode(val));
+            // Find text nodes
+            const textNodes = children.filter(node => node.nodeType === 3);
+
+            if (children.some(node => node.nodeType === 1 && allowedTags.includes(node.tagName))) {
+                // Has preserved elements (like icons)
+                if (textNodes.length > 0) {
+                    // Update the first text node that isn't just whitespace if possible
+                    const contentNode = textNodes.find(n => n.nodeValue.trim().length > 0) || textNodes[0];
+                    contentNode.nodeValue = val;
                 } else {
-                    el.innerText = val;
+                    // No text node? Add one
+                    el.appendChild(document.createTextNode(val));
                 }
             } else {
+                // Simple element
                 el.innerText = val;
             }
         }

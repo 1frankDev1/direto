@@ -133,14 +133,6 @@
                                 <label class="form-label">Nombre del Negocio</label>
                                 <input type="text" id="bizName" class="form-control" placeholder="Ej. El Herradero" required>
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Link Personalizado (Slug)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text small">tragalero.com/</span>
-                                    <input type="text" id="bizSlug" class="form-control" placeholder="ej-mi-negocio" required>
-                                </div>
-                                <small class="text-muted">Este será tu enlace corto. Se genera automáticamente pero puedes editarlo.</small>
-                            </div>
                             <div class="col-md-6">
                                 <label class="form-label">Categoría</label>
                                 <select id="bizCategory" class="form-select" required>
@@ -314,30 +306,11 @@
     <script src="./assets/js/supabase_logic.js"></script>
 
     <script>
-        function slugify(text) {
-            if (!text) return "";
-            return text.toString().toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/\s+/g, '-')
-                .replace(/[^\w\-]+/g, '')
-                .replace(/\-\-+/g, '-')
-                .replace(/^-+/, '')
-                .replace(/-+$/, '');
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             renderUserMenu('authButtons');
             if (ownerIdParam && ownerIdParam !== sessionUser.id && sessionUser.role === 'Admin') {
                 document.getElementById('adminNav').style.display = 'block';
             }
-
-            const bizNameInput = document.getElementById('bizName');
-            const bizSlugInput = document.getElementById('bizSlug');
-
-            bizNameInput.addEventListener('input', () => {
-                bizSlugInput.value = slugify(bizNameInput.value);
-            });
         });
 
         // Check Access
@@ -521,7 +494,6 @@
                 const bizData = {
                     owner_id: targetOwnerId,
                     name: document.getElementById('bizName').value,
-                    slug: document.getElementById('bizSlug').value,
                     category: bizCategory.value,
                     city: document.getElementById('bizCity').value,
                     state: document.getElementById('bizState').value,

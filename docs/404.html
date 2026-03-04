@@ -74,57 +74,10 @@
 <body>
   <h1>404</h1>
   <p>Oops... this page isn’t part of this campaign 🎯</p>
-  <div id="router-status" style="margin-top: 20px; font-weight: bold; display: none;">
-      Redirigiendo...
-  </div>
   <a href="/">Go back Tragalero</a>
 
-  <!-- JS Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./assets/js/supabase_logic.js"></script>
-
-  <!-- Router Logic -->
+  <!-- Generar estrellitas -->
   <script>
-    async function routeBySlug() {
-        const path = window.location.pathname.split('/').filter(p => p !== '').pop();
-        if (!path || path === 'docs' || path.includes('.') || path === 'index.html') return;
-
-        const status = document.getElementById('router-status');
-        status.style.display = 'block';
-
-        try {
-            // Get business by slug
-            const { data: biz } = await supabaseClient
-                .from('businesses')
-                .select('owner_id')
-                .eq('slug', path)
-                .single();
-
-            if (biz && biz.owner_id) {
-                // Check if they have a website first
-                const { data: webData } = await supabaseClient
-                    .from('user_websites')
-                    .select('id')
-                    .eq('user_id', biz.owner_id)
-                    .single();
-
-                if (webData) {
-                    window.location.href = `./webBuilding.html?user=${biz.owner_id}`;
-                } else {
-                    window.location.href = `./cards.html?user=${biz.owner_id}`;
-                }
-            } else {
-                status.style.display = 'none';
-            }
-        } catch (e) {
-            console.error("Router error:", e);
-            status.style.display = 'none';
-        }
-    }
-
-    routeBySlug();
-
-    // Generar estrellitas
     for (let i = 0; i < 40; i++) {
       const star = document.createElement("div");
       star.className = "star";
