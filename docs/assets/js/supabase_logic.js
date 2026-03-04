@@ -48,7 +48,8 @@ async function getBusinesses(showAll = false) {
                 is_visible: item.is_visible,
                 owner_id: item.owner_id,
                 latitude: item.latitude,
-                longitude: item.longitude
+                longitude: item.longitude,
+                slug: item.slug
             }));
         }
     } catch (e) {
@@ -85,6 +86,26 @@ function escapeHtml(unsafe) {
 function logout() {
     sessionStorage.removeItem('tragalero_user');
     window.location.href = './login.html';
+}
+
+/**
+ * Fetches a single business by its slug.
+ */
+async function getBusinessBySlug(slug) {
+    if (!slug) return null;
+    try {
+        const { data, error } = await supabaseClient
+            .from('businesses')
+            .select('*')
+            .eq('slug', slug)
+            .single();
+
+        if (error) throw error;
+        return data;
+    } catch (e) {
+        console.error(`Error fetching business by slug ${slug}:`, e);
+        return null;
+    }
 }
 
 function checkAccess(roleRequired) {

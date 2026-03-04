@@ -71,7 +71,7 @@
                         <table class="table table-hover align-middle">
                             <thead>
                                 <tr>
-                                    <th>Negocio</th>
+                                    <th>Negocio / Slug</th>
                                     <th>Categoría</th>
                                     <th>Ubicación</th>
                                     <th>Dueño</th>
@@ -111,6 +111,13 @@
                                 <div class="col-md-12">
                                     <label class="form-label small fw-bold">Nombre del Negocio</label>
                                     <input type="text" id="editBizName" class="form-control" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label small fw-bold">Slug (Link Corto)</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">tragalero.com/</span>
+                                        <input type="text" id="editBizSlug" class="form-control" required>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold">Categoría</label>
@@ -280,6 +287,7 @@
 
                 document.getElementById('editBizId').value = biz.id;
                 document.getElementById('editBizName').value = biz.name;
+                document.getElementById('editBizSlug').value = biz.slug || '';
                 document.getElementById('editBizCategory').value = biz.category;
                 document.getElementById('editBizCity').value = biz.city;
                 document.getElementById('editBizState').value = biz.state || '';
@@ -367,6 +375,7 @@
 
                 const updates = {
                     name: document.getElementById('editBizName').value,
+                    slug: document.getElementById('editBizSlug').value,
                     category: editCategory.value,
                     city: document.getElementById('editBizCity').value,
                     state: document.getElementById('editBizState').value,
@@ -435,7 +444,7 @@
                                 <img src="${escapeHtml(biz.logo_url) || 'https://via.placeholder.com/150'}" class="biz-logo-sm me-3">
                                 <div>
                                     <div class="fw-bold">${escapeHtml(biz.name)}</div>
-                                    <div class="small text-muted">${escapeHtml(biz.zip || '')}</div>
+                                    <div class="small text-primary fw-bold" style="font-size: 0.75rem;">tragalero.com/${escapeHtml(biz.slug || '')}</div>
                                 </div>
                             </div>
                         </td>

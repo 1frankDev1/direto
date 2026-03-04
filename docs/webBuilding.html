@@ -239,8 +239,25 @@
         setupDeviceSwitcher();
 
         document.getElementById('save-btn').onclick = saveConfig;
-        document.getElementById('btn-view-public').onclick = () => {
-            const publicUrl = `${window.location.origin}${window.location.pathname}?user=${user.id}&template=${activeTemplateId}`;
+        document.getElementById('btn-view-public').onclick = async () => {
+            let publicUrl = `${window.location.origin}${window.location.pathname}?user=${user.id}`;
+
+            // Try to find business slug for this user
+            try {
+                const { data } = await supabaseClient
+                    .from('businesses')
+                    .select('slug')
+                    .eq('owner_id', user.id)
+                    .limit(1)
+                    .single();
+
+                if (data && data.slug) {
+                    publicUrl = window.location.origin + '/' + data.slug;
+                }
+            } catch (e) {
+                console.error("Error fetching slug for public view:", e);
+            }
+
             window.open(publicUrl, '_blank');
         };
 
