@@ -978,7 +978,23 @@
             qrContainer.innerHTML = '';
 
             // Generate public URL
-            const publicUrl = window.location.origin + window.location.pathname + '?user=' + user.id;
+            let publicUrl = window.location.origin + window.location.pathname + '?user=' + user.id;
+
+            // Try to find business slug for this user
+            supabaseClient
+                .from('businesses')
+                .select('slug')
+                .eq('owner_id', user.id)
+                .limit(1)
+                .single()
+                .then(({ data }) => {
+                    if (data && data.slug) {
+                        publicUrl = window.location.origin + '/' + data.slug;
+                    }
+                    shareUrlInput.value = publicUrl;
+                    updateQR(publicUrl);
+                });
+
             shareUrlInput.value = publicUrl;
 
             // Social Sharing Links
@@ -1000,14 +1016,36 @@
                 };
             }
 
+            updateQR(publicUrl);
+            qrModal.show();
+        };
+
+        function updateQR(url) {
+            const qrContainer = document.getElementById('qrContainer');
+            const shareUrlInput = document.getElementById('shareUrlInput');
+            qrContainer.innerHTML = '';
             const canvas = document.createElement('canvas');
-            QRCode.toCanvas(canvas, publicUrl, { width: 250, margin: 2 }, (error) => {
+            QRCode.toCanvas(canvas, url, { width: 250, margin: 2 }, (error) => {
                 if (error) console.error(error);
                 qrContainer.appendChild(canvas);
             });
 
-            qrModal.show();
-        };
+            // Update Social Sharing Links
+            const encodedUrl = encodeURIComponent(url);
+            const encodedText = encodeURIComponent(translations[cardConfig.lang || 'es'].shareTitle || 'Mira mi tarjeta digital');
+            document.getElementById('shareWA').href = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+            document.getElementById('shareFB').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+
+            if (navigator.share) {
+                document.getElementById('nativeShareBtn').onclick = () => {
+                    navigator.share({
+                        title: cardConfig.name || 'Mi Tarjeta Digital',
+                        text: cardConfig.bio || 'Mira mi tarjeta digital en Tragalero',
+                        url: url,
+                    }).catch(console.error);
+                };
+            }
+        }
 
         document.getElementById('copyLinkBtn').onclick = () => {
             const shareUrlInput = document.getElementById('shareUrlInput');
