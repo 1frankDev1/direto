@@ -598,36 +598,38 @@ body {
   <title>Los Barriles Ice Cream</title>
 </head>
 <body>
+  <header id="cabecera" data-label="Cabecera">
     <div style="background:#E5017D;" id="iconosnav">
-  <ul  class="social-icons">
-    <li><a href="https://www.facebook.com/profile.php?id=100063484845817&mibextid=LQQJ4d" target="_blank"><img id="fb" src="https://barrilesicecream.online/assets/img/fb.png" alt="Facebook"></a></li>
-    <li><a href="https://wa.me/+14084012061" target="_blank"><img id="wa" src="https://barrilesicecream.online/assets/img/whatsappi.png" alt="WhatsApp"></a></li>
-    <li><a href="https://www.instagram.com/losbarriles408/?igsh=OGQ5ZDc2ODk2ZA%3D%3D&utm_source=qr" target="_blank"><img id="tik" src="https://barrilesicecream.online/assets/img/insta.png" alt="TikTok"></a></li>
-        <li><a href="https://barrilesicecream.online/index-en"><img src="https://barrilesicecream.online/assets/img/enes.png" alt="EN/ES"></a></li>
-  </ul>
-</div>
-      <nav>
-        <div class="logo-container">
-          <img src="https://barrilesicecream.online/assets/img/LOS%20BARRILES.png">
+      <ul  class="social-icons">
+        <li><a href="https://www.facebook.com/profile.php?id=100063484845817&mibextid=LQQJ4d" target="_blank"><img id="fb" src="https://barrilesicecream.online/assets/img/fb.png" alt="Facebook"></a></li>
+        <li><a href="https://wa.me/+14084012061" target="_blank"><img id="wa" src="https://barrilesicecream.online/assets/img/whatsappi.png" alt="WhatsApp"></a></li>
+        <li><a href="https://www.instagram.com/losbarriles408/?igsh=OGQ5ZDc2ODk2ZA%3D%3D&utm_source=qr" target="_blank"><img id="tik" src="https://barrilesicecream.online/assets/img/insta.png" alt="TikTok"></a></li>
+            <li><a href="https://barrilesicecream.online/index-en"><img src="https://barrilesicecream.online/assets/img/enes.png" alt="EN/ES"></a></li>
+      </ul>
+    </div>
+    <nav>
+      <div class="logo-container">
+        <img src="https://barrilesicecream.online/assets/img/LOS%20BARRILES.png" data-label="Logotipo">
+      </div>
+      <div class="contact-info">
+        <p>Llamanos: <a href="tel:14084012061" data-label="Teléfono Nav">1 408-401-2061</a></p>
+      </div>
+      <div class="mobile-menu">
+        <div class="hamburger-menu" onclick="toggleMenu()">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
         </div>
-        <div class="contact-info">
-          <p>Llamanos: <a href="tel:14084012061">1 408-401-2061</a></p>
-        </div>
-        <div class="mobile-menu">
-          <div class="hamburger-menu" onclick="toggleMenu()">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-          </div>
-          <ul class="nav-links">
-            <li><a href="./index.html#inicio">Inicio</a></li>
-            <li><a href="./index.html#sobre-nosotros">Acerca de</a></li>
-            <li><a href="./menues.html">Menu</a></li>
-            <li><a href="./index.html#galeria">Galeria</a></li>
-            <li><a href="./index.html#contacto">Contactanos</a></li>
-          </ul>
-        </div>
-      </nav>
+        <ul class="nav-links">
+          <li><a href="./index.html#inicio">Inicio</a></li>
+          <li><a href="./index.html#sobre-nosotros">Acerca de</a></li>
+          <li><a href="./menues.html">Menu</a></li>
+          <li><a href="./index.html#galeria">Galeria</a></li>
+          <li><a href="./index.html#contacto">Contactanos</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
 
 
       <!-- Resto del código... -->
@@ -639,10 +641,10 @@ body {
         }
       </script>
 
-  <header class="hero" id="inicio">
+  <header class="hero" id="inicio" data-label="Hero">
     <div class="overlay">
-      <h1>Los Barriles Ice Cream</h1>
-      <a href="https://barrilesicecream.online/menues" class="order-button">Ver Menu</a>
+      <h1 data-label="Título Hero">Los Barriles Ice Cream</h1>
+      <a href="https://barrilesicecream.online/menues" class="order-button" data-label="Botón Hero">Ver Menu</a>
     </div>
   </header>
 
@@ -655,33 +657,33 @@ body {
 
   <!--<div class="img1"><img src="https://barrilesicecream.online/assets/img/img1.png"/></div>-->
 
-<div class="bienvenida">
-  <img src="https://barrilesicecream.online/assets/img/bienvenida.png"/>
-  <p>Bienvenidos a los barriles Ice Cream
+<section class="bienvenida" data-label="Bienvenida">
+  <img src="https://barrilesicecream.online/assets/img/bienvenida.png" data-label="Imagen Bienvenida"/>
+  <p data-label="Texto Bienvenida">Bienvenidos a los barriles Ice Cream
 Ven a disfrutar de una rica nieve de garrafa, estilo México, hecha de manera artesanal, con ingredientes 100% naturales.
 Además de una gran variedad de antojitos mexicanos como, mangonadas, tostilocos, salchipapas, esquites y mucho más.
 Te esperamos!</p>
-  </div>
+  </section>
 
-  <div class="cartas">
+  <section class="cartas" data-label="Especialidades">
     <div class="card"  id="card1">
-      <video src="https://menutechdeveloper.github.io/bddImg/assets/img/barrilesv1.mp4" autoplay muted playsinline loop></video>
+      <video src="https://menutechdeveloper.github.io/bddImg/assets/img/barrilesv1.mp4" autoplay muted playsinline loop data-label="Video 1"></video>
       <div class="sombra"></div>
-      <h2>Dulces<br/>Delicias</h2>
+      <h2 data-label="Título Carta 1">Dulces<br/>Delicias</h2>
     </div>
     <div class="card" id="card2">
-      <video src="https://menutechdeveloper.github.io/bddImg/assets/img/port2.mp4" autoplay muted playsinline loop></video>
+      <video src="https://menutechdeveloper.github.io/bddImg/assets/img/port2.mp4" autoplay muted playsinline loop data-label="Video 2"></video>
       <div class="sombra"></div>
-      <h2>Delicias<br/>Heladas</h2>
+      <h2 data-label="Título Carta 2">Delicias<br/>Heladas</h2>
     </div>
     <div class="card" id="card3">
-      <video src="https://menutechdeveloper.github.io/bddImg/assets/img/barrilesv3.mp4" autoplay muted playsinline loop></video>
+      <video src="https://menutechdeveloper.github.io/bddImg/assets/img/barrilesv3.mp4" autoplay muted playsinline loop data-label="Video 3"></video>
       <div class="sombra"></div>
-      <h2>Sabores<br/>Frutales</h2>
+      <h2 data-label="Título Carta 3">Sabores<br/>Frutales</h2>
     </div>
-  </div>
+  </section>
 
-  <div id="sobre-nosotros" class="about">
+  <section id="sobre-nosotros" class="about" data-label="Sobre Nosotros">
     <p>Los Barriles Ice Cream es un negocio familiar , donde nos enfocamos en mantener viva la tradición mexicana de las Nieves de garrafa, una nieve 100% natural y artesanal, estiló Jalisco, que te hará sentir que estás probando un pedacito de México.
       Contamos con una variedad de más de 100 sabores, desde los clásicos como vainilla, limón, chocolate, fresa, hasta los más exóticos como guanábana, mamey, pitaya, tuna, arrayán … los cuales vamos rotando cada semana para que siempre tengas variedad y nuevos sabores a probar!</p>
       <br/>
@@ -693,9 +695,11 @@ Te esperamos!</p>
       <p>También contamos con servicio para cualquier tipo de evento, fiestas infantiles, quinceañeras, bodas, festivales, empresas, etc.</p>
       <br/>
       <p>Así que si aún no nos conoces, te invitamos a visitar nuestra lonchera y próximamente nuestro local, te va a encantar!!!</p>
-  </div>
+  </section>
 
-  <div class="banner"><img src="https://barrilesicecream.online/assets/img/bannerice.jpg"/></div>
+  <section class="banner" data-label="Banner Publicitario">
+    <img src="https://barrilesicecream.online/assets/img/bannerice.jpg" data-label="Imagen Banner"/>
+  </section>
 
   <!--<section class="about-us" id="sobre-nosotros">
     <div class="container">
@@ -705,10 +709,10 @@ Te esperamos!</p>
     </div>
   </section>-->
 
-  <div class="follow">
+  <section class="follow" data-label="Redes Sociales">
       <div class="colum1">
-        <h2>Síguenos en nuestras redes sociales.</h2>
-        <p>conoce las promociones que tenemos mes tras mes,<br/>
+        <h2 data-label="Título Social">Síguenos en nuestras redes sociales.</h2>
+        <p data-label="Texto Social">conoce las promociones que tenemos mes tras mes,<br/>
           o el lanzamiento de nuevos productos en el menú</p>
 
 
@@ -721,59 +725,59 @@ Te esperamos!</p>
 
       </div>
       <div class="colum2">
-        <img src="https://barrilesicecream.online/assets/img/ins.png"/>
+        <img src="https://barrilesicecream.online/assets/img/ins.png" data-label="Imagen Redes"/>
       </div>
-  </div>
+  </section>
 
 
 
 
-  <section class="gallery" id="galeria">
+  <section class="gallery" id="galeria" data-label="Galería">
     <div class="container">
-      <h2>Galería</h2>
+      <h2 data-label="Título Galería">Galería</h2>
       <div class="gallery-grid">
-        <img src="https://barrilesicecream.online/assets/img/bar1.png" alt="Galería 1">
-        <img src="https://barrilesicecream.online/assets/img/bar2.png" alt="Galería 2">
-        <img src="https://barrilesicecream.online/assets/img/bar3.png" alt="Galería 3">
-        <img src="https://barrilesicecream.online/assets/img/bar4.png" alt="Galería 4">
-        <img src="https://barrilesicecream.online/assets/img/bar5.png" alt="Galería 5">
-        <img src="https://barrilesicecream.online/assets/img/bar6.png" alt="Galería 6">
-        <img src="https://barrilesicecream.online/assets/img/bar7.png" alt="Galería 7">
-        <img src="https://barrilesicecream.online/assets/img/bar8.png" alt="Galería 8">
-        <img src="https://barrilesicecream.online/assets/img/bar9.png" alt="Galería 9">
-        <img src="https://barrilesicecream.online/assets/img/bar10.png" alt="Galería 10">
-        <img src="https://barrilesicecream.online/assets/img/bar11.png" alt="Galería 11">
-        <img src="https://barrilesicecream.online/assets/img/bar12.png" alt="Galería 12">
+        <img src="https://barrilesicecream.online/assets/img/bar1.png" alt="Galería 1" data-label="Foto 1">
+        <img src="https://barrilesicecream.online/assets/img/bar2.png" alt="Galería 2" data-label="Foto 2">
+        <img src="https://barrilesicecream.online/assets/img/bar3.png" alt="Galería 3" data-label="Foto 3">
+        <img src="https://barrilesicecream.online/assets/img/bar4.png" alt="Galería 4" data-label="Foto 4">
+        <img src="https://barrilesicecream.online/assets/img/bar5.png" alt="Galería 5" data-label="Foto 5">
+        <img src="https://barrilesicecream.online/assets/img/bar6.png" alt="Galería 6" data-label="Foto 6">
+        <img src="https://barrilesicecream.online/assets/img/bar7.png" alt="Galería 7" data-label="Foto 7">
+        <img src="https://barrilesicecream.online/assets/img/bar8.png" alt="Galería 8" data-label="Foto 8">
+        <img src="https://barrilesicecream.online/assets/img/bar9.png" alt="Galería 9" data-label="Foto 9">
+        <img src="https://barrilesicecream.online/assets/img/bar10.png" alt="Galería 10" data-label="Foto 10">
+        <img src="https://barrilesicecream.online/assets/img/bar11.png" alt="Galería 11" data-label="Foto 11">
+        <img src="https://barrilesicecream.online/assets/img/bar12.png" alt="Galería 12" data-label="Foto 12">
       </div>
     </div>
   </section>
 
-  <section class="order-online" id="orden-en-linea">
+  <section class="order-online" id="orden-en-linea" data-label="Orden en Línea">
     <div class="container">
-      <h2 style="color: #E5017D; font-family: helado;">Ver el MENÚ y ordenar ahora</h2>
-      <p>¡Disfruta nuestro menú desde la comodidad de tu hogar! Realiza tu pedido ahora.</p>
-      <a href="https://barrilesicecream.online/menues" class="order-button">Ver Menu</a>
+      <h2 style="color: #E5017D; font-family: helado;" data-label="Título Orden">Ver el MENÚ y ordenar ahora</h2>
+      <p data-label="Texto Orden">¡Disfruta nuestro menú desde la comodidad de tu hogar! Realiza tu pedido ahora.</p>
+      <a href="https://barrilesicecream.online/menues" class="order-button" data-label="Botón Orden">Ver Menu</a>
     </div>
   </section>
 
-  <section class="contact" id="contacto">
+  <section class="contact" id="contacto" data-label="Contacto">
     <div class="container">
-      <h2 style="color: #E5017D; font-family: helado;">Contactanos</h2>
-      <p>Telefono: <a style="text-decoration:none; color:#000;" href="tel:14084012061">1 408-401-2061</a></p>
-      <p>1642 Mabury Rd San Jose Ca 95133</p>
+      <h2 style="color: #E5017D; font-family: helado;" data-label="Título Contacto">Contactanos</h2>
+      <p>Telefono: <a style="text-decoration:none; color:#000;" href="tel:14084012061" data-label="Teléfono Contacto">1 408-401-2061</a></p>
+      <p data-label="Dirección Contacto">1642 Mabury Rd San Jose Ca 95133</p>
     </div>
   </section>
 
-  <section class="facebook-video">
+  <section class="facebook-video" data-label="Ubicación">
     <div class="container">
-      <h2 style="color: #E5017D; font-family: helado;">Visitanos</h2>
+      <h2 style="color: #E5017D; font-family: helado;" data-label="Título Mapa">Visitanos</h2>
       <div class="mapa">
-<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12684.116132640595!2d-121.870903!3d37.3654899!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fcd368120f6eb%3A0xd6aee4b8289c20d1!2sLos%20Barriles%20Ice%20Cream!5e0!3m2!1sen!2smx!4v1706006014685!5m2!1sen!2smx" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12684.116132640595!2d-121.870903!3d37.3654899!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fcd368120f6eb%3A0xd6aee4b8289c20d1!2sLos%20Barriles%20Ice%20Cream!5e0!3m2!1sen!2smx!4v1706006014685!5m2!1sen!2smx" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-label="Mapa Google"></iframe>
       </div>
     </div>
   </section>
 
-  <footer>
+  <footer data-label="Pie de Página">
     <div id="brand"> </div>
 <script>
     var y = new Date().getFullYear();
