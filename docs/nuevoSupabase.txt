@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS businesses (
     btn_text_color TEXT DEFAULT '#ffffff',
     latitude FLOAT8,
     longitude FLOAT8,
+    slug TEXT UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
